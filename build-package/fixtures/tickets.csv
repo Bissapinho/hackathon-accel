@@ -1,0 +1,61 @@
+ticket_id,title,description,status,priority,category,assignee,customer,created_at,resolved_at,estimate_hours
+T-2000,Slow login page,Customer reports: slow login page.,open,low,performance,Alan Turing,Wayne Enterprises,2026-09-05,,1
+T-2001,Slow login page,Customer reports: slow login page.,resolved,high,performance,Ada Lovelace,Acme Corp,2026-08-12,2026-08-22,2
+T-2002,Upload stuck at 99%,Customer reports: upload stuck at 99%.,resolved,urgent,files,Katherine Johnson,Wayne Enterprises,2026-08-04,2026-08-13,8
+T-2003,Wrong totals in report,Customer reports: wrong totals in report.,open,high,reporting,Ada Lovelace,Hooli,2026-09-05,,2
+T-2004,Broken link in footer,Customer reports: broken link in footer.,in_progress,medium,ui,Grace Hopper,Acme Corp,2026-09-05,,1
+T-2005,Wrong totals in report,Customer reports: wrong totals in report.,open,medium,reporting,Ada Lovelace,Wayne Enterprises,2026-09-14,,5
+T-2006,Export button greyed out,Customer reports: export button greyed out.,open,medium,ui,Katherine Johnson,Stark Industries,2026-08-11,,3
+T-2007,Wrong timezone in report,Customer reports: wrong timezone in report.,open,low,reporting,Grace Hopper,Acme Corp,2026-08-06,,2
+T-2008,CSV import rejects dates,Customer reports: csv import rejects dates.,open,medium,files,Grace Hopper,Globex,2026-09-05,,3
+T-2009,Login fails on mobile,Customer reports: login fails on mobile.,open,medium,auth,Alan Turing,Stark Industries,2026-08-10,,13
+T-2010,Upload stuck at 99%,Customer reports: upload stuck at 99%.,open,high,files,Katherine Johnson,Wayne Enterprises,2026-09-18,,8
+T-2011,Upload stuck at 99%,Customer reports: upload stuck at 99%.,resolved,medium,files,Grace Hopper,Umbrella,2026-08-08,2026-08-12,3
+T-2012,Missing translation,Customer reports: missing translation.,open,urgent,ui,Linus Torvalds,Umbrella,2026-09-10,,13
+T-2013,Dashboard chart empty,Customer reports: dashboard chart empty.,open,medium,reporting,Margaret Hamilton,Stark Industries,2026-08-18,,3
+T-2014,Broken link in footer,Customer reports: broken link in footer.,resolved,medium,ui,Alan Turing,Stark Industries,2026-09-21,2026-09-27,5
+T-2015,Missing translation,Customer reports: missing translation.,open,low,ui,Katherine Johnson,Umbrella,2026-08-20,,8
+T-2016,Missing translation,Customer reports: missing translation.,in_progress,medium,ui,Margaret Hamilton,Hooli,2026-09-29,,1
+T-2017,Slow login page,Customer reports: slow login page.,resolved,low,performance,Grace Hopper,Acme Corp,2026-10-08,2026-10-13,3
+T-2018,Wrong totals in report,Customer reports: wrong totals in report.,open,high,reporting,Katherine Johnson,Initech,2026-08-01,,8
+T-2019,Password reset email not received,Customer reports: password reset email not received.,open,high,auth,Grace Hopper,Hooli,2026-08-14,,13
+T-2020,Export button greyed out,Customer reports: export button greyed out.,resolved,medium,ui,Margaret Hamilton,Hooli,2026-08-20,2026-08-26,8
+T-2021,Refund not applied,Customer reports: refund not applied.,open,urgent,billing,Ada Lovelace,Initech,2026-09-11,,3
+T-2022,Upload stuck at 99%,Customer reports: upload stuck at 99%.,open,medium,files,Linus Torvalds,Hooli,2026-08-11,,1
+T-2023,Password reset email not received,Customer reports: password reset email not received.,resolved,low,auth,Alan Turing,Initech,2026-08-17,2026-08-25,8
+T-2024,CSV import rejects dates,Customer reports: csv import rejects dates.,resolved,medium,files,Katherine Johnson,Globex,2026-08-28,2026-09-06,13
+T-2025,Duplicate notifications,Customer reports: duplicate notifications.,in_progress,medium,notifications,Linus Torvalds,Acme Corp,2026-09-26,,2
+T-2026,Upload stuck at 99%,Customer reports: upload stuck at 99%.,open,medium,files,Alan Turing,Stark Industries,2026-08-03,,2
+T-2027,Typo in invoice email,Customer reports: typo in invoice email.,open,low,billing,Ada Lovelace,Hooli,2026-08-30,,3
+T-2028,Missing translation,Customer reports: missing translation.,resolved,medium,ui,Alan Turing,Wayne Enterprises,2026-09-05,2026-09-13,8
+T-2029,Wrong timezone in report,Customer reports: wrong timezone in report.,in_progress,medium,reporting,Alan Turing,Acme Corp,2026-09-30,,1
+T-2030,Slow login page,Customer reports: slow login page.,in_progress,medium,performance,Katherine Johnson,Acme Corp,2026-09-24,,13
+T-2031,Slow login page,Customer reports: slow login page.,resolved,low,performance,Ada Lovelace,Globex,2026-08-08,2026-08-15,2
+T-2032,Upload stuck at 99%,Customer reports: upload stuck at 99%.,resolved,high,files,Linus Torvalds,Globex,2026-08-18,2026-08-25,1
+T-2033,Dashboard chart empty,Customer reports: dashboard chart empty.,resolved,low,reporting,Ada Lovelace,Hooli,2026-08-07,2026-08-16,2
+T-2034,Timeout on search,Customer reports: timeout on search.,in_progress,high,performance,Linus Torvalds,Acme Corp,2026-10-01,,2
+T-2035,Wrong totals in report,Customer reports: wrong totals in report.,open,medium,reporting,Linus Torvalds,Initech,2026-09-03,,5
+T-2036,Broken link in footer,Customer reports: broken link in footer.,resolved,high,ui,Alan Turing,Acme Corp,2026-10-02,2026-10-05,8
+T-2037,Broken link in footer,Customer reports: broken link in footer.,resolved,low,ui,Linus Torvalds,Stark Industries,2026-09-10,2026-09-11,8
+T-2038,Timeout on search,Customer reports: timeout on search.,open,high,performance,Ada Lovelace,Stark Industries,2026-08-11,,1
+T-2039,Slow login page,Customer reports: slow login page.,open,medium,performance,Margaret Hamilton,Globex,2026-08-16,,8
+T-2040,Wrong timezone in report,Customer reports: wrong timezone in report.,open,urgent,reporting,Margaret Hamilton,Stark Industries,2026-08-11,,8
+T-2041,Login fails on mobile,Customer reports: login fails on mobile.,open,medium,auth,Linus Torvalds,Globex,2026-09-10,,13
+T-2042,Slow login page,Customer reports: slow login page.,open,high,performance,Ada Lovelace,Acme Corp,2026-09-10,,5
+T-2043,Wrong timezone in report,Customer reports: wrong timezone in report.,resolved,low,reporting,Grace Hopper,Globex,2026-08-10,2026-08-19,3
+T-2044,Refund not applied,Customer reports: refund not applied.,open,medium,billing,Linus Torvalds,Hooli,2026-09-17,,8
+T-2045,Broken link in footer,Customer reports: broken link in footer.,open,urgent,ui,,Hooli,2026-10-07,,8
+T-2046,Duplicate notifications,Customer reports: duplicate notifications.,resolved,low,notifications,Ada Lovelace,Wayne Enterprises,2026-08-18,2026-08-23,8
+T-2047,Timeout on search,Customer reports: timeout on search.,open,medium,performance,Alan Turing,Wayne Enterprises,2026-08-27,,13
+T-2048,CSV import rejects dates,Customer reports: csv import rejects dates.,open,high,files,Ada Lovelace,Acme Corp,2026-10-02,,13
+T-2049,Wrong totals in report,Customer reports: wrong totals in report.,open,low,reporting,Alan Turing,Wayne Enterprises,2026-08-01,,3
+T-2050,Timeout on search,Customer reports: timeout on search.,resolved,high,performance,Ada Lovelace,Acme Corp,2026-10-10,2026-10-17,13
+T-2051,Refund not applied,Customer reports: refund not applied.,open,high,billing,Margaret Hamilton,Stark Industries,2026-08-05,,2
+T-2052,Wrong totals in report,Customer reports: wrong totals in report.,open,low,reporting,Ada Lovelace,Initech,2026-09-09,,2
+T-2053,Slow login page,Customer reports: slow login page.,open,low,performance,Linus Torvalds,Stark Industries,2026-09-15,,13
+T-2054,Timeout on search,Customer reports: timeout on search.,open,low,performance,Ada Lovelace,Globex,2026-08-23,,13
+T-2055,Refund not applied,Customer reports: refund not applied.,in_progress,medium,billing,Katherine Johnson,Acme Corp,2026-09-01,,5
+T-2056,CSV import rejects dates,Customer reports: csv import rejects dates.,open,high,files,Linus Torvalds,Initech,2026-08-29,,3
+T-2057,CSV import rejects dates,Customer reports: csv import rejects dates.,open,medium,files,Linus Torvalds,Initech,2026-08-04,,3
+T-2058,CSV import rejects dates,Customer reports: csv import rejects dates.,open,medium,files,Linus Torvalds,Wayne Enterprises,2026-09-14,,8
+T-2059,Login fails on mobile,Customer reports: login fails on mobile.,open,low,auth,Grace Hopper,Acme Corp,2026-09-03,,1

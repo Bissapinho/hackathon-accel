@@ -1,0 +1,120 @@
+{
+  "_note": "An example of what the agent should produce for the demo (02-slice-and-demo.md). Names may differ in a live run; use it for tests, the mock replay and as a target. <ticketsDatasetId>/<peopleDatasetId>/<presenterUserId> are filled by the seed.",
+  "objectTypes": [
+    {
+      "apiName": "Ticket", "displayName": "Ticket", "pluralDisplayName": "Tickets",
+      "description": "A customer support request handled by the support team, from creation to resolution.",
+      "aliases": ["issue", "case", "request"], "icon": "ticket",
+      "datasetId": "<ticketsDatasetId>", "primaryKey": "ticketId", "titleProperty": "title", "status": "active",
+      "properties": [
+        { "apiName": "ticketId", "column": "ticket_id", "type": "string", "displayName": "Ticket ID", "description": "Unique reference of the ticket, e.g. T-2003.", "aliases": ["reference", "number"], "editable": false },
+        { "apiName": "title", "column": "title", "type": "string", "displayName": "Title", "description": "Short summary of the problem reported.", "aliases": ["subject"], "editable": false },
+        { "apiName": "description", "column": "description", "type": "string", "displayName": "Description", "description": "What the customer reported, in their words.", "aliases": [], "editable": false },
+        { "apiName": "status", "column": "status", "type": "string", "displayName": "Status", "description": "Where the ticket is in its life: open, in progress or resolved.", "aliases": ["state"], "editable": true, "allowedValues": ["open", "in_progress", "resolved"] },
+        { "apiName": "priority", "column": "priority", "type": "string", "displayName": "Priority", "description": "How urgent the ticket is: low, medium, high or urgent.", "aliases": ["urgency", "severity"], "editable": true, "allowedValues": ["low", "medium", "high", "urgent"] },
+        { "apiName": "category", "column": "category", "type": "string", "displayName": "Category", "description": "Area of the product the ticket is about.", "aliases": ["area", "topic"], "editable": false },
+        { "apiName": "assignee", "column": "assignee", "type": "string", "displayName": "Assignee", "description": "Full name of the team member handling the ticket; empty if unassigned.", "aliases": ["owner", "handled by"], "editable": true },
+        { "apiName": "customer", "column": "customer", "type": "string", "displayName": "Customer", "description": "Company that reported the ticket.", "aliases": ["client", "account"], "editable": false },
+        { "apiName": "createdAt", "column": "created_at", "type": "date", "displayName": "Created on", "description": "Day the ticket was opened.", "aliases": ["opened"], "editable": false },
+        { "apiName": "resolvedAt", "column": "resolved_at", "type": "date", "displayName": "Resolved on", "description": "Day the ticket was resolved; empty while it's still open.", "aliases": ["closed"], "editable": true },
+        { "apiName": "estimateHours", "column": "estimate_hours", "type": "integer", "displayName": "Estimated hours", "description": "Estimated effort to resolve the ticket, in hours.", "aliases": ["effort", "workload"], "editable": false },
+        { "apiName": "resolvedBy", "type": "string", "displayName": "Resolved by", "description": "Team member who marked the ticket resolved (recorded by the Resolve action).", "aliases": [], "editable": true },
+        { "apiName": "resolutionNote", "type": "string", "displayName": "Resolution note", "description": "What was done to resolve the ticket (recorded by the Resolve action).", "aliases": ["fix"], "editable": true }
+      ]
+    },
+    {
+      "apiName": "TeamMember", "displayName": "Team member", "pluralDisplayName": "Team members",
+      "description": "A person in the support organization who can be assigned tickets.",
+      "aliases": ["person", "agent", "employee", "support engineer"], "icon": "person",
+      "datasetId": "<peopleDatasetId>", "primaryKey": "personId", "titleProperty": "fullName", "status": "active",
+      "properties": [
+        { "apiName": "personId", "column": "person_id", "type": "string", "displayName": "Person ID", "description": "Unique reference of the team member.", "aliases": [], "editable": false },
+        { "apiName": "fullName", "column": "full_name", "type": "string", "displayName": "Full name", "description": "First and last name, as used in ticket assignments.", "aliases": ["name"], "editable": false },
+        { "apiName": "email", "column": "email", "type": "string", "displayName": "Email", "description": "Work email address.", "aliases": [], "editable": false },
+        { "apiName": "team", "column": "team", "type": "string", "displayName": "Team", "description": "Team the person belongs to.", "aliases": ["group"], "editable": false },
+        { "apiName": "role", "column": "role", "type": "string", "displayName": "Role", "description": "Job role in the team.", "aliases": ["title"], "editable": false }
+      ]
+    }
+  ],
+  "linkTypes": [
+    { "apiName": "assignedTo", "from": "Ticket", "to": "TeamMember", "cardinality": "many-to-one",
+      "fromProperty": "assignee", "toProperty": "fullName",
+      "displayName": "Assigned to", "reverseApiName": "assignedTickets", "reverseDisplayName": "Assigned tickets",
+      "description": "The team member responsible for the ticket, matched on full name." }
+  ],
+  "actionTypes": [
+    {
+      "apiName": "ResolveTicket", "displayName": "Resolve ticket",
+      "description": "Mark a ticket as resolved and record who resolved it, when, and how.",
+      "agentDescription": "Use when a ticket's problem is fixed. Sets status to resolved, resolvedAt to today, resolvedBy to the current user, and stores the note. Refused if the ticket is already resolved.",
+      "parameters": [
+        { "id": "ticket", "kind": "object", "objectType": "Ticket", "displayName": "Ticket", "description": "The ticket to resolve.", "required": true },
+        { "id": "note", "kind": "value", "type": "string", "displayName": "Resolution note", "description": "What was done to fix it.", "required": true }
+      ],
+      "rules": [
+        { "kind": "modifyObject", "object": "ticket", "set": {
+            "status": { "kind": "literal", "value": "resolved" },
+            "resolvedAt": { "kind": "now" },
+            "resolvedBy": { "kind": "currentUser" },
+            "resolutionNote": { "kind": "param", "param": "note" } } }
+      ],
+      "submissionCriteria": [
+        { "left": { "kind": "paramProperty", "param": "ticket", "property": "status" }, "op": "neq",
+          "right": { "kind": "literal", "value": "resolved" }, "failureMessage": "This ticket is already resolved." }
+      ],
+      "successMessage": "Ticket \"{{ticket.title}}\" is resolved."
+    },
+    {
+      "apiName": "ChangeTicketPriority", "displayName": "Change priority",
+      "description": "Set a ticket's priority.",
+      "agentDescription": "Use to raise or lower a ticket's urgency. Only changes priority. Refused for resolved tickets.",
+      "parameters": [
+        { "id": "ticket", "kind": "object", "objectType": "Ticket", "displayName": "Ticket", "description": "The ticket to change.", "required": true },
+        { "id": "priority", "kind": "value", "type": "string", "allowedValues": ["low", "medium", "high", "urgent"], "displayName": "New priority", "description": "The new priority.", "required": true }
+      ],
+      "rules": [ { "kind": "modifyObject", "object": "ticket", "set": { "priority": { "kind": "param", "param": "priority" } } } ],
+      "submissionCriteria": [
+        { "left": { "kind": "paramProperty", "param": "ticket", "property": "status" }, "op": "neq",
+          "right": { "kind": "literal", "value": "resolved" }, "failureMessage": "Resolved tickets can't change priority." }
+      ],
+      "successMessage": "Priority of \"{{ticket.title}}\" set to {{priority}}."
+    }
+  ],
+  "apps": [
+    {
+      "id": "triage", "name": "Ticket triage", "description": "Work through unresolved tickets, most urgent first.",
+      "pages": [ { "id": "main", "title": "Triage", "blocks": [
+        { "kind": "metric", "version": 1, "label": "Open tickets",
+          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
+          "aggregate": { "fn": "count" } },
+        { "kind": "metric", "version": 1, "label": "Urgent",
+          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "and", "filters": [
+            { "kind": "cmp", "property": "priority", "op": "eq", "value": "urgent" },
+            { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } ] } },
+          "aggregate": { "fn": "count" } },
+        { "kind": "metric", "version": 1, "label": "Hours of work left",
+          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
+          "aggregate": { "fn": "sum", "property": "estimateHours" } },
+        { "kind": "objectList", "version": 1, "id": "queue", "title": "Unresolved tickets",
+          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
+          "columns": ["ticketId", "title", "priority", "status", "assignee", "customer", "createdAt"],
+          "sort": [ { "property": "priority", "direction": "asc", "order": ["urgent", "high", "medium", "low"] }, { "property": "createdAt", "direction": "asc" } ],
+          "filters": [ { "property": "priority", "control": "multiSelect" }, { "property": "assignee", "control": "select" }, { "property": "category", "control": "select" }, { "property": "title", "control": "search" } ],
+          "pageSize": 25 },
+        { "kind": "objectDetail", "version": 1, "source": "queue",
+          "properties": ["title", "description", "priority", "status", "category", "customer", "createdAt", "estimateHours"],
+          "links": ["assignedTo"], "actions": ["ResolveTicket", "ChangeTicketPriority"] }
+      ] } ]
+    }
+  ],
+  "automations": [
+    {
+      "id": "urgent-alert", "name": "Urgent ticket alert", "description": "Tell me when a ticket becomes urgent and isn't resolved.",
+      "condition": { "kind": "objectsEnterSet", "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "and", "filters": [
+        { "kind": "cmp", "property": "priority", "op": "eq", "value": "urgent" },
+        { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } ] } } },
+      "effects": [ { "kind": "notify", "recipients": [ { "kind": "currentUser" } ],
+        "title": "Urgent ticket", "body": "{{object.ticketId}} \"{{object.title}}\" is now urgent." } ]
+    }
+  ]
+}

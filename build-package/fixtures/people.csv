@@ -1,0 +1,7 @@
+person_id,full_name,email,team,role
+P-01,Ada Lovelace,ada@example.com,Billing,Support engineer
+P-02,Alan Turing,alan@example.com,Platform,Support engineer
+P-03,Grace Hopper,grace@example.com,Platform,Team lead
+P-04,Linus Torvalds,linus@example.com,Infrastructure,Support engineer
+P-05,Margaret Hamilton,margaret@example.com,Billing,Team lead
+P-06,Katherine Johnson,katherine@example.com,Data,Support engineer
