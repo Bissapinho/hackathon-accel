@@ -1,4 +1,5 @@
 import { createActionsService } from './modules/actions/service.js';
+import { createAppsService } from './modules/apps/service.js';
 import { createDatasetsService } from './modules/datasets/service.js';
 import { createJobsService } from './modules/jobs/service.js';
 import { createLogicService } from './modules/logic/service.js';
@@ -39,6 +40,7 @@ export function buildAlexandreServices(deps: AppDeps) {
     objects: createObjectsService(deps.db),
     actions: createActionsService(deps.db, workspace),
     workspace,
+    apps: createAppsService({ workspace }),
     publish: createPublishService({ db: deps.db, config: deps.config, workspace, pipelines, semantics: deps.semantics }),
   };
 }
