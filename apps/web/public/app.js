@@ -95,7 +95,7 @@ function renderShell() {
           S.me.projects.map((p) => el('option', { value: p.id, selected: p.id === S.pid }, p.name))),
         el('div', { class: 'row xs muted' }, icon('user'), S.me.user.name || S.me.user.email,
           el('button', { class: 'link xs', onclick: async () => { await api('POST', '/api/logout'); closeStream(); boot(); } }, 'Sign out')))),
-    el('div', { class: 'main' }, bar, content)));
+    el('div', { class: 'main' }, el('div', { class: 'disclaimer' }, icon('info'), 'Demo: only a fraction of Kumo’s real data is available on this link.'), bar, content)));
   bar.append(el('h2', {}, VIEWS.find((v) => v[0] === S.view)[1]), el('span', { class: 'muted' }, project ? `· ${project.name}` : ''), el('span', { class: 'spacer' }));
   if (!S.pid) return content.append(el('div', { class: 'muted' }, 'You have no project yet. Run pnpm db:seed.'));
   if (S.view !== 'agent') closeStream();

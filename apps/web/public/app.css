@@ -149,3 +149,6 @@ div.ds { background: var(--surface); box-shadow: var(--ring); cursor: default; }
 .er-f { font: 12.5px var(--mono); fill: var(--ink-2); } .er-f.pk { font-weight: 700; fill: var(--ink); }
 .er-k { font: 700 10px var(--font); fill: var(--accent); letter-spacing: .05em; }
 .er-ty { font: 11px var(--font); fill: var(--ink-3); }
+
+.disclaimer { display: flex; align-items: center; justify-content: center; gap: 6px; flex: none; padding: 4px 12px; font-size: 12.5px; line-height: 18px; color: var(--warn-text); background: var(--warn-tint); border-bottom: 1px solid var(--sep); }
+.disclaimer .icon { width: 14px; height: 14px; }
