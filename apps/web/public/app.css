@@ -128,3 +128,24 @@ div.ds { background: var(--surface); box-shadow: var(--ring); cursor: default; }
 .empty { text-align: center; padding: 8vh 0 0; display: grid; justify-items: center; gap: 8px; }
 .empty .icon { width: 36px; height: 36px; color: var(--ink-3); }
 .empty .muted { max-width: 460px; }
+
+/* ER diagram */
+.seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--inset); }
+.seg button { border: 0; background: none; padding: 5px 14px; border-radius: 8px; cursor: pointer; color: var(--ink-3); font-size: 14px; }
+.seg button.on { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: var(--ring); }
+.er-wrap { overflow: auto; background: var(--surface); border-radius: 14px; box-shadow: var(--ring); max-height: calc(100vh - 190px);
+  background-image: radial-gradient(rgba(28,27,24,.09) 1px, transparent 1px); background-size: 18px 18px; }
+.er { display: block; }
+.er-r path { fill: none; stroke: rgba(28,27,24,.32); stroke-width: 1.4; transition: stroke .15s; }
+.er-r rect { fill: #fff; stroke: rgba(28,27,24,.12); } .er-r text { font: 12px var(--font); fill: var(--ink-3); }
+.er-r.on path { stroke: var(--accent); stroke-width: 2.4; } .er-r.on text { fill: var(--accent); font-weight: 600; } .er-r.on rect { stroke: var(--accent); }
+.er-e { cursor: pointer; transition: opacity .15s; outline: none; }
+.er-e.off { opacity: .3; }
+.er-box { fill: #fff; stroke: rgba(28,27,24,.2); }
+.er-head { fill: var(--inset); }
+.er-e:hover .er-box, .er-e:focus-visible .er-box { stroke: var(--accent); stroke-width: 2; }
+.er-e:hover .er-head { fill: var(--accent-tint); }
+.er-name { font: 600 15px var(--font); fill: var(--ink); }
+.er-f { font: 12.5px var(--mono); fill: var(--ink-2); } .er-f.pk { font-weight: 700; fill: var(--ink); }
+.er-k { font: 700 10px var(--font); fill: var(--accent); letter-spacing: .05em; }
+.er-ty { font: 11px var(--font); fill: var(--ink-3); }

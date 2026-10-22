@@ -348,22 +348,113 @@ async function viewMeaning(content, bar) {
 }
 
 // ── objects ──
-async function viewObjects(content) {
-  let doc;
+// ER diagram of a workspace document: one box per object type, one arrow per link type (from → to).
+// Layout: columns by depth along links (types that point at others on the left, referenced types on the right).
+function erDiagram(doc, onPick) {
+  const types = doc.objectTypes || [], links = (doc.linkTypes || []).filter((l) => l.from && l.to);
+  const by = Object.fromEntries(types.map((t) => [t.apiName, t]));
+  const depth = {};
+  const d = (n, seen = new Set()) => {
+    if (depth[n] != null) return depth[n];
+    if (seen.has(n)) return 0;
+    seen.add(n);
+    const outs = links.filter((l) => l.from === n && l.to !== n && by[l.to]);
+    return (depth[n] = outs.length ? 1 + Math.max(...outs.map((l) => d(l.to, seen))) : 0);
+  };
+  types.forEach((t) => d(t.apiName));
+  const maxD = Math.max(0, ...Object.values(depth));
+  const W = 250, HEAD = 40, ROW = 22, PAD = 10, COLW = 380, GAP = 36, MAXP = 8;
+  const fks = new Set(links.flatMap((l) => (l.keys || []).map((k) => `${l.from}.${k.fromProperty}`)));
+  const nodes = types.map((t) => {
+    const props = [...(t.properties || [])].sort((x, y) => (y.apiName === t.primaryKey) - (x.apiName === t.primaryKey)
+      || fks.has(`${t.apiName}.${y.apiName}`) - fks.has(`${t.apiName}.${x.apiName}`));
+    const shown = props.slice(0, MAXP);
+    return { t, col: maxD - depth[t.apiName], shown, more: props.length - shown.length,
+      h: HEAD + PAD + shown.length * ROW + (props.length > MAXP ? ROW : 0) + PAD / 2 };
+  });
+  const cols = [...new Set(nodes.map((n) => n.col))].sort((x, y) => x - y);
+  const colH = (c) => nodes.filter((n) => n.col === c).reduce((s, n) => s + n.h + GAP, -GAP);
+  const H = Math.max(...cols.map(colH));
+  for (const c of cols) {
+    let y = 60 + (H - colH(c)) / 2;
+    nodes.filter((n) => n.col === c).forEach((n) => { n.x = 40 + cols.indexOf(c) * COLW; n.y = y; y += n.h + GAP; });
+  }
+  const node = Object.fromEntries(nodes.map((n) => [n.t.apiName, n]));
+  const rowY = (n, prop) => { const i = n.shown.findIndex((p) => p.apiName === prop); return i < 0 ? n.y + HEAD / 2 : n.y + HEAD + PAD + i * ROW + ROW / 2 - 4; };
+  let edges = '';
+  links.forEach((l, i) => {
+    const a = node[l.from], b = node[l.to]; if (!a || !b) return;
+    const k = (l.keys || [])[0] || {};
+    const y1 = rowY(a, k.fromProperty), y2 = rowY(b, k.toProperty ?? b.t.primaryKey);
+    let path, lx, ly;
+    if (a === b) {
+      const x = a.x + W; path = `M${x},${y1} C${x + 70},${y1 - 40} ${x + 70},${y1 + 40} ${x},${y1 + 12}`; lx = x + 56; ly = y1 + 6;
+    } else if (b.x > a.x) {
+      const x1 = a.x + W, x2 = b.x, m = (x2 - x1) / 2;
+      path = `M${x1},${y1} C${x1 + m},${y1} ${x2 - m},${y2} ${x2},${y2}`; lx = (x1 + x2) / 2; ly = (y1 + y2) / 2;
+    } else {
+      const x1 = a.x + W, x2 = b.x + W, out = Math.max(x1, x2) + 60 + (i % 3) * 18;
+      path = `M${x1},${y1} C${out},${y1} ${out},${y2} ${x2},${y2}`; lx = out - 14; ly = (y1 + y2) / 2;
+    }
+    const lbl = `${l.displayName || l.apiName} · ${l.cardinality === 'one-to-one' ? '1:1' : 'N:1'}`;
+    edges += `<g class="er-r"><title>${esc(`${l.from} → ${l.to}: ${l.description || ''}`)}</title><path d="${path}" marker-end="url(#erArr)"/>
+      <rect x="${lx - lbl.length * 3.4 - 6}" y="${ly - 10}" width="${lbl.length * 6.8 + 12}" height="20" rx="4"/><text x="${lx}" y="${ly + 4}" text-anchor="middle">${esc(lbl)}</text></g>`;
+  });
+  const boxes = nodes.map((n) => {
+    const { t } = n;
+    const rows = n.shown.map((p, i) => {
+      const y = n.y + HEAD + PAD + i * ROW + ROW / 2;
+      const tag = p.apiName === t.primaryKey ? 'PK' : fks.has(`${t.apiName}.${p.apiName}`) ? 'FK' : '';
+      return `<text class="er-k" x="${n.x + 12}" y="${y}">${tag}</text><text class="er-f${tag === 'PK' ? ' pk' : ''}" x="${n.x + 40}" y="${y}">${esc(p.apiName)}</text>
+        <text class="er-ty" x="${n.x + W - 12}" y="${y}" text-anchor="end">${esc(p.type)}</text>`;
+    }).join('');
+    const more = n.more > 0 ? `<text class="er-ty" x="${n.x + 40}" y="${n.y + HEAD + PAD + n.shown.length * ROW + ROW / 2}">+ ${n.more} more</text>` : '';
+    return `<g class="er-e" data-t="${esc(t.apiName)}" tabindex="0"><title>${esc(t.description || '')}</title>
+      <rect class="er-box" x="${n.x}" y="${n.y}" width="${W}" height="${n.h}" rx="10"/>
+      <path class="er-head" d="M${n.x},${n.y + HEAD} V${n.y + 10} a10,10 0 0 1 10,-10 H${n.x + W - 10} a10,10 0 0 1 10,10 V${n.y + HEAD} Z"/>
+      <text class="er-name" x="${n.x + 14}" y="${n.y + 25}">${esc(t.displayName || t.apiName)}</text>
+      <text class="er-ty" x="${n.x + W - 12}" y="${n.y + 25}" text-anchor="end">${t.status === 'experimental' ? 'draft' : ''}</text>${rows}${more}</g>`;
+  }).join('');
+  const width = 40 + cols.length * COLW + 40, height = H + 120;
+  const wrap = el('div', { class: 'er-wrap' });
+  wrap.innerHTML = `<svg class="er" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+    <defs><marker id="erArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9" fill="none" stroke="#8a8b90" stroke-width="1.6"/></marker></defs>
+    ${edges}${boxes}</svg>`;
+  wrap.querySelectorAll('.er-e').forEach((g) => {
+    g.addEventListener('click', () => onPick(g.dataset.t));
+    g.addEventListener('mouseenter', () => {
+      const n = g.dataset.t;
+      const near = new Set([n, ...links.filter((l) => l.from === n || l.to === n).flatMap((l) => [l.from, l.to])]);
+      wrap.querySelectorAll('.er-e').forEach((x) => x.classList.toggle('off', !near.has(x.dataset.t)));
+      wrap.querySelectorAll('.er-r').forEach((x, i) => x.classList.toggle('on', links[i] && (links[i].from === n || links[i].to === n)));
+    });
+    g.addEventListener('mouseleave', () => wrap.querySelectorAll('.off, .er-r.on').forEach((x) => x.classList.remove('off', 'on')));
+  });
+  return wrap;
+}
+
+async function viewObjects(content, bar) {
+  let doc, published = true;
   try { doc = (await api('GET', `${P()}/workspace`)).doc; }
   catch (e) {
     if (e.status !== 404) return content.append(errBox(e));
-    let draft = null;
-    try { draft = (await api('GET', `${P()}/workspace?version=draft`)).draft?.doc; } catch { /* no draft either */ }
-    const types = draft?.objectTypes || [];
-    return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'Nothing published yet'),
-      el('div', { class: 'muted' }, types.length ? 'The assistant has drafted these object types. Approve the publish in the Assistant to browse their records.'
-        : 'Ask the assistant to build your objects, then approve the publish.')),
-      types.length ? el('div', { class: 'ds-list', style: 'max-width:720px;margin:24px auto 0' }, types.map((t) => el('div', { class: 'ds' },
-        el('div', { class: 'ds-name' }, t.pluralDisplayName || t.apiName), el('div', { class: 'ds-meta' }, t.description || '', el('span', { class: 'ds-st warn' }, 'Draft'))))) : null);
+    published = false;
+    try { doc = (await api('GET', `${P()}/workspace?version=draft`)).draft?.doc; } catch { /* no draft either */ }
   }
-  const types = doc.objectTypes || [];
-  if (!types.length) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'No object types yet'), el('div', { class: 'muted' }, 'Ask the assistant to build them.')));
+  const types = doc?.objectTypes || [];
+  if (!types.length) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'No object types yet'), el('div', { class: 'muted' }, 'Ask the assistant to build your objects.')));
+  if (!S.objMode) S.objMode = 'diagram';
+  if (S.openObject && published) S.objMode = 'records';
+  const seg = el('div', { class: 'seg' }, [['diagram', 'Diagram'], ['records', 'Records']].map(([k, label]) =>
+    el('button', { class: S.objMode === k ? 'on' : null, onclick: () => { S.objMode = k; renderShell(); } }, label)));
+  bar.append(published ? null : el('span', { class: 'ds-st warn', style: 'margin:0' }, 'Draft, not published'), seg);
+  if (S.objMode === 'diagram') {
+    return content.append(el('div', { class: 'stack' },
+      el('div', { class: 'xs muted' }, `${types.length} object types · ${(doc.linkTypes || []).length} links. Hover a box to see its links, click it to open its records.`),
+      erDiagram(doc, (t) => { if (!published) return; S.objMode = 'records'; S.openType = t; renderShell(); })));
+  }
+  if (!published) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'Nothing published yet'),
+    el('div', { class: 'muted' }, 'Approve the publish in the Assistant to browse records. The Diagram shows the drafted structure.')));
   const nav = el('div', { class: 'list' });
   const main = el('div', { class: 'stack' });
   content.append(el('div', { class: 'split' }, nav, main));
@@ -391,7 +482,8 @@ async function viewObjects(content) {
   };
   for (const t of types) nav.append(el('button', { 'data-t': t.apiName, onclick: () => showType(t) }, t.pluralDisplayName || t.apiName));
   const open = S.openObject; S.openObject = null;
-  await showType(types.find((t) => t.apiName === open?.objectType) || types[0]);
+  const want = open?.objectType || S.openType; S.openType = null;
+  await showType(types.find((t) => t.apiName === want) || types[0]);
   if (open) showObject(open);
 }
 
