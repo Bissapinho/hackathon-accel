@@ -1,4 +1,4 @@
-import type { ColumnInfo, SemLifecycle, SemRecord, Trajectory, Validation } from '@mini/shared';
+import type { ColumnInfo, ColumnProfile, SemLifecycle, SemRecord, Trajectory, Validation } from '@mini/shared';
 import type { ColumnType, Kysely, Transaction } from 'kysely';
 import type { Db } from '../../db/index.js';
 
@@ -62,6 +62,7 @@ export type SemTables = {
   'meta.datasets': {
     id: ReadOnly<string>;
     project_id: ReadOnly<string>;
+    short_id: ReadOnly<string>;
     name: ReadOnly<string>;
     simulated: ReadOnly<boolean>;
     current_version: ReadOnly<number | null>;
@@ -70,8 +71,10 @@ export type SemTables = {
     dataset_id: ReadOnly<string>;
     version: ReadOnly<number>;
     table_name: ReadOnly<string>;
+    row_count: ReadOnly<number>;
+    created_by: ReadOnly<string>;
     columns: ReadOnly<ColumnInfo[]>;
-    profile: ReadOnly<unknown>; // ColumnProfile[] once profile_status = 'done'
+    profile: ReadOnly<ColumnProfile[] | null>; // set once profile_status = 'done'
     profile_status: ReadOnly<'pending' | 'running' | 'done' | 'failed'>;
   };
 };
