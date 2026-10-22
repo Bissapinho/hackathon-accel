@@ -1,3 +1,4 @@
+import { createPipelinesService } from './modules/pipelines/service.js';
 import { createResourcesService } from './modules/resources/service.js';
 import type { AppDeps } from './services.js';
 
@@ -5,5 +6,6 @@ import type { AppDeps } from './services.js';
 export function buildAlexandreServices(deps: AppDeps) {
   return {
     resources: createResourcesService(deps.db),
+    pipelines: createPipelinesService({ db: deps.db, config: deps.config }),
   };
 }

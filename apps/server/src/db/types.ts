@@ -1,4 +1,5 @@
-import type { Generated } from 'kysely';
+import type { ColumnType, Generated } from 'kysely';
+import type { PipelineCheck } from '@mini/shared';
 
 // Kysely table types for the `meta` schema (apps/server/migrations/001_init.sql).
 // Hand-written; add a table here when a service starts using it. Tables are addressed as 'meta.<name>'.
@@ -28,8 +29,28 @@ export interface ProjectMembersTable {
   role: ProjectRole;
 }
 
+// jsonb columns: read as parsed JSON, written as JSON text (pg would turn JS arrays into Postgres arrays).
+type Json<T> = ColumnType<T, string, string>;
+
+export interface PipelineBuildsTable {
+  id: Generated<string>;
+  project_id: string;
+  workspace_version: number;
+  pipeline: string;
+  output: string;
+  table_name: string;
+  row_count: Generated<number>;
+  input_versions: Json<Record<string, number>>;
+  definition_hash: string;
+  checks: Json<{ check: PipelineCheck; ok: boolean; detail: string }[]>;
+  status: 'built' | 'upToDate' | 'failed';
+  duration_ms: Generated<number>;
+  created_at: Timestamp;
+}
+
 export interface DB {
   'meta.users': UsersTable;
   'meta.projects': ProjectsTable;
   'meta.project_members': ProjectMembersTable;
+  'meta.pipeline_builds': PipelineBuildsTable;
 }
