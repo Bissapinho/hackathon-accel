@@ -1,3 +1,4 @@
+import { createLogicService } from './modules/logic/service.js';
 import { createObjectsService } from './modules/objects/service.js';
 import { createPipelinesService } from './modules/pipelines/service.js';
 import { createResourcesService } from './modules/resources/service.js';
@@ -8,6 +9,7 @@ export function buildAlexandreServices(deps: AppDeps) {
   return {
     resources: createResourcesService(deps.db),
     pipelines: createPipelinesService({ db: deps.db, config: deps.config }),
+    logic: createLogicService({ db: deps.db, config: deps.config }),
     objects: createObjectsService(deps.db),
   };
 }
