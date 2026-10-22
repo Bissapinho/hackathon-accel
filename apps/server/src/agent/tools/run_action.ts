@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { toObjectRef } from '../../modules/actions/evaluate.js';
-import { asToolResult, runToolResult } from './action-support.js';
+import { runToolResult } from './action-support.js';
+import { asToolResult } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 // Runs a PUBLISHED action on real objects. Gated: the loop asks the user first, showing summarize().

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { searchOntology } from '../../modules/workspace/service.js';
-import { asTool } from './part-a-helpers.js';
+import { runTool } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 export const searchOntologyTool = defineTool({
@@ -14,7 +14,7 @@ export const searchOntologyTool = defineTool({
     which: z.enum(['published', 'draft']),
   }),
   run: (input, ctx) =>
-    asTool(ctx, 'read', async () => {
+    runTool(ctx, 'read', async () => {
       const doc = await ctx.services.workspace.readDoc(ctx.projectId, input.which);
       const hits = searchOntology(doc, input.queries, input.kinds);
       const summary = hits.length

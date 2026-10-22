@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { queryObjectsRequestSchema } from '../../modules/objects/schemas.js';
-import { runTool } from './result.alexandre.js';
+import { runTool } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 const MAX_TOOL_PAGE = 50; // catalog: max 50 per call

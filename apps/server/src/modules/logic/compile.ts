@@ -200,7 +200,7 @@ export type LogicView = {
   objectType: string;
   viewName: string; // logic.<t>
   sql: string; // CREATE VIEW statement (literals inlined: views can't take bind parameters)
-  statements: string[]; // DROP, CREATE, GRANT, COMMENTs, in order
+  statements: string[]; // DROP, CREATE, COMMENTs, in order
   columns: { apiName: string; sqlName: string; kind: 'derived' | 'rule'; type: BaseType }[];
   errors: FieldError[];
 };
@@ -239,7 +239,6 @@ export function compileLogicView(objectType: string, doc: LogicDoc): LogicView {
   const statements = [
     `DROP VIEW IF EXISTS ${view}`,
     sql,
-    `GRANT SELECT ON ${view} TO mini_reader`,
     ...comments,
   ];
   return { objectType, viewName, sql, statements, columns, errors: [] };

@@ -39,7 +39,7 @@ describe('compileLogicView', () => {
     // rules never null
     expect(view.sql).toMatch(/COALESCE\(\(.*\), false\) AS "retours_eleves"/s);
     expect(view.statements[0]).toBe('DROP VIEW IF EXISTS logic."lg_client"');
-    expect(view.statements).toContain('GRANT SELECT ON logic."lg_client" TO mini_reader');
+    expect(view.statements.some((st) => st.startsWith('GRANT'))).toBe(false);
     expect(view.columns.map((c) => [c.sqlName, c.kind, c.type])).toEqual([
       ['nb_livrees', 'derived', 'integer'],
       ['nb_retours', 'derived', 'integer'],
