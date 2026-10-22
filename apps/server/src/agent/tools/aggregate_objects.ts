@@ -1,5 +1,5 @@
 import { aggregateRequestSchema } from '../../modules/objects/schemas.js';
-import { runTool } from './result.alexandre.js';
+import { runTool } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 const MAX_TOOL_GROUPS = 100;

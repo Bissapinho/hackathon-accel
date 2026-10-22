@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { BaseType, ColumnInfo, FieldError, PipelineBuild, PipelineCheck, PipelineDef, PipelinePreview } from '@mini/shared';
+import type { BaseType, ColumnInfo, FieldError, PipelineBuild, PipelineCheck, PipelineDef, PipelinePreview, Validation, WorkspaceDoc } from '@mini/shared';
 import { CompiledQuery, sql } from 'kysely';
 import type { Config } from '../../config.js';
 import type { Db } from '../../db/index.js';
@@ -16,6 +16,7 @@ import {
   type PipelineResolver,
   type ResolvedDataset,
 } from './compiler.js';
+import type { WorkspaceService } from '../workspace/service.js';
 import { finalize, q, qq, SQL_TYPE, type Statement } from './sql.js';
 
 const PG_TIMEOUT = '57014';
@@ -66,7 +67,7 @@ function isTimeout(err: unknown): boolean {
   return (err as { code?: string })?.code === PG_TIMEOUT;
 }
 
-export function createPipelinesService(deps: { db: Db; config: Config }) {
+export function createPipelinesService(deps: { db: Db; config: Config; workspace: Pick<WorkspaceService, 'getDraft'> }) {
   const { db, config } = deps;
 
   // Current version table of every dataset of the project (by id and by name).
@@ -91,16 +92,13 @@ export function createPipelinesService(deps: { db: Db; config: Config }) {
     return { dataset: (ref) => byRef.get(ref) ?? null };
   }
 
-  // TODO(merge with T-11): read the draft through the workspace service instead of its table.
+  // The pipeline `apiName` of the project's workspace draft (read through the workspace service).
   async function getDraftPipeline(projectId: string, apiName: string): Promise<PipelineDef> {
-    const res = await sql<{ pipelines: PipelineDef[] | null }>`
-      SELECT doc->'pipelines' AS pipelines FROM meta.workspace_drafts WHERE project_id = ${projectId}`.execute(db);
-    const row = res.rows[0];
-    if (!row) throw notFound('The workspace draft', 'nothing has been written to it yet', 'Add a pipeline to the draft first.');
-    const def = (row.pipelines ?? []).find((p) => p?.apiName === apiName);
+    const { doc } = await deps.workspace.getDraft(projectId);
+    const def = doc.pipelines.find((p) => p.apiName === apiName);
     if (!def) {
-      const known = (row.pipelines ?? []).map((p) => p?.apiName).join(', ') || 'none';
-      throw notFound(`The pipeline "${apiName}"`, `it is not in the draft (draft pipelines: ${known})`);
+      const known = doc.pipelines.map((p) => p.apiName).join(', ') || 'none';
+      throw notFound(`The pipeline "${apiName}"`, `it is not in the draft (draft pipelines: ${known})`, 'Add the pipeline to the draft first.');
     }
     return def;
   }
@@ -211,6 +209,51 @@ export function createPipelinesService(deps: { db: Db; config: Config }) {
     }
   }
 
+  // Data half of workspace validation (T-13), plugged into the workspace service as its DataChecker:
+  // every pipeline compiles, runs and passes its checks (PIPELINE_SQL_ERROR, PIPELINE_CHECK_FAILED), and the
+  // primary key of every object type is unique and non-null in its source (PK_NOT_UNIQUE, PK_HAS_NULLS).
+  async function checkWorkspaceData(doc: WorkspaceDoc, ctx: { projectId: string }): Promise<Validation> {
+    const result: Validation = { errors: [], warnings: [] };
+    const resolver = await loadResolver(ctx.projectId);
+    const compiled = new Map<string, CompiledPipeline>();
+    for (const [i, def] of doc.pipelines.entries()) {
+      result.errors.push(...(await validatePipelineData(ctx.projectId, def, `pipelines[${i}]`)));
+      const c = compilePipeline(def, resolver);
+      if (!c.errors.length) compiled.set(def.apiName, c);
+    }
+    for (const [i, t] of doc.objectTypes.entries()) {
+      const pk = t.properties.find((p) => p.apiName === t.primaryKey);
+      if (!pk?.column) continue;
+      const col = q(pk.column);
+      let st: Statement | null = null;
+      if (t.source.kind === 'pipeline') {
+        const c = compiled.get(t.source.pipeline);
+        const out = c?.outputs.find((o) => o.apiName === (t.source as { output: string }).output);
+        if (c && out) st = statement(c, [out.node], `SELECT count(*) AS total, count(${col}) AS filled, count(DISTINCT ${col}) AS distinct_n FROM ${q(out.node)}`);
+      } else {
+        const ds = resolver.dataset(t.source.datasetId);
+        if (ds) st = finalize(`SELECT count(*) AS total, count(${col}) AS filled, count(DISTINCT ${col}) AS distinct_n FROM ${qq(ds.schema, ds.table)}`, []);
+      }
+      if (!st) continue;
+      try {
+        const res = await withReadOnly({ timeoutMs: config.PREVIEW_TIMEOUT_MS }, (rdb) => run<{ total: string; filled: string; distinct_n: string }>(rdb, st!));
+        const r = res.rows[0];
+        if (!r) continue;
+        const [total, filled, distinct] = [Number(r.total), Number(r.filled), Number(r.distinct_n)];
+        const path = `objectTypes[${i}].primaryKey`;
+        if (filled < total) {
+          result.errors.push({ path, code: 'PK_HAS_NULLS', message: `The key ${t.primaryKey} of ${t.apiName} is empty on ${total - filled} of ${total} rows.` });
+        }
+        if (distinct < filled) {
+          result.errors.push({ path, code: 'PK_NOT_UNIQUE', message: `The key ${t.primaryKey} of ${t.apiName} is not unique: ${filled - distinct} of ${filled} rows repeat an earlier value.` });
+        }
+      } catch {
+        // Source SQL problems are already reported by the pipeline checks above.
+      }
+    }
+    return result;
+  }
+
   function toBuild(r: {
     pipeline: string; output: string; workspace_version: number; table_name: string; row_count: number;
     input_versions: Record<string, number>; checks: CheckResult[]; status: PipelineBuild['status']; duration_ms: number; created_at: Date;
@@ -230,9 +273,12 @@ export function createPipelinesService(deps: { db: Db; config: Config }) {
   }
 
   // Materializes every output of a pipeline as data.pl_<pipeline>_<output>_v<n> and records the builds.
-  // Called by publish (T-14) inside its transaction, as the server role. Skips outputs that are up to date.
+  // Called by publish (T-14) inside its transaction (`conn` must be that transaction: SET LOCAL needs it).
+  // Skips outputs that are up to date.
   async function buildPipeline(conn: Db, args: { projectId: string; def: PipelineDef; workspaceVersion: number }): Promise<PipelineBuild[]> {
     const { projectId, def, workspaceVersion } = args;
+    // Tables created here are owned by mini_app, so mini_reader's default privileges apply (as for uploads).
+    await sql`SET LOCAL ROLE mini_app`.execute(conn);
     const c = compileOrThrow(def, await loadResolver(projectId, conn));
     const hash = definitionHash(def);
     const inputs = c.inputVersions;
@@ -298,8 +344,6 @@ export function createPipelinesService(deps: { db: Db; config: Config }) {
       const colList = cols.map((col) => q(col.name)).join(', ');
       // WITH <ctes> INSERT INTO … SELECT … : the CTEs stay in front of the INSERT.
       const inserted = await run(conn, statement(c, [out.node], `INSERT INTO ${target} (${colList}) SELECT ${colList} FROM ${q(out.node)}`));
-      // Tables created by a superuser (local dev) don't get mini_app's default privileges: grant explicitly.
-      await run(conn, finalize(`GRANT SELECT ON ${target} TO mini_reader`, []));
 
       const checks: CheckResult[] = [];
       for (const check of (def.checks ?? []).filter((ch) => ch.output === out.apiName)) {
@@ -340,7 +384,7 @@ export function createPipelinesService(deps: { db: Db; config: Config }) {
     return rows.map(toBuild);
   }
 
-  return { loadResolver, getDraftPipeline, previewPipeline, previewDraftPipeline, validatePipelineData, buildPipeline, listBuilds };
+  return { loadResolver, getDraftPipeline, previewPipeline, previewDraftPipeline, validatePipelineData, checkWorkspaceData, buildPipeline, listBuilds };
 }
 
 export type PipelinesService = ReturnType<typeof createPipelinesService>;

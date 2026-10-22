@@ -8,6 +8,7 @@
     "db:migrate": "tsx --env-file-if-exists=../../.env src/db/migrate-cli.ts",
     "db:seed": "tsx --env-file-if-exists=../../.env src/db/seed-cli.ts",
     "db:wipe": "tsx --env-file-if-exists=../../.env src/db/wipe-cli.ts",
+    "seed:kumo": "tsx --env-file-if-exists=../../.env ../../scripts/seed-kumo.ts",
     "test": "vitest run",
     "typecheck": "tsc -p ."
   },
