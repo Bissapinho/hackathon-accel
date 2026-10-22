@@ -1,4 +1,4 @@
-# Consolidated plan: the seven chapters in one build plan
+# Consolidated plan: the eight chapters in one build plan
 
 > **Status:** v0.1 (2026-10-20). Merges the feature lists of chapters 1–7 into one plan for the reduced Foundry. Items keep their chapter number so you can jump to the details: `2.F6` = chapter 2, feature F6.
 > **Legend:** 🟢 observed in Foundry · 🟡 inferred · 🔵 our design choice. Everything in this file is 🔵 unless marked.
@@ -58,6 +58,20 @@ Six milestones; each one is usable on its own. Counts are "Must" items from the 
 | 7.C8 | Egress allowlist with admin approval |
 | 7.C9 | Table and file exports (append / full, scheduled) |
 | 7.C11 | REST "pull" sync (paginated GET into a dataset), our addition |
+
+### M1c — Semantic bank (chapter 8, EvoOntology engine in TypeScript)
+| Item | Feature |
+|---|---|
+| 8.E1 | Five record types (Term, Mapping, Relation, Constraint, Evidence) with controlled vocabularies |
+| 8.E2 | A minimal card for every column, enriched by the seed questions |
+| 8.E3 | Seed questions (~30) + glossary from the business operator |
+| 8.E4 | Validation + versioned publication with question → object links |
+| 8.E5 | `browse` / `resolve` for the FDE agent and the analyst |
+| 8.E6 | A trajectory recorded for every analyst question |
+| 8.E7 | Evolution: trigger, run, judge gate, accept / reject (minimal) |
+| 8.E8 | Bank review screen |
+
+The operational ontology (M2) is built **from the bank**: descriptions and aliases come from Terms, links from Relations, allowed values from constraints. The bank's evolution replaces the "metadata suggestions" idea of chapter 3 §4.x.
 
 ### M2 — Ontology and actions (chapter 2, 11 items)
 | Item | Feature |
@@ -137,7 +151,7 @@ Six milestones; each one is usable on its own. Counts are "Must" items from the 
 | 3.G11 | Two modes (build, analyze) swapping prompt and tools |
 | 3.G17 | "Nothing found" results that explain why |
 
-**Total: 78 must-haves from the seven chapters, plus 8 remaining from the docs check (§3bis; N1 and N2 are now chapter 7) = 86.** M1–M3 alone already make a usable product (upload → objects → apps); M4–M6 make it alive and AI-native.
+**Total: 86 must-haves from the eight chapters (8 from chapter 8), plus 8 remaining from the docs check (§3bis; N1 and N2 are now chapter 7) = 94.** M1–M3 alone already make a usable product (upload → objects → apps); M4–M6 make it alive and AI-native.
 
 ### 3bis. Added after the docs check ([docs-comparison.md](docs-comparison.md) §3)
 
@@ -174,6 +188,7 @@ Six milestones; each one is usable on its own. Counts are "Must" items from the 
 |---|---|---|
 | `resources` | folders, projects, roles, search, trash | compass, multipass |
 | `datasets` | datasets, branches, transactions, files, schemas, previews | foundry-catalog, data-proxy, foundry-metadata, schema-inference |
+| `semantics` | the semantic bank: five record types, versions, validation, browse / resolve, trajectories, evolution runs (EvoOntology engine ported to TypeScript, MIT) | — (not a Foundry service; ch. 8) |
 | `connections` | connectors, sources + secrets, egress allowlist, syncs (as build jobs), exports, webhooks + executions, listeners → streams | source-store, network-egress-policies, webhook registry / executor, stream catalog (`magritte-*`) |
 | `ontology` | object / link / action types, versions, drafts | ontology-metadata |
 | `objects` | index of objects + edits overlay, object-set queries, aggregations | phonograph2, objects-data-funnel, object-set-service |
@@ -196,3 +211,4 @@ Six milestones; each one is usable on its own. Counts are "Must" items from the 
 | [5 Pipelines, builds, schedules](05-pipelines-builds-schedules.md) | §2 | §3 | §5 | §7 |
 | [6 Explorer, Automate, Logic](06-explorer-automate-logic.md) | §2 | §3 | §5 | §7 |
 | [7 Data connection](07-data-connection.md) | §2 | §3 | §4 | §7 |
+| [8 Semantic engine (EvoOntology)](08-semantic-engine.md) | §3 | — | §4 | §6 (port scope) |
