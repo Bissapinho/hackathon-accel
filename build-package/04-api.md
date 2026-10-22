@@ -88,7 +88,7 @@ All types: `types/shared.ts` (copy to `packages/shared/src/index.ts`). Every rou
 
 ```ts
 type SemOp =
-  | { op: 'upsertRecord'; kind: 'term' | 'mapping' | 'relation' | 'constraint' | 'evidence'; value: SemRecordBody }
+  | { op: 'upsertRecord'; record: { kind: SemKind; body: SemTerm | SemMapping | SemRelation | SemConstraint | SemEvidence; lifecycle?: SemLifecycle } }
   | { op: 'setLifecycle'; recordId: string; lifecycle: 'active' | 'superseded' | 'proposed' }
   | { op: 'resolveConstraint'; recordId: string; choice: string; note?: string }   // by = current user, at = now
   | { op: 'remove'; recordId: string };

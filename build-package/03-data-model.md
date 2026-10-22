@@ -144,13 +144,15 @@ The five record types of EvoOntology (feature book ch. 8 §3), stored as `sem_re
 
 | Kind | Body (summary) |
 |---|---|
-| `term` | id, name, type (`entity` / `metric` / `dimension` / `category` / `concept`), definition, scope, aliases, evidence ids, 🔵 `status` (`card` = minimal, `enriched`) |
-| `mapping` | id, term id, 🔵 `datasetId` + table, column(s), semantic filter (words, not SQL), aggregation semantics, grain, evidence ids |
-| `relation` | id, source term, target term, `relation_type` ∈ `association` / `hierarchy` / `composition` / `equivalence` / `derivation`, connection condition in words, 🔵 `keys: [{fromColumn, toColumn}]` checked by an Evidence join query, evidence ids |
-| `constraint` | id, target (term or mapping), type (`enum_semantics` / `data_quality` / `business_rule` / `unit` / `scope`), trigger_keywords, severity (`block` / `warn` / `info`), description, confidence, 🔵 `options` (for an open ambiguity: the readings the user can choose from) and `resolution` (`{choice, by, at}`) |
-| `evidence` | id, source, query (read-only SQL), result (summary, ≤ 2 KB), validation method, timestamp |
+| `term` | `id`, `name`, `type` (`entity` / `metric` / `dimension` / `category` / `concept`), `definition`, `scope`, `aliases`, `evidence` (ids), 🔵 `status` (`card` = minimal, `enriched`) |
+| `mapping` | `id`, `term_id`, `database_source` (🔵 the dataset id), `table`, `column`, `semantic_filter` (words, not SQL), `aggregation_semantics` (words), `grain`, `validation`, `evidence` |
+| `relation` | `id`, `source`, `relation_type` ∈ `association` / `hierarchy` / `composition` / `equivalence` / `derivation`, `target`, `connection_condition` (words), `description`, 🔵 `keys: [{fromColumn, toColumn}]` checked by an Evidence join query, `evidence` |
+| `constraint` | `id`, `target` (term or mapping), `constraint_type` (`enum_semantics` / `data_quality` / `business_rule` / `unit` / `scope`), `trigger_keywords`, `severity` (`block` / `warning` / `info`), `scope`, `confidence`, `description`, 🔵 `options` (for an open ambiguity: the readings the user can choose from) and `resolution` (`{choice, note?, by, at}`), `evidence` |
+| `evidence` | `id`, `source`, `query` (read-only SQL, run by the server), `result` (summary, ≤ 2 KB, written by the server), `validation_method`, `timestamp` |
 
-**Minimal cards** (written by the upload, not the agent): for each column one `term` (name from the column, type guessed: an id-like unique column → `entity` key, low-cardinality string → `category`, numeric → `metric`, date → `dimension`, otherwise `concept`; definition `"to be defined"`, `status: card`), one `mapping` to the column, and one `evidence` with the profile summary. Simulated datasets also get a `scope` constraint "simulated data, calibrated on real orders" with severity `warn`.
+Exact TypeScript types: `SemTerm`, `SemMapping`, `SemRelation`, `SemConstraint`, `SemEvidence` in `types/shared.ts`.
+
+**Minimal cards** (written by the upload, not the agent): for each column one `term` (name from the column, type guessed: an id-like unique column → `entity` key, low-cardinality string → `category`, numeric → `metric`, date → `dimension`, otherwise `concept`; definition `"to be defined"`, `status: card`), one `mapping` to the column, and one `evidence` with the profile summary. Simulated datasets also get a `scope` constraint "simulated data, calibrated on real orders" with severity `warning`.
 
 **Rules:** the bank stores meaning and grounding only: no SQL templates, no agent strategies. Evidence queries are the only SQL in it. A published version is immutable; resolving an open constraint after publication creates a new version.
 
