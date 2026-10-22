@@ -41,6 +41,13 @@ export function createPublishService(deps: {
   const { db, workspace, pipelines, semantics } = deps;
   const retentionRows = deps.retentionRows ?? RETENTION_ROWS;
   const listeners = new Set<(projectId: string, ev: PublishProgress) => void>();
+  const publishedListeners = new Set<(projectId: string) => Promise<void>>();
+
+  // Automations (T-32) evaluate once a publish is committed.
+  function onPublished(fn: (projectId: string) => Promise<void>): () => void {
+    publishedListeners.add(fn);
+    return () => publishedListeners.delete(fn);
+  }
 
   // The agent loop (Part B) subscribes to turn these into SSE events.
   function onProgress(fn: (projectId: string, ev: PublishProgress) => void): () => void {
@@ -86,7 +93,7 @@ export function createPublishService(deps: {
     }
     const docToStore: WorkspaceDoc = { ...doc, semanticVersion: semVersion };
 
-    return db.transaction().execute(async (trx) => {
+    const result = await db.transaction().execute(async (trx) => {
       const got = await sql<{ ok: boolean }>`SELECT pg_try_advisory_xact_lock(hashtext(${PUBLISH_LOCK_KEY})) AS ok`.execute(trx);
       if (!got.rows[0]?.ok) {
         throw new ApiError(409, 'PUBLISH_IN_PROGRESS', 'Another publish is running.', { hint: 'Wait for it to finish, then publish again.' });
@@ -200,6 +207,8 @@ export function createPublishService(deps: {
       emit('Published', 1, 1);
       return { version, builds };
     });
+    for (const l of publishedListeners) await l(projectId).catch(() => undefined); // already committed
+    return result;
   }
 
   async function applyRetention(trx: Db, doc: WorkspaceDoc, datasets: Map<string, SourceRow>): Promise<void> {
@@ -223,7 +232,7 @@ export function createPublishService(deps: {
     }
   }
 
-  return { publish, onProgress };
+  return { publish, onProgress, onPublished };
 }
 
 export type PublishService = ReturnType<typeof createPublishService>;

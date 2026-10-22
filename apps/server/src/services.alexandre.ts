@@ -1,5 +1,6 @@
 import { createActionsService } from './modules/actions/service.js';
 import { createAppsService } from './modules/apps/service.js';
+import { createAutomationsService } from './modules/automations/service.js';
 import { createDatasetsService } from './modules/datasets/service.js';
 import { createJobsService } from './modules/jobs/service.js';
 import { createLogicService } from './modules/logic/service.js';
@@ -31,16 +32,25 @@ export function buildAlexandreServices(deps: AppDeps) {
   });
   const pipelines = createPipelinesService({ db: deps.db, config: deps.config, workspace });
   jobs.setHandler('profile', (versionId, progress) => datasets.runProfileJob(versionId, progress));
+  const objects = createObjectsService(deps.db);
+  const actions = createActionsService(deps.db, workspace);
+  const publish = createPublishService({ db: deps.db, config: deps.config, workspace, pipelines, semantics: deps.semantics });
+  // Automations (T-32) are evaluated after every publish and every applied action run. Runs the automations
+  // themselves start are handled inside the evaluation, so they don't re-enter here.
+  const automations = createAutomationsService({ db: deps.db, objects, actions, resources });
+  publish.onPublished((projectId) => automations.evaluate(projectId, 'publish').then(() => undefined));
+  actions.onApplied((run) => (run.via === 'automation' ? Promise.resolve() : automations.evaluate(run.projectId, 'action_run').then(() => undefined)));
   return {
     resources,
     jobs,
     datasets,
     pipelines,
     logic: createLogicService({ db: deps.db, config: deps.config, workspace }),
-    objects: createObjectsService(deps.db),
-    actions: createActionsService(deps.db, workspace),
+    objects,
+    actions,
+    automations,
     workspace,
     apps: createAppsService({ workspace }),
-    publish: createPublishService({ db: deps.db, config: deps.config, workspace, pipelines, semantics: deps.semantics }),
+    publish,
   };
 }

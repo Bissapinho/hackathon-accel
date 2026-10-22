@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { AppContext } from './app.js';
 import { registerActionRoutes } from './modules/actions/routes.js';
 import { registerAppRoutes } from './modules/apps/routes.js';
+import { registerAutomationRoutes } from './modules/automations/routes.js';
 import { registerDatasetRoutes } from './modules/datasets/routes.js';
 import { registerJobRoutes } from './modules/jobs/routes.js';
 import { registerLogicRoutes } from './modules/logic/routes.js';
@@ -22,6 +23,7 @@ export async function registerAlexandre(app: FastifyInstance, ctx: AppContext): 
   registerObjectRoutes(app, ctx.services);
   registerActionRoutes(app, ctx.services);
   registerAppRoutes(app, ctx.services);
+  registerAutomationRoutes(app, ctx.services);
 
   // Background jobs: resume what a stopped server left, then run whatever is queued.
   app.addHook('onReady', async () => {

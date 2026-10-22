@@ -78,6 +78,13 @@ class Rollback extends Error {
 const ACTION_LOCK_NS = 734_019;
 
 export function createActionsService(db: Db, workspace: Pick<WorkspaceService, 'getDraft'>) {
+  // Called after an action run is committed (automations, T-32). Never called for dry-runs or refusals.
+  const appliedListeners = new Set<(run: { projectId: string; via: Via }) => Promise<void>>();
+  function onApplied(fn: (run: { projectId: string; via: Via }) => Promise<void>): () => void {
+    appliedListeners.add(fn);
+    return () => appliedListeners.delete(fn);
+  }
+
   // ── Definitions ──
 
   async function publishedDefinitions(projectId: string): Promise<Definitions> {
@@ -162,6 +169,7 @@ export function createActionsService(db: Db, workspace: Pick<WorkspaceService, '
         await insertRun(trx, defs, action, opts, runId, false, applied);
         return applied;
       });
+      for (const l of appliedListeners) await l({ projectId: opts.projectId, via: opts.via }).catch(() => undefined); // the run is already committed
       return { runId, ...outcome };
     } catch (err) {
       if (err instanceof Rollback) {
@@ -540,7 +548,7 @@ export function createActionsService(db: Db, workspace: Pick<WorkspaceService, '
     }));
   }
 
-  return { runAction, testDraftAction, validateActionRun, applyActionRun, getPublishedAction, publishedDefinitions, listActionLog };
+  return { onApplied, runAction, testDraftAction, validateActionRun, applyActionRun, getPublishedAction, publishedDefinitions, listActionLog };
 }
 
 export type ActionsService = ReturnType<typeof createActionsService>;
