@@ -1,0 +1,12 @@
+**/node_modules
+.git
+.env
+.env.*
+var
+data
+feature-book
+Brainstorm
+fixtures
+.claude
+**/*.csv
+**/*.csv.gz
