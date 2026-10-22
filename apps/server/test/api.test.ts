@@ -90,8 +90,8 @@ describe('T-03 server skeleton', () => {
 });
 
 describe('Phase 0 tool registry', () => {
-  it('starts empty and rejects duplicates and names missing from the catalog', () => {
-    expect(buildToolRegistry().size).toBe(0);
+  it('builds from both indexes and rejects duplicates and names missing from the catalog', () => {
+    expect(() => buildToolRegistry()).not.toThrow();
     const fake = { name: 'list_datasets', modes: [], risk: 'read', input: null, run: async () => ({ ok: true }) };
     expect(() => buildToolRegistry([fake, fake] as never)).toThrow(/twice/);
     expect(() => buildToolRegistry([{ ...fake, name: 'nope' }] as never)).toThrow(/catalog/);

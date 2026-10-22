@@ -28,8 +28,25 @@ export interface ProjectMembersTable {
   role: ProjectRole;
 }
 
+export interface ActionRunsTable {
+  id: string;
+  project_id: string;
+  workspace_version: number; // 0 for draft tests
+  action_api_name: string;
+  params: unknown; // jsonb: the request's params as sent
+  dry_run: boolean;
+  status: 'applied' | 'valid' | 'rejected' | 'failed';
+  errors: unknown; // jsonb: FieldError[]
+  edits: unknown; // jsonb: [{objectType, primaryKey, op, before, after}]
+  run_by: string;
+  via: 'ui' | 'agent' | 'automation';
+  agent_session_id: string | null;
+  created_at: Timestamp;
+}
+
 export interface DB {
   'meta.users': UsersTable;
   'meta.projects': ProjectsTable;
   'meta.project_members': ProjectMembersTable;
+  'meta.action_runs': ActionRunsTable;
 }
