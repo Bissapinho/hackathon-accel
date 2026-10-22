@@ -78,7 +78,9 @@ async function renderLogin() {
   } catch (e) { box.append(errBox(e)); }
 }
 
-const VIEWS = [['agent', 'Assistant', 'chat'], ['data', 'Data', 'db'], ['meaning', 'Meaning', 'layers'], ['objects', 'Objects', 'cube'], ['history', 'History', 'history']];
+const VIEWS = [['agent', 'Assistant', 'chat'], ['data', 'Data', 'db'], ['meaning', 'Meaning', 'layers'], ['objects', 'Objects', 'cube'], ['logic', 'Logic', 'branch'], ['actions', 'Actions', 'wrench'], ['history', 'History', 'history']];
+// Extra screens live in their own files (logic.js, actions.js) and register here.
+const EXT = (window.SWAIN_VIEWS = window.SWAIN_VIEWS || {});
 
 function renderShell() {
   const project = S.me.projects.find((p) => p.id === S.pid);
@@ -97,7 +99,8 @@ function renderShell() {
   bar.append(el('h2', {}, VIEWS.find((v) => v[0] === S.view)[1]), el('span', { class: 'muted' }, project ? `· ${project.name}` : ''), el('span', { class: 'spacer' }));
   if (!S.pid) return content.append(el('div', { class: 'muted' }, 'You have no project yet. Run pnpm db:seed.'));
   if (S.view !== 'agent') closeStream();
-  ({ agent: viewAgent, data: viewData, meaning: viewMeaning, objects: viewObjects, history: viewHistory })[S.view](content, bar);
+  const fn = ({ agent: viewAgent, data: viewData, meaning: viewMeaning, objects: viewObjects, history: viewHistory, ...EXT })[S.view];
+  if (fn) fn(content, bar); else content.append(el('div', { class: 'muted' }, 'Loading…'));
 }
 
 // ── agent ──
