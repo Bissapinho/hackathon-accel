@@ -64,7 +64,9 @@ export const filterSchema: z.ZodType<Filter> = z.lazy(() =>
   ]),
 );
 
-const pair = (s: z.ZodType<LogicExpr>) => z.tuple([s, s]);
+// An array of exactly two, not z.tuple: zod-to-json-schema writes tuples as `items: [a, b]`, which the
+// Claude API rejects (tool schemas must be JSON Schema 2020-12, where tuples use `prefixItems`).
+const pair = (s: z.ZodType<LogicExpr>) => z.array(s).length(2) as unknown as z.ZodType<[LogicExpr, LogicExpr]>;
 
 export const logicExprSchema: z.ZodType<LogicExpr> = z.lazy(() =>
   z.union([
