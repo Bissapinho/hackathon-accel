@@ -10,9 +10,11 @@ export const listDatasets = defineTool({
   run: (_input, ctx) =>
     toolResult(async () => {
       const list = await ctx.services.datasets.listDatasets(ctx.projectId, ctx.user.id);
+      const tables = await ctx.services.datasets.currentTables(ctx.projectId, ctx.user.id);
       const datasets = list.map((d) => ({
         id: d.id,
         name: d.name,
+        sqlTable: tables.get(d.id) ?? null, // what run_sql reads: the name is not derived from the dataset name
         simulated: d.simulated,
         currentVersion: d.currentVersion,
         rowCount: d.current?.rowCount ?? 0,
@@ -21,7 +23,7 @@ export const listDatasets = defineTool({
       }));
       const simulated = datasets.filter((d) => d.simulated).length;
       return {
-        summary: `${datasets.length} datasets${simulated ? ` (${simulated} simulated)` : ''}`,
+        summary: `${datasets.length} datasets${simulated ? ` (${simulated} simulated)` : ''}: ${datasets.map((d) => `${d.name} = ${d.sqlTable ?? '(no table)'}`).join(', ')}`,
         result: { total: datasets.length, truncated: false, datasets },
       };
     }),

@@ -17,13 +17,15 @@ export const getDataset = defineTool({
     toolResult(async () => {
       const ds = await ctx.services.datasets.resolveDataset(ctx.projectId, ctx.user.id, input.datasetId);
       const v = await ctx.services.datasets.getVersion(ds, input.version);
+      const sqlTable = await ctx.services.datasets.sqlTable(ds, input.version);
       return {
-        summary: `${ds.name} v${v.version}: ${v.rowCount} rows, ${v.columns.length} columns, ${v.parseErrors.length} parse errors`,
+        summary: `${ds.name} v${v.version}: ${v.rowCount} rows, ${v.columns.length} columns, ${v.parseErrors.length} parse errors. SQL table: ${sqlTable ?? '(removed)'} (columns by sqlName)`,
         result: {
           id: ds.id,
           name: ds.name,
           simulated: ds.simulated,
           version: v.version,
+          sqlTable,
           transactionType: v.transactionType,
           rowCount: v.rowCount,
           profileStatus: v.profileStatus,

@@ -189,6 +189,25 @@ export function createDatasetsService(deps: DatasetsDeps) {
     return toVersion(await versionRow(ds, version));
   }
 
+  // The SQL table holding a version's rows (`data.ds_…_v1`), for read-only SQL; null when retention dropped it.
+  async function sqlTable(ds: DatasetRow, version?: number): Promise<string | null> {
+    const v = await versionRow(ds, version);
+    return v.dropped_at ? null : v.table_name;
+  }
+
+  // Dataset id → SQL table of its current version, for every dataset of the project.
+  async function currentTables(projectId: string, userId: string): Promise<Map<string, string>> {
+    await resources.requireAccess(projectId, userId, 'read');
+    const rows = await db
+      .selectFrom('meta.datasets as d')
+      .innerJoin('meta.dataset_versions as v', (j) => j.onRef('v.dataset_id', '=', 'd.id').onRef('v.version', '=', 'd.current_version'))
+      .select(['d.id', 'v.table_name'])
+      .where('d.project_id', '=', projectId)
+      .where('v.dropped_at', 'is', null)
+      .execute();
+    return new Map(rows.map((r) => [r.id, r.table_name]));
+  }
+
   async function preview(
     ds: DatasetRow,
     opts: { version?: number; limit: number; offset: number },
@@ -464,6 +483,8 @@ export function createDatasetsService(deps: DatasetsDeps) {
     listDatasets,
     listVersions,
     getVersion,
+    sqlTable,
+    currentTables,
     preview,
     profile,
     matchRate,
