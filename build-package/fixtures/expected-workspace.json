@@ -1,120 +1,1366 @@
 {
-  "_note": "An example of what the agent should produce for the demo (02-slice-and-demo.md). Names may differ in a live run; use it for tests, the mock replay and as a target. <ticketsDatasetId>/<peopleDatasetId>/<presenterUserId> are filled by the seed.",
-  "objectTypes": [
+  "_note": "Kumo demo workspace (02-slice-and-demo.md), a target for tests, the mock replay and the agent. Names may differ in a live run. <...DatasetId> placeholders are replaced by the test (or the seed) with the project's dataset ids. Column names are the snake_cased headers of the kumo-mini files; the ones listed in _assumptions are not yet confirmed by the fixture. Composite keys can't be built (LogicExpr has no concat), so CuisineJour is keyed on the dataset column cle_cuisine_jour.",
+  "_assumptions": [
+    "CAPACITE_CUISINES_JOUR_2025 has a key column cle_cuisine_jour (unique per kitchen-day, e.g. 'Frepillon|2025-10-14') plus cuisine, date and capacite_unites columns (names ASSUMED)",
+    "CUISINES_REFERENTIEL has a cuisine column holding the kitchen name (ASSUMED)",
+    "APP_KIOSQUE_INVENDUS_2025 has id_invendu (unique), id_interne_client_netsuite, id_interne_article, date and quantite (ASSUMED)",
+    "COMMANDES_NETSUITE_2025 has date_production (spec 02 section 3) next to lieu_production; each SO document is produced in one kitchen on one day",
+    "CLIENTS_NETSUITE columns: id_interne, zone_distribution, actif; ARTICLES_NETSUITE: id_interne, nom_article, dlc, date_de_cr_ation, article_actif"
+  ],
+  "semanticVersion": "v0",
+  "pipelines": [
     {
-      "apiName": "Ticket", "displayName": "Ticket", "pluralDisplayName": "Tickets",
-      "description": "A customer support request handled by the support team, from creation to resolution.",
-      "aliases": ["issue", "case", "request"], "icon": "ticket",
-      "datasetId": "<ticketsDatasetId>", "primaryKey": "ticketId", "titleProperty": "title", "status": "active",
-      "properties": [
-        { "apiName": "ticketId", "column": "ticket_id", "type": "string", "displayName": "Ticket ID", "description": "Unique reference of the ticket, e.g. T-2003.", "aliases": ["reference", "number"], "editable": false },
-        { "apiName": "title", "column": "title", "type": "string", "displayName": "Title", "description": "Short summary of the problem reported.", "aliases": ["subject"], "editable": false },
-        { "apiName": "description", "column": "description", "type": "string", "displayName": "Description", "description": "What the customer reported, in their words.", "aliases": [], "editable": false },
-        { "apiName": "status", "column": "status", "type": "string", "displayName": "Status", "description": "Where the ticket is in its life: open, in progress or resolved.", "aliases": ["state"], "editable": true, "allowedValues": ["open", "in_progress", "resolved"] },
-        { "apiName": "priority", "column": "priority", "type": "string", "displayName": "Priority", "description": "How urgent the ticket is: low, medium, high or urgent.", "aliases": ["urgency", "severity"], "editable": true, "allowedValues": ["low", "medium", "high", "urgent"] },
-        { "apiName": "category", "column": "category", "type": "string", "displayName": "Category", "description": "Area of the product the ticket is about.", "aliases": ["area", "topic"], "editable": false },
-        { "apiName": "assignee", "column": "assignee", "type": "string", "displayName": "Assignee", "description": "Full name of the team member handling the ticket; empty if unassigned.", "aliases": ["owner", "handled by"], "editable": true },
-        { "apiName": "customer", "column": "customer", "type": "string", "displayName": "Customer", "description": "Company that reported the ticket.", "aliases": ["client", "account"], "editable": false },
-        { "apiName": "createdAt", "column": "created_at", "type": "date", "displayName": "Created on", "description": "Day the ticket was opened.", "aliases": ["opened"], "editable": false },
-        { "apiName": "resolvedAt", "column": "resolved_at", "type": "date", "displayName": "Resolved on", "description": "Day the ticket was resolved; empty while it's still open.", "aliases": ["closed"], "editable": true },
-        { "apiName": "estimateHours", "column": "estimate_hours", "type": "integer", "displayName": "Estimated hours", "description": "Estimated effort to resolve the ticket, in hours.", "aliases": ["effort", "workload"], "editable": false },
-        { "apiName": "resolvedBy", "type": "string", "displayName": "Resolved by", "description": "Team member who marked the ticket resolved (recorded by the Resolve action).", "aliases": [], "editable": true },
-        { "apiName": "resolutionNote", "type": "string", "displayName": "Resolution note", "description": "What was done to resolve the ticket (recorded by the Resolve action).", "aliases": ["fix"], "editable": true }
+      "apiName": "commandes",
+      "description": "Sales orders rolled up from order lines to one row per document (SO-...).",
+      "terms": [
+        "T_commande"
+      ],
+      "nodes": [
+        {
+          "id": "lignes",
+          "kind": "source",
+          "datasetId": "<commandesDatasetId>"
+        },
+        {
+          "id": "so",
+          "kind": "filter",
+          "input": "lignes",
+          "where": {
+            "kind": "cmp",
+            "property": "no_transaction",
+            "op": "startsWith",
+            "value": "SO-"
+          }
+        },
+        {
+          "id": "docs",
+          "kind": "aggregate",
+          "input": "so",
+          "groupBy": [
+            "no_transaction",
+            "date",
+            "id_interne_client_netsuite"
+          ],
+          "measures": [
+            {
+              "as": "lignes",
+              "fn": "count"
+            },
+            {
+              "as": "quantite",
+              "fn": "sum",
+              "column": "quantite"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "apiName": "commandes",
+          "node": "docs"
+        }
+      ],
+      "checks": [
+        {
+          "output": "commandes",
+          "kind": "unique",
+          "columns": [
+            "no_transaction"
+          ]
+        },
+        {
+          "output": "commandes",
+          "kind": "notNull",
+          "columns": [
+            "id_interne_client_netsuite"
+          ]
+        }
       ]
     },
     {
-      "apiName": "TeamMember", "displayName": "Team member", "pluralDisplayName": "Team members",
-      "description": "A person in the support organization who can be assigned tickets.",
-      "aliases": ["person", "agent", "employee", "support engineer"], "icon": "person",
-      "datasetId": "<peopleDatasetId>", "primaryKey": "personId", "titleProperty": "fullName", "status": "active",
+      "apiName": "retours",
+      "description": "Returns (RMA-... documents, negative quantities) rolled up to one row per document, with the quantity returned as a positive number.",
+      "terms": [
+        "T_retour"
+      ],
+      "nodes": [
+        {
+          "id": "lignes",
+          "kind": "source",
+          "datasetId": "<commandesDatasetId>"
+        },
+        {
+          "id": "rma",
+          "kind": "filter",
+          "input": "lignes",
+          "where": {
+            "kind": "cmp",
+            "property": "no_transaction",
+            "op": "startsWith",
+            "value": "RMA-"
+          }
+        },
+        {
+          "id": "docs",
+          "kind": "aggregate",
+          "input": "rma",
+          "groupBy": [
+            "no_transaction",
+            "date",
+            "id_interne_client_netsuite"
+          ],
+          "measures": [
+            {
+              "as": "lignes",
+              "fn": "count"
+            },
+            {
+              "as": "quantite",
+              "fn": "sum",
+              "column": "quantite"
+            }
+          ]
+        },
+        {
+          "id": "positifs",
+          "kind": "derive",
+          "input": "docs",
+          "as": "quantite_retournee",
+          "expr": {
+            "mul": [
+              {
+                "property": "quantite"
+              },
+              {
+                "literal": -1
+              }
+            ]
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "apiName": "retours",
+          "node": "positifs"
+        }
+      ],
+      "checks": [
+        {
+          "output": "retours",
+          "kind": "unique",
+          "columns": [
+            "no_transaction"
+          ]
+        }
+      ]
+    },
+    {
+      "apiName": "flux_article",
+      "description": "Quantities delivered and returned per article, over all orders and returns.",
+      "terms": [
+        "T_article",
+        "T_retour"
+      ],
+      "nodes": [
+        {
+          "id": "lignes",
+          "kind": "source",
+          "datasetId": "<commandesDatasetId>"
+        },
+        {
+          "id": "livre",
+          "kind": "derive",
+          "input": "lignes",
+          "as": "livre",
+          "expr": {
+            "case": [
+              {
+                "when": {
+                  "kind": "cmp",
+                  "property": "no_transaction",
+                  "op": "startsWith",
+                  "value": "SO-"
+                },
+                "then": {
+                  "property": "quantite"
+                }
+              }
+            ],
+            "else": {
+              "literal": 0
+            }
+          }
+        },
+        {
+          "id": "retourne",
+          "kind": "derive",
+          "input": "livre",
+          "as": "retourne",
+          "expr": {
+            "case": [
+              {
+                "when": {
+                  "kind": "cmp",
+                  "property": "no_transaction",
+                  "op": "startsWith",
+                  "value": "RMA-"
+                },
+                "then": {
+                  "mul": [
+                    {
+                      "property": "quantite"
+                    },
+                    {
+                      "literal": -1
+                    }
+                  ]
+                }
+              }
+            ],
+            "else": {
+              "literal": 0
+            }
+          }
+        },
+        {
+          "id": "par_article",
+          "kind": "aggregate",
+          "input": "retourne",
+          "groupBy": [
+            "id_interne_article"
+          ],
+          "measures": [
+            {
+              "as": "livre",
+              "fn": "sum",
+              "column": "livre"
+            },
+            {
+              "as": "retourne",
+              "fn": "sum",
+              "column": "retourne"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "apiName": "flux",
+          "node": "par_article"
+        }
+      ],
+      "checks": [
+        {
+          "output": "flux",
+          "kind": "unique",
+          "columns": [
+            "id_interne_article"
+          ]
+        }
+      ]
+    },
+    {
+      "apiName": "production",
+      "description": "Production lots: sales orders with a known kitchen and production day (recorded from August only), one row per order.",
+      "terms": [
+        "T_lot_production",
+        "T_cuisine"
+      ],
+      "nodes": [
+        {
+          "id": "lignes",
+          "kind": "source",
+          "datasetId": "<commandesDatasetId>"
+        },
+        {
+          "id": "produites",
+          "kind": "filter",
+          "input": "lignes",
+          "where": {
+            "kind": "and",
+            "filters": [
+              {
+                "kind": "cmp",
+                "property": "no_transaction",
+                "op": "startsWith",
+                "value": "SO-"
+              },
+              {
+                "kind": "cmp",
+                "property": "lieu_production",
+                "op": "notNull"
+              },
+              {
+                "kind": "cmp",
+                "property": "date_production",
+                "op": "notNull"
+              }
+            ]
+          }
+        },
+        {
+          "id": "lots",
+          "kind": "aggregate",
+          "input": "produites",
+          "groupBy": [
+            "no_transaction",
+            "lieu_production",
+            "date_production"
+          ],
+          "measures": [
+            {
+              "as": "quantite",
+              "fn": "sum",
+              "column": "quantite"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "apiName": "lots",
+          "node": "lots"
+        }
+      ],
+      "checks": [
+        {
+          "output": "lots",
+          "kind": "unique",
+          "columns": [
+            "no_transaction"
+          ]
+        },
+        {
+          "output": "lots",
+          "kind": "notNull",
+          "columns": [
+            "lieu_production",
+            "date_production"
+          ]
+        }
+      ]
+    },
+    {
+      "apiName": "cuisine_jours",
+      "description": "Capacity per kitchen and day, summed over workshops and shifts (simulated data).",
+      "terms": [
+        "T_capacite",
+        "T_cuisine"
+      ],
+      "nodes": [
+        {
+          "id": "capacite",
+          "kind": "source",
+          "datasetId": "<capaciteDatasetId>"
+        },
+        {
+          "id": "par_jour",
+          "kind": "aggregate",
+          "input": "capacite",
+          "groupBy": [
+            "cle_cuisine_jour",
+            "cuisine",
+            "date"
+          ],
+          "measures": [
+            {
+              "as": "capacite",
+              "fn": "sum",
+              "column": "capacite_unites"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "apiName": "cuisine_jours",
+          "node": "par_jour"
+        }
+      ],
+      "checks": [
+        {
+          "output": "cuisine_jours",
+          "kind": "unique",
+          "columns": [
+            "cle_cuisine_jour"
+          ]
+        }
+      ]
+    }
+  ],
+  "objectTypes": [
+    {
+      "apiName": "Client",
+      "displayName": "Client (store)",
+      "pluralDisplayName": "Clients (stores)",
+      "description": "A store that orders from Kumo; one row per client code.",
+      "aliases": [
+        "store",
+        "magasin",
+        "customer"
+      ],
+      "icon": "store",
+      "term": "T_client",
+      "source": {
+        "kind": "dataset",
+        "datasetId": "<clientsDatasetId>"
+      },
+      "primaryKey": "clientId",
+      "titleProperty": "clientId",
+      "status": "active",
       "properties": [
-        { "apiName": "personId", "column": "person_id", "type": "string", "displayName": "Person ID", "description": "Unique reference of the team member.", "aliases": [], "editable": false },
-        { "apiName": "fullName", "column": "full_name", "type": "string", "displayName": "Full name", "description": "First and last name, as used in ticket assignments.", "aliases": ["name"], "editable": false },
-        { "apiName": "email", "column": "email", "type": "string", "displayName": "Email", "description": "Work email address.", "aliases": [], "editable": false },
-        { "apiName": "team", "column": "team", "type": "string", "displayName": "Team", "description": "Team the person belongs to.", "aliases": ["group"], "editable": false },
-        { "apiName": "role", "column": "role", "type": "string", "displayName": "Role", "description": "Job role in the team.", "aliases": ["title"], "editable": false }
+        {
+          "apiName": "clientId",
+          "column": "id_interne",
+          "type": "string",
+          "displayName": "Client code",
+          "description": "Unique code of the client, e.g. C0421.",
+          "aliases": [
+            "code client"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "zone",
+          "column": "zone_distribution",
+          "type": "string",
+          "displayName": "Delivery zone",
+          "description": "Distribution zone the store is delivered in.",
+          "aliases": [
+            "zone"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "actif",
+          "column": "actif",
+          "type": "boolean",
+          "displayName": "Active",
+          "description": "Whether the client is still active.",
+          "aliases": [
+            "active"
+          ],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "Article",
+      "displayName": "Article",
+      "pluralDisplayName": "Articles",
+      "description": "A product Kumo makes and sells.",
+      "aliases": [
+        "product",
+        "produit"
+      ],
+      "icon": "box",
+      "term": "T_article",
+      "source": {
+        "kind": "dataset",
+        "datasetId": "<articlesDatasetId>"
+      },
+      "primaryKey": "articleId",
+      "titleProperty": "nom",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "articleId",
+          "column": "id_interne",
+          "type": "string",
+          "displayName": "Article code",
+          "description": "Unique code of the article, e.g. A0137.",
+          "aliases": [
+            "code article"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "nom",
+          "column": "nom_article",
+          "type": "string",
+          "displayName": "Name",
+          "description": "Name of the product.",
+          "aliases": [
+            "libelle"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "dlc",
+          "column": "dlc",
+          "type": "string",
+          "displayName": "Shelf life",
+          "description": "How long the product keeps, written like J+3 (three days after production).",
+          "aliases": [
+            "DLC",
+            "use-by"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "actif",
+          "column": "article_actif",
+          "type": "boolean",
+          "displayName": "Active",
+          "description": "Whether the article is still sold.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "creeLe",
+          "column": "date_de_cr_ation",
+          "type": "timestamp",
+          "displayName": "Created on",
+          "description": "When the article was created in NetSuite.",
+          "aliases": [],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "Commande",
+      "displayName": "Order",
+      "pluralDisplayName": "Orders",
+      "description": "A sales order (SO document) placed by a client, with its number of lines and total quantity.",
+      "aliases": [
+        "order",
+        "SO",
+        "commande"
+      ],
+      "icon": "cart",
+      "term": "T_commande",
+      "source": {
+        "kind": "pipeline",
+        "pipeline": "commandes",
+        "output": "commandes"
+      },
+      "primaryKey": "noTransaction",
+      "titleProperty": "noTransaction",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "noTransaction",
+          "column": "no_transaction",
+          "type": "string",
+          "displayName": "Document number",
+          "description": "Number of the sales order, starting with SO-.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "date",
+          "column": "date",
+          "type": "date",
+          "displayName": "Date",
+          "description": "Date of the order.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "clientId",
+          "column": "id_interne_client_netsuite",
+          "type": "string",
+          "displayName": "Client code",
+          "description": "Code of the client who ordered.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "lignes",
+          "column": "lignes",
+          "type": "integer",
+          "displayName": "Lines",
+          "description": "Number of lines on the order.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "quantite",
+          "column": "quantite",
+          "type": "integer",
+          "displayName": "Quantity",
+          "description": "Total quantity delivered on the order.",
+          "aliases": [
+            "delivered"
+          ],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "Retour",
+      "displayName": "Return",
+      "pluralDisplayName": "Returns",
+      "description": "A return (RMA document): goods a client sent back, counted as a positive quantity.",
+      "aliases": [
+        "return",
+        "RMA",
+        "retour"
+      ],
+      "icon": "undo",
+      "term": "T_retour",
+      "source": {
+        "kind": "pipeline",
+        "pipeline": "retours",
+        "output": "retours"
+      },
+      "primaryKey": "noTransaction",
+      "titleProperty": "noTransaction",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "noTransaction",
+          "column": "no_transaction",
+          "type": "string",
+          "displayName": "Document number",
+          "description": "Number of the return, starting with RMA-.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "date",
+          "column": "date",
+          "type": "date",
+          "displayName": "Date",
+          "description": "Date of the return.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "clientId",
+          "column": "id_interne_client_netsuite",
+          "type": "string",
+          "displayName": "Client code",
+          "description": "Code of the client who returned the goods.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "lignes",
+          "column": "lignes",
+          "type": "integer",
+          "displayName": "Lines",
+          "description": "Number of lines on the return.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "quantiteRetournee",
+          "column": "quantite_retournee",
+          "type": "integer",
+          "displayName": "Quantity returned",
+          "description": "Total quantity sent back, as a positive number.",
+          "aliases": [],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "FluxArticle",
+      "displayName": "Article movements",
+      "pluralDisplayName": "Article movements",
+      "description": "Totals of what was delivered and what was returned for one article over the year.",
+      "aliases": [
+        "article totals"
+      ],
+      "icon": "chart",
+      "term": "T_article",
+      "source": {
+        "kind": "pipeline",
+        "pipeline": "flux_article",
+        "output": "flux"
+      },
+      "primaryKey": "articleId",
+      "titleProperty": "articleId",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "articleId",
+          "column": "id_interne_article",
+          "type": "string",
+          "displayName": "Article code",
+          "description": "Code of the article.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "livre",
+          "column": "livre",
+          "type": "integer",
+          "displayName": "Delivered",
+          "description": "Quantity delivered over all sales orders.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "retourne",
+          "column": "retourne",
+          "type": "integer",
+          "displayName": "Returned",
+          "description": "Quantity returned over all returns, as a positive number.",
+          "aliases": [],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "Cuisine",
+      "displayName": "Kitchen",
+      "pluralDisplayName": "Kitchens",
+      "description": "A central kitchen where products are made (simulated reference data).",
+      "aliases": [
+        "kitchen",
+        "cuisine",
+        "labo"
+      ],
+      "icon": "chef",
+      "term": "T_cuisine",
+      "source": {
+        "kind": "dataset",
+        "datasetId": "<cuisinesDatasetId>"
+      },
+      "primaryKey": "cuisineId",
+      "titleProperty": "cuisineId",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "cuisineId",
+          "column": "cuisine",
+          "type": "string",
+          "displayName": "Kitchen",
+          "description": "Name of the kitchen, e.g. Frepillon.",
+          "aliases": [
+            "name"
+          ],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "CuisineJour",
+      "displayName": "Kitchen-day",
+      "pluralDisplayName": "Kitchen-days",
+      "description": "One kitchen on one day, with the capacity it can produce (simulated data).",
+      "aliases": [
+        "kitchen day",
+        "capacite jour"
+      ],
+      "icon": "calendar",
+      "term": "T_capacite",
+      "source": {
+        "kind": "pipeline",
+        "pipeline": "cuisine_jours",
+        "output": "cuisine_jours"
+      },
+      "primaryKey": "cle",
+      "titleProperty": "cle",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "cle",
+          "column": "cle_cuisine_jour",
+          "type": "string",
+          "displayName": "Key",
+          "description": "Unique key of the kitchen-day: the kitchen name and the day.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "cuisine",
+          "column": "cuisine",
+          "type": "string",
+          "displayName": "Kitchen",
+          "description": "Name of the kitchen.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "jour",
+          "column": "date",
+          "type": "date",
+          "displayName": "Day",
+          "description": "The day.",
+          "aliases": [
+            "date"
+          ],
+          "editable": false
+        },
+        {
+          "apiName": "capacite",
+          "column": "capacite",
+          "type": "integer",
+          "displayName": "Capacity",
+          "description": "Units the kitchen can produce that day, all workshops and shifts together.",
+          "aliases": [
+            "capacity"
+          ],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "LotProduction",
+      "displayName": "Production lot",
+      "pluralDisplayName": "Production lots",
+      "description": "The products of one sales order made in one kitchen on one day; the kitchen can be changed by an action.",
+      "aliases": [
+        "lot",
+        "production"
+      ],
+      "icon": "factory",
+      "term": "T_lot_production",
+      "source": {
+        "kind": "pipeline",
+        "pipeline": "production",
+        "output": "lots"
+      },
+      "primaryKey": "lotId",
+      "titleProperty": "lotId",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "lotId",
+          "column": "no_transaction",
+          "type": "string",
+          "displayName": "Order number",
+          "description": "Number of the sales order this lot belongs to.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "lieuProduction",
+          "column": "lieu_production",
+          "type": "string",
+          "displayName": "Kitchen",
+          "description": "Kitchen where the lot is produced.",
+          "aliases": [
+            "kitchen"
+          ],
+          "editable": true,
+          "allowedValues": [
+            "Gennevilliers",
+            "Frepillon",
+            "Draveil"
+          ]
+        },
+        {
+          "apiName": "dateProduction",
+          "column": "date_production",
+          "type": "date",
+          "displayName": "Production day",
+          "description": "Day the lot is produced.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "quantite",
+          "column": "quantite",
+          "type": "integer",
+          "displayName": "Quantity",
+          "description": "Units in the lot.",
+          "aliases": [],
+          "editable": false
+        }
+      ]
+    },
+    {
+      "apiName": "Invendu",
+      "displayName": "Unsold declaration",
+      "pluralDisplayName": "Unsold declarations",
+      "description": "Unsold goods a store declares for an article on a day.",
+      "aliases": [
+        "unsold",
+        "invendus"
+      ],
+      "icon": "trash",
+      "term": "T_invendu",
+      "source": {
+        "kind": "dataset",
+        "datasetId": "<invendusDatasetId>"
+      },
+      "primaryKey": "invenduId",
+      "titleProperty": "invenduId",
+      "status": "active",
+      "properties": [
+        {
+          "apiName": "invenduId",
+          "column": "id_invendu",
+          "type": "string",
+          "displayName": "Reference",
+          "description": "Unique reference of the declaration.",
+          "aliases": [],
+          "editable": false
+        },
+        {
+          "apiName": "clientId",
+          "column": "id_interne_client_netsuite",
+          "type": "string",
+          "displayName": "Client code",
+          "description": "Store that declared the unsold goods.",
+          "aliases": [],
+          "editable": true
+        },
+        {
+          "apiName": "articleId",
+          "column": "id_interne_article",
+          "type": "string",
+          "displayName": "Article code",
+          "description": "Article left unsold.",
+          "aliases": [],
+          "editable": true
+        },
+        {
+          "apiName": "date",
+          "column": "date",
+          "type": "date",
+          "displayName": "Date",
+          "description": "Day of the declaration.",
+          "aliases": [],
+          "editable": true
+        },
+        {
+          "apiName": "quantite",
+          "column": "quantite",
+          "type": "integer",
+          "displayName": "Quantity",
+          "description": "Units left unsold.",
+          "aliases": [],
+          "editable": true
+        }
       ]
     }
   ],
   "linkTypes": [
-    { "apiName": "assignedTo", "from": "Ticket", "to": "TeamMember", "cardinality": "many-to-one",
-      "fromProperty": "assignee", "toProperty": "fullName",
-      "displayName": "Assigned to", "reverseApiName": "assignedTickets", "reverseDisplayName": "Assigned tickets",
-      "description": "The team member responsible for the ticket, matched on full name." }
+    {
+      "apiName": "client",
+      "from": "Commande",
+      "to": "Client",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "clientId",
+          "toProperty": "clientId"
+        }
+      ],
+      "relation": "R_commande_client",
+      "displayName": "Client",
+      "reverseApiName": "commandes",
+      "reverseDisplayName": "Orders",
+      "description": "The client who placed the order."
+    },
+    {
+      "apiName": "client",
+      "from": "Retour",
+      "to": "Client",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "clientId",
+          "toProperty": "clientId"
+        }
+      ],
+      "relation": "R_retour_client",
+      "displayName": "Client",
+      "reverseApiName": "retours",
+      "reverseDisplayName": "Returns",
+      "description": "The client who sent the goods back."
+    },
+    {
+      "apiName": "article",
+      "from": "FluxArticle",
+      "to": "Article",
+      "cardinality": "one-to-one",
+      "keys": [
+        {
+          "fromProperty": "articleId",
+          "toProperty": "articleId"
+        }
+      ],
+      "relation": "R_flux_article",
+      "displayName": "Article",
+      "reverseApiName": "flux",
+      "reverseDisplayName": "Movements",
+      "description": "The article these totals are about."
+    },
+    {
+      "apiName": "cuisineJour",
+      "from": "LotProduction",
+      "to": "CuisineJour",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "lieuProduction",
+          "toProperty": "cuisine"
+        },
+        {
+          "fromProperty": "dateProduction",
+          "toProperty": "jour"
+        }
+      ],
+      "relation": "R_lot_cuisine_jour",
+      "displayName": "Kitchen-day",
+      "reverseApiName": "lots",
+      "reverseDisplayName": "Production lots",
+      "description": "The kitchen and day the lot is produced on, matched on both."
+    },
+    {
+      "apiName": "site",
+      "from": "CuisineJour",
+      "to": "Cuisine",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "cuisine",
+          "toProperty": "cuisineId"
+        }
+      ],
+      "relation": "R_cuisine_jour_cuisine",
+      "displayName": "Kitchen",
+      "reverseApiName": "jours",
+      "reverseDisplayName": "Kitchen-days",
+      "description": "The kitchen this day of capacity belongs to."
+    },
+    {
+      "apiName": "client",
+      "from": "Invendu",
+      "to": "Client",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "clientId",
+          "toProperty": "clientId"
+        }
+      ],
+      "relation": "R_invendu_client",
+      "displayName": "Client",
+      "reverseApiName": "invendus",
+      "reverseDisplayName": "Unsold declarations",
+      "description": "The store that declared the unsold goods."
+    },
+    {
+      "apiName": "article",
+      "from": "Invendu",
+      "to": "Article",
+      "cardinality": "many-to-one",
+      "keys": [
+        {
+          "fromProperty": "articleId",
+          "toProperty": "articleId"
+        }
+      ],
+      "relation": "R_invendu_article",
+      "displayName": "Article",
+      "reverseApiName": "invendus",
+      "reverseDisplayName": "Unsold declarations",
+      "description": "The article left unsold."
+    }
+  ],
+  "logic": [
+    {
+      "apiName": "nbCommandes",
+      "objectType": "Client",
+      "kind": "derived",
+      "type": "integer",
+      "expr": {
+        "aggregate": {
+          "link": "commandes",
+          "fn": "count"
+        }
+      },
+      "displayName": "Orders placed",
+      "description": "How many sales orders the client placed this year."
+    },
+    {
+      "apiName": "tauxRetour",
+      "objectType": "Client",
+      "kind": "derived",
+      "type": "double",
+      "expr": {
+        "div": [
+          {
+            "coalesce": [
+              {
+                "aggregate": {
+                  "link": "retours",
+                  "fn": "sum",
+                  "property": "quantiteRetournee"
+                }
+              },
+              {
+                "literal": 0
+              }
+            ]
+          },
+          {
+            "aggregate": {
+              "link": "commandes",
+              "fn": "sum",
+              "property": "quantite"
+            }
+          }
+        ]
+      },
+      "displayName": "Return rate",
+      "description": "Quantity returned divided by quantity delivered; empty when the client received nothing.",
+      "constraints": [
+        "C_rma_negatif"
+      ]
+    },
+    {
+      "apiName": "tauxRetour",
+      "objectType": "Article",
+      "kind": "derived",
+      "type": "double",
+      "expr": {
+        "div": [
+          {
+            "aggregate": {
+              "link": "flux",
+              "fn": "sum",
+              "property": "retourne"
+            }
+          },
+          {
+            "aggregate": {
+              "link": "flux",
+              "fn": "sum",
+              "property": "livre"
+            }
+          }
+        ]
+      },
+      "displayName": "Return rate",
+      "description": "Quantity returned divided by quantity delivered for the article; empty when none was delivered.",
+      "constraints": [
+        "C_rma_negatif"
+      ]
+    },
+    {
+      "apiName": "charge",
+      "objectType": "CuisineJour",
+      "kind": "derived",
+      "type": "integer",
+      "expr": {
+        "coalesce": [
+          {
+            "aggregate": {
+              "link": "lots",
+              "fn": "sum",
+              "property": "quantite"
+            }
+          },
+          {
+            "literal": 0
+          }
+        ]
+      },
+      "displayName": "Load",
+      "description": "Units planned in this kitchen on this day: the sum of its production lots."
+    },
+    {
+      "apiName": "surcharge",
+      "objectType": "CuisineJour",
+      "kind": "rule",
+      "condition": {
+        "kind": "cmpProps",
+        "left": "charge",
+        "op": "gt",
+        "right": "capacite"
+      },
+      "displayName": "Over capacity",
+      "description": "True when more units are planned than the kitchen can produce that day.",
+      "constraints": [
+        "C_capacite_simulee"
+      ]
+    }
   ],
   "actionTypes": [
     {
-      "apiName": "ResolveTicket", "displayName": "Resolve ticket",
-      "description": "Mark a ticket as resolved and record who resolved it, when, and how.",
-      "agentDescription": "Use when a ticket's problem is fixed. Sets status to resolved, resolvedAt to today, resolvedBy to the current user, and stores the note. Refused if the ticket is already resolved.",
+      "apiName": "ReaffecterProduction",
+      "displayName": "Move a production",
+      "description": "Move a production lot to another kitchen, as long as that kitchen stays within its capacity that day.",
+      "agentDescription": "Use to move a production lot to another kitchen. Sets the lot kitchen (lieuProduction). Refused when the target kitchen-day would be over capacity once the lot is added; check with a dry run first.",
+      "constraints": [
+        "C_capacite_simulee"
+      ],
       "parameters": [
-        { "id": "ticket", "kind": "object", "objectType": "Ticket", "displayName": "Ticket", "description": "The ticket to resolve.", "required": true },
-        { "id": "note", "kind": "value", "type": "string", "displayName": "Resolution note", "description": "What was done to fix it.", "required": true }
+        {
+          "id": "lot",
+          "kind": "object",
+          "objectType": "LotProduction",
+          "displayName": "Lot",
+          "description": "The production lot to move.",
+          "required": true
+        },
+        {
+          "id": "cible",
+          "kind": "value",
+          "type": "string",
+          "allowedValues": [
+            "Gennevilliers",
+            "Frepillon",
+            "Draveil"
+          ],
+          "displayName": "Target kitchen",
+          "description": "The kitchen that should produce it.",
+          "required": true
+        }
       ],
       "rules": [
-        { "kind": "modifyObject", "object": "ticket", "set": {
-            "status": { "kind": "literal", "value": "resolved" },
-            "resolvedAt": { "kind": "now" },
-            "resolvedBy": { "kind": "currentUser" },
-            "resolutionNote": { "kind": "param", "param": "note" } } }
+        {
+          "kind": "modifyObject",
+          "object": "lot",
+          "set": {
+            "lieuProduction": {
+              "kind": "param",
+              "param": "cible"
+            }
+          }
+        }
       ],
       "submissionCriteria": [
-        { "left": { "kind": "paramProperty", "param": "ticket", "property": "status" }, "op": "neq",
-          "right": { "kind": "literal", "value": "resolved" }, "failureMessage": "This ticket is already resolved." }
+        {
+          "kind": "rule",
+          "objectType": "CuisineJour",
+          "rule": "surcharge",
+          "object": {
+            "kind": "lookup",
+            "objectType": "CuisineJour",
+            "keys": {
+              "cuisine": {
+                "kind": "param",
+                "param": "cible"
+              },
+              "jour": {
+                "kind": "paramProperty",
+                "param": "lot",
+                "property": "dateProduction"
+              }
+            }
+          },
+          "expect": false,
+          "afterEdits": true,
+          "failureMessage": "{{cible}} would be over capacity on that day."
+        }
       ],
-      "successMessage": "Ticket \"{{ticket.title}}\" is resolved."
+      "successMessage": "Lot {{lot.lotId}} is now produced in {{cible}}."
     },
     {
-      "apiName": "ChangeTicketPriority", "displayName": "Change priority",
-      "description": "Set a ticket's priority.",
-      "agentDescription": "Use to raise or lower a ticket's urgency. Only changes priority. Refused for resolved tickets.",
+      "apiName": "DeclarerInvendus",
+      "displayName": "Declare unsold goods",
+      "description": "Record unsold goods for a store and an article.",
+      "agentDescription": "Use when a store reports unsold goods. Creates an Invendu linked to the client and the article; needs a new unique reference and a positive quantity.",
       "parameters": [
-        { "id": "ticket", "kind": "object", "objectType": "Ticket", "displayName": "Ticket", "description": "The ticket to change.", "required": true },
-        { "id": "priority", "kind": "value", "type": "string", "allowedValues": ["low", "medium", "high", "urgent"], "displayName": "New priority", "description": "The new priority.", "required": true }
+        {
+          "id": "reference",
+          "kind": "value",
+          "type": "string",
+          "displayName": "Reference",
+          "description": "A new unique reference for the declaration.",
+          "required": true
+        },
+        {
+          "id": "client",
+          "kind": "object",
+          "objectType": "Client",
+          "displayName": "Client",
+          "description": "The store declaring.",
+          "required": true
+        },
+        {
+          "id": "article",
+          "kind": "object",
+          "objectType": "Article",
+          "displayName": "Article",
+          "description": "The article left unsold.",
+          "required": true
+        },
+        {
+          "id": "quantite",
+          "kind": "value",
+          "type": "integer",
+          "displayName": "Quantity",
+          "description": "Units left unsold.",
+          "required": true
+        }
       ],
-      "rules": [ { "kind": "modifyObject", "object": "ticket", "set": { "priority": { "kind": "param", "param": "priority" } } } ],
+      "rules": [
+        {
+          "kind": "createObject",
+          "objectType": "Invendu",
+          "primaryKey": {
+            "kind": "param",
+            "param": "reference"
+          },
+          "set": {
+            "clientId": {
+              "kind": "param",
+              "param": "client"
+            },
+            "articleId": {
+              "kind": "param",
+              "param": "article"
+            },
+            "quantite": {
+              "kind": "param",
+              "param": "quantite"
+            },
+            "date": {
+              "kind": "now"
+            }
+          }
+        }
+      ],
       "submissionCriteria": [
-        { "left": { "kind": "paramProperty", "param": "ticket", "property": "status" }, "op": "neq",
-          "right": { "kind": "literal", "value": "resolved" }, "failureMessage": "Resolved tickets can't change priority." }
+        {
+          "kind": "compare",
+          "left": {
+            "kind": "param",
+            "param": "quantite"
+          },
+          "op": "gt",
+          "right": {
+            "kind": "literal",
+            "value": 0
+          },
+          "failureMessage": "The quantity must be more than zero."
+        }
       ],
-      "successMessage": "Priority of \"{{ticket.title}}\" set to {{priority}}."
+      "successMessage": "Declared {{quantite}} unsold units for {{client.clientId}}."
     }
   ],
-  "apps": [
-    {
-      "id": "triage", "name": "Ticket triage", "description": "Work through unresolved tickets, most urgent first.",
-      "pages": [ { "id": "main", "title": "Triage", "blocks": [
-        { "kind": "metric", "version": 1, "label": "Open tickets",
-          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
-          "aggregate": { "fn": "count" } },
-        { "kind": "metric", "version": 1, "label": "Urgent",
-          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "and", "filters": [
-            { "kind": "cmp", "property": "priority", "op": "eq", "value": "urgent" },
-            { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } ] } },
-          "aggregate": { "fn": "count" } },
-        { "kind": "metric", "version": 1, "label": "Hours of work left",
-          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
-          "aggregate": { "fn": "sum", "property": "estimateHours" } },
-        { "kind": "objectList", "version": 1, "id": "queue", "title": "Unresolved tickets",
-          "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } },
-          "columns": ["ticketId", "title", "priority", "status", "assignee", "customer", "createdAt"],
-          "sort": [ { "property": "priority", "direction": "asc", "order": ["urgent", "high", "medium", "low"] }, { "property": "createdAt", "direction": "asc" } ],
-          "filters": [ { "property": "priority", "control": "multiSelect" }, { "property": "assignee", "control": "select" }, { "property": "category", "control": "select" }, { "property": "title", "control": "search" } ],
-          "pageSize": 25 },
-        { "kind": "objectDetail", "version": 1, "source": "queue",
-          "properties": ["title", "description", "priority", "status", "category", "customer", "createdAt", "estimateHours"],
-          "links": ["assignedTo"], "actions": ["ResolveTicket", "ChangeTicketPriority"] }
-      ] } ]
-    }
-  ],
+  "apps": [],
   "automations": [
     {
-      "id": "urgent-alert", "name": "Urgent ticket alert", "description": "Tell me when a ticket becomes urgent and isn't resolved.",
-      "condition": { "kind": "objectsEnterSet", "set": { "kind": "filter", "of": { "kind": "all", "objectType": "Ticket" }, "where": { "kind": "and", "filters": [
-        { "kind": "cmp", "property": "priority", "op": "eq", "value": "urgent" },
-        { "kind": "cmp", "property": "status", "op": "neq", "value": "resolved" } ] } } },
-      "effects": [ { "kind": "notify", "recipients": [ { "kind": "currentUser" } ],
-        "title": "Urgent ticket", "body": "{{object.ticketId}} \"{{object.title}}\" is now urgent." } ]
+      "id": "alerte-surcharge",
+      "name": "Over-capacity alert",
+      "description": "Warn the person who made the change when a kitchen-day goes over capacity.",
+      "condition": {
+        "kind": "objectsEnterSet",
+        "set": {
+          "kind": "filter",
+          "of": {
+            "kind": "all",
+            "objectType": "CuisineJour"
+          },
+          "where": {
+            "kind": "rule",
+            "rule": "surcharge"
+          }
+        }
+      },
+      "effects": [
+        {
+          "kind": "notify",
+          "recipients": [
+            {
+              "kind": "currentUser"
+            }
+          ],
+          "title": "Kitchen over capacity",
+          "body": "{{object.cle}} is planned above its capacity."
+        }
+      ]
     }
   ]
 }
