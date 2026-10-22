@@ -21,6 +21,7 @@ It is derived from the feature book (`../feature-book/`, observations of Palanti
 
 | File | What it gives you |
 |---|---|
+| **`09-work-split.md`** | **Mandatory first read.** Who builds what: Alexandre = Part A (data platform), Alfred = Part B (semantics and agent); folder ownership; every interdependency and its contract |
 | `02-slice-and-demo.md` | **What** we build, the Kumo data, and the demo script |
 | `01-architecture.md` | Stack, components, data flow, configuration, data handling, **deployment on Aiven** |
 | `CLAUDE.md` | Copy to the repo root: commands, layout, rules |
@@ -38,7 +39,7 @@ It is derived from the feature book (`../feature-book/`, observations of Palanti
 
 1. Create an empty repo, copy this folder to `docs/build-package/`, `CLAUDE.md` to the root and `LICENSE-EvoOntology` to the root as `NOTICE`.
 2. Put `ANTHROPIC_API_KEY` in `.env` yourself (never in the repo).
-3. Ask Claude Code: *"Read docs/build-package/README.md and do task T-P1 from 08-tasks.md. Stop when its 'done when' checks pass."* Then T-P2 is already done in this package; continue with T-01, T-02… one task per prompt, reviewing each.
+3. Each person reads `09-work-split.md` and takes only their part's tasks. Ask Claude Code: *"I am Alexandre (Part A) / Alfred (Part B). Read docs/build-package/README.md and 09-work-split.md, then do task T-P1 from 08-tasks.md. Stop when its 'done when' checks pass."* Then T-P2 is already done in this package; continue with T-01, T-02… one task per prompt, reviewing each.
 4. From T-21 on, test the agent with the mock LLM first, then live on `kumo-mini`, then on the real data on Aiven.
 
 ## Known open points

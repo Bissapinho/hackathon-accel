@@ -1,5 +1,7 @@
 # 08 — Tasks for Claude Code
 
+> **Read `09-work-split.md` first.** Every task below has one owner there (Alexandre = Part A, Alfred = Part B); take only your own.
+
 Ordered so that something works at the end of every block. Each task is sized for one focused Claude Code session (≈30–90 min). "Done when" = the checks to run before moving on. Test ids refer to `07-acceptance-tests.md`.
 
 ## Block P — Before the hackathon
@@ -84,4 +86,4 @@ Ordered so that something works at the end of every block. Each task is sized fo
 | T-33 | Evolution: trigger, run, judge gate, `adopt_semantic_version`          | A candidate is offered only after winning the gate |
 
 
-**Front end:** built by another team against `04-api.md` and `06-screens.md`; no UI task is in this list. With 3 people in parallel (Block 1 + Block 2, Block 3 + Block 4, Block 5 tools/prompts can start once T-03, T-09 and T-11 exist), it fits two days, with the stretch block as the buffer.
+**Front end:** built by another team against `04-api.md` and `06-screens.md`; no UI task is in this list. **Parallel work:** two people, Alexandre (Part A) and Alfred (Part B), split as described in `09-work-split.md`; the stretch block is the buffer.

@@ -2,6 +2,15 @@
 
 Copy this file to the root of the new repository. It tells Claude Code how this project works.
 
+## ⚠️ Mandatory before any task: the work split
+
+Two people build this on two machines: **Alexandre owns Part A (data platform)** and **Alfred owns Part B (semantics and agent)**. Before starting any task, **read `docs/build-package/09-work-split.md`**, then:
+
+1. Find out which part this session works on: ask the user if it isn't obvious from the request or from `git config user.name`.
+2. Only take tasks of that part (09 §2) and only edit that part's files (09 §3).
+3. Never edit the other part's files. If the task needs a change there, or in a shared contract (`packages/shared/`, `ports.ts`, `agent/tools/types.ts`, `db/readonly.ts`, migrations, `tools/catalog.json`), stop and say what must change so the owner can do it (09 §6.2).
+4. Where the two parts meet, code against the contract and stub of 09 §4, never against the other part's implementation.
+
 ## What we're building
 
 The **server** of a reduced data-and-ontology platform where a **non-technical user turns their company's data into something they can trust and act on by chatting with an AI agent**, on Kumo's NetSuite 2025 exports: upload files → the agent agrees questions with the user and builds the **meaning** of the data (EvoOntology semantic bank, with evidence) → it builds **pipelines, object types and links** on that meaning → it adds **logic and actions** → the user approves each publish → the agent verifies and explains. The front end is built by another team against our API. Specs live in `docs/build-package/`. Read `02-slice-and-demo.md` first, then the spec for the area you're touching.
