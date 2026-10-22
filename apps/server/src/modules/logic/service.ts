@@ -5,6 +5,7 @@ import type { Db } from '../../db/index.js';
 import { withReadOnly } from '../../db/readonly.js';
 import type { DB } from '../../db/types.js';
 import { ApiError } from '../../errors.js';
+import type { WorkspaceService } from '../workspace/service.js';
 import { compileLogicItem, compileLogicView, LogicCompileError, type LogicView } from './compile.js';
 import { findMember, findType, type LogicDoc } from './model.js';
 import { ParamSink, PG_TYPE, q, sqlName } from './sqltext.js';
@@ -23,6 +24,8 @@ export async function buildLogicViews(trx: Kysely<DB>, doc: LogicDoc): Promise<L
       details: errors,
     });
   }
+  // Views created here are owned by mini_app, so mini_reader's default privileges apply (as for uploads).
+  await sql`SET LOCAL ROLE mini_app`.execute(trx);
   const keep = new Set(views.map((v) => sqlName(v.objectType)));
   const existing = await sql<{ viewname: string }>`SELECT viewname FROM pg_views WHERE schemaname = 'logic'`.execute(trx);
   for (const { viewname } of existing.rows) {
@@ -106,18 +109,10 @@ export async function testLogic(doc: LogicDoc, req: LogicTestRequest, opts: { ti
   }
 }
 
-export function createLogicService(deps: { db: Db; config: Config }) {
-  // The project's workspace draft (meta.workspace_drafts, owned by the workspace module).
+export function createLogicService(deps: { db: Db; config: Config; workspace: Pick<WorkspaceService, 'getDraft'> }) {
+  // The project's workspace draft, read through the workspace service.
   async function getDraftDoc(projectId: string): Promise<WorkspaceDoc> {
-    const row = await sql<{ doc: WorkspaceDoc }>`
-      SELECT doc FROM meta.workspace_drafts WHERE project_id = ${projectId}`.execute(deps.db);
-    const doc = row.rows[0]?.doc;
-    if (!doc) {
-      throw new ApiError(404, 'NOT_FOUND', 'The workspace draft was not found: nothing has been drafted in this project yet.', {
-        hint: 'Add object types and logic to the draft first.',
-      });
-    }
-    return doc;
+    return (await deps.workspace.getDraft(projectId)).doc;
   }
 
   return {

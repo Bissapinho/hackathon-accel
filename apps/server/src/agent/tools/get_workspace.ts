@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { entityKindSchema } from '../../modules/workspace/schemas.js';
 import { findEntity, inventory } from '../../modules/workspace/service.js';
-import { asTool } from './part-a-helpers.js';
+import { runTool } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 export const getWorkspace = defineTool({
@@ -15,7 +15,7 @@ export const getWorkspace = defineTool({
     inventoryOnly: z.boolean().default(false),
   }),
   run: (input, ctx) =>
-    asTool(ctx, 'read', async () => {
+    runTool(ctx, 'read', async () => {
       const ws = ctx.services.workspace;
       const draft = input.which === 'draft' ? await ws.getDraft(ctx.projectId) : null;
       const doc = draft?.doc ?? (await ws.readDoc(ctx.projectId, 'published'));

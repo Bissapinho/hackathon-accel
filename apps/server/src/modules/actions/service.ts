@@ -17,14 +17,15 @@ import { sql, type Kysely, type RawBuilder } from 'kysely';
 import type { Db, DB } from '../../db/index.js';
 import { ident, qualified } from '../../db/ident.js';
 import { ApiError, notFound } from '../../errors.js';
+import { toSqlName } from '../objects/model.js';
 import type { User } from '../resources/schemas.js';
+import type { WorkspaceService } from '../workspace/service.js';
 import {
   checkParams,
   coerceValue,
   evaluateCompare,
   evaluateValue,
   renderTemplate,
-  sqlName,
   type ObjectValues,
   type RunContext,
   type Scalar,
@@ -76,7 +77,7 @@ class Rollback extends Error {
 // capacity criterion.
 const ACTION_LOCK_NS = 734_019;
 
-export function createActionsService(db: Db) {
+export function createActionsService(db: Db, workspace: Pick<WorkspaceService, 'getDraft'>) {
   // ── Definitions ──
 
   async function publishedDefinitions(projectId: string): Promise<Definitions> {
@@ -91,11 +92,7 @@ export function createActionsService(db: Db) {
   }
 
   async function draftDefinitions(projectId: string): Promise<Definitions> {
-    const row = await sql<{ doc: WorkspaceDoc }>`
-      SELECT doc FROM meta.workspace_drafts WHERE project_id = ${projectId}`.execute(db);
-    const r = row.rows[0];
-    if (!r) throw notFound('The workspace draft', 'this project has no draft yet', 'Add an action to the draft first.');
-    return { doc: r.doc, workspaceVersion: 0 };
+    return { doc: (await workspace.getDraft(projectId)).doc, workspaceVersion: 0 };
   }
 
   function findAction(defs: Definitions, apiName: string, where: string): ActionTypeDef {
@@ -358,13 +355,13 @@ export function createActionsService(db: Db) {
       }
       const value = evaluateValue(valueExpr, ctx);
       if (value === null) {
-        conditions.push(sql`${ident(sqlName(property))} IS NULL`);
+        conditions.push(sql`${ident(toSqlName(property))} IS NULL`);
       } else {
-        conditions.push(sql`${ident(sqlName(property))}::text = ${String(value)}`);
+        conditions.push(sql`${ident(toSqlName(property))}::text = ${String(value)}`);
       }
       described.push(`${property} = ${value === null ? 'empty' : String(value)}`);
     }
-    const pkCol = ident(sqlName(type.primaryKey));
+    const pkCol = ident(toSqlName(type.primaryKey));
     const rows = await sql<{ pk: string }>`
       SELECT o.${pkCol}::text AS pk FROM ${view} o WHERE ${sql.join(conditions, sql` AND `)} LIMIT 2`.execute(trx);
     if (rows.rows.length === 0) {
@@ -403,13 +400,13 @@ export function createActionsService(db: Db) {
       const typed = typedValues(type, rule.set, ctx, path);
       if ('error' in typed) return typed;
       const pkProp = type.properties.find((p) => p.apiName === type.primaryKey)!;
-      const allValues: Record<string, Scalar> = { [sqlName(pkProp.apiName)]: pk };
+      const allValues: Record<string, Scalar> = { [toSqlName(pkProp.apiName)]: pk };
       for (const v of typed.values) allValues[v.column] = v.value;
       const editable = typed.values.filter((v) => v.editable);
       const cols = editable.map((v) => ident(v.column));
       const vals = editable.map((v) => sql`CAST(${v.value} AS ${sql.raw(PG_TYPE[v.type])})`);
       const nulls = editable.filter((v) => v.value === null).map((v) => v.column);
-      const table = qualified('edits', sqlName(type.apiName));
+      const table = qualified('edits', toSqlName(type.apiName));
       const extraCols = cols.length ? sql`, ${sql.join(cols)}` : sql``;
       const extraVals = vals.length ? sql`, ${sql.join(vals)}` : sql``;
       const extraSets = editable.length
@@ -432,7 +429,7 @@ export function createActionsService(db: Db) {
       return { error: { path: `${path}.object`, code: 'REQUIRED', message: `Choose an object for "${rule.object}".` } };
     }
     const type = typeDef(doc, obj.ref.objectType)!;
-    const table = qualified('edits', sqlName(type.apiName));
+    const table = qualified('edits', toSqlName(type.apiName));
     const pk = obj.ref.primaryKey;
 
     if (rule.kind === 'deleteObject') {
@@ -470,7 +467,7 @@ export function createActionsService(db: Db) {
 
   // logic.<t> when it exists (derived properties and rules), else ont.<t>.
   async function objectView(trx: Trx, type: ObjectTypeDef): Promise<RawBuilder<unknown>> {
-    const name = sqlName(type.apiName);
+    const name = toSqlName(type.apiName);
     const logic = qualified('logic', name);
     const found = await sql<{ ok: boolean }>`SELECT to_regclass(${`logic.${name}`}) IS NOT NULL AS ok`.execute(trx);
     return found.rows[0]?.ok ? logic : qualified('ont', name);
@@ -478,15 +475,15 @@ export function createActionsService(db: Db) {
 
   async function readObject(trx: Trx, doc: WorkspaceDoc, type: ObjectTypeDef, primaryKey: string): Promise<ObjectValues | null> {
     const view = await objectView(trx, type);
-    const pkCol = ident(sqlName(type.primaryKey));
+    const pkCol = ident(toSqlName(type.primaryKey));
     const res = await sql<{ row: Record<string, unknown> }>`
       SELECT to_jsonb(o) AS row FROM ${view} o WHERE o.${pkCol}::text = ${primaryKey} LIMIT 1`.execute(trx);
     const row = res.rows[0]?.row;
     if (!row) return null;
     const values: ObjectValues = {};
-    for (const p of type.properties) values[p.apiName] = row[sqlName(p.apiName)] ?? null;
+    for (const p of type.properties) values[p.apiName] = row[toSqlName(p.apiName)] ?? null;
     for (const l of doc.logic ?? []) {
-      if (l.objectType === type.apiName && sqlName(l.apiName) in row) values[l.apiName] = row[sqlName(l.apiName)];
+      if (l.objectType === type.apiName && toSqlName(l.apiName) in row) values[l.apiName] = row[toSqlName(l.apiName)];
     }
     return values;
   }
@@ -651,7 +648,7 @@ function typedValues(
         },
       };
     }
-    values.push({ column: sqlName(property), type: prop.type, value: coerced.value, editable: prop.editable });
+    values.push({ column: toSqlName(property), type: prop.type, value: coerced.value, editable: prop.editable });
   }
   return { values };
 }

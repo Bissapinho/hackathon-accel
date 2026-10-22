@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ApiError } from '../../errors.js';
+import { toToolError } from './tool-result.js';
 import { logicTestRequestSchema } from '../../modules/logic/schemas.js';
 import { defineTool, rationaleSchema } from './types.js';
 
@@ -32,8 +32,7 @@ export const testLogicTool = defineTool({
         result: res.rows,
       };
     } catch (err) {
-      if (err instanceof ApiError) return { ok: false, code: err.code, message: err.message, hint: err.extra.hint };
-      throw err;
+      return toToolError(err);
     }
   },
 });

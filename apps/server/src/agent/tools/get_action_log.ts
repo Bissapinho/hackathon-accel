@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { objectRefSchema } from '../../modules/actions/schemas.js';
-import { asToolResult } from './action-support.js';
+import { asToolResult } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 // Recent action runs: who, when, what changed on which objects, status.

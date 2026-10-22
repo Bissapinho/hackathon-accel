@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { asToolResult, runToolResult } from './action-support.js';
+import { runToolResult } from './action-support.js';
+import { asToolResult } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 // Dry-run of the DRAFT definition of an action against current objects; nothing is written.

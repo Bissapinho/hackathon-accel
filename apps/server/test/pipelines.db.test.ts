@@ -72,11 +72,14 @@ beforeAll(async () => {
   ).id;
   await t.db.insertInto('meta.project_members').values({ project_id: projectId, user_id: adaId, role: 'owner' }).execute();
 
-  await sql`CREATE TABLE ${sql.id('data', dsTable)} (no_transaction text, quantite bigint, id_client text, code text, _row integer)`.execute(t.db);
-  for (const [i, r] of rows.entries()) {
-    await sql`INSERT INTO ${sql.id('data', dsTable)} VALUES (${r[0]}, ${r[1]}, ${r[2]}, ${r[3]}, ${i + 1})`.execute(t.db);
-  }
-  await sql`GRANT SELECT ON ${sql.id('data', dsTable)} TO mini_reader`.execute(t.db);
+  // As an upload does: owned by mini_app, so mini_reader gets SELECT by default privileges.
+  await t.db.transaction().execute(async (trx) => {
+    await sql`SET LOCAL ROLE mini_app`.execute(trx);
+    await sql`CREATE TABLE ${sql.id('data', dsTable)} (no_transaction text, quantite bigint, id_client text, code text, _row integer)`.execute(trx);
+    for (const [i, r] of rows.entries()) {
+      await sql`INSERT INTO ${sql.id('data', dsTable)} VALUES (${r[0]}, ${r[1]}, ${r[2]}, ${r[3]}, ${i + 1})`.execute(trx);
+    }
+  });
   datasetId = (
     await sql<{ id: string }>`INSERT INTO meta.datasets (project_id, short_id, name, current_version, created_by)
       VALUES (${projectId}, ${shortId}, 'COMMANDES_NETSUITE_2025', 1, ${adaId}) RETURNING id`.execute(t.db)
@@ -206,7 +209,7 @@ describe('T-12 data validation (W2 pipeline codes)', () => {
 describe('T-12 build (called by publish)', () => {
   it('materializes the output, records the build, skips when up to date, rebuilds on change', async () => {
     const svc = t.ctx.services.pipelines;
-    const [first] = await svc.buildPipeline(t.db, { projectId, def: commandes, workspaceVersion: 1 });
+    const [first] = await t.db.transaction().execute((trx) => svc.buildPipeline(trx, { projectId, def: commandes, workspaceVersion: 1 }));
     createdTables.push(first!.tableName);
     expect(first).toMatchObject({ status: 'built', rowCount: 3, tableName: 'data.pl_commandes_commandes_v1', inputVersions: { [datasetId]: 1 } });
     expect(first!.checks).toEqual([expect.objectContaining({ ok: true })]);
@@ -217,11 +220,11 @@ describe('T-12 build (called by publish)', () => {
     );
     expect(count.rows[0]!.n).toBe(3);
 
-    const [second] = await svc.buildPipeline(t.db, { projectId, def: commandes, workspaceVersion: 2 });
+    const [second] = await t.db.transaction().execute((trx) => svc.buildPipeline(trx, { projectId, def: commandes, workspaceVersion: 2 }));
     expect(second).toMatchObject({ status: 'upToDate', tableName: first!.tableName, rowCount: 3, workspaceVersion: 2 });
 
     const changed: PipelineDef = { ...commandes, description: 'changed' };
-    const [third] = await svc.buildPipeline(t.db, { projectId, def: changed, workspaceVersion: 3 });
+    const [third] = await t.db.transaction().execute((trx) => svc.buildPipeline(trx, { projectId, def: changed, workspaceVersion: 3 }));
     createdTables.push(third!.tableName);
     expect(third).toMatchObject({ status: 'built', tableName: 'data.pl_commandes_commandes_v2' });
 
@@ -235,7 +238,7 @@ describe('T-12 build (called by publish)', () => {
   });
 
   it('a failing check marks the build failed', async () => {
-    const [b] = await t.ctx.services.pipelines.buildPipeline(t.db, { projectId, def: lignes, workspaceVersion: 1 });
+    const [b] = await t.db.transaction().execute((trx) => t.ctx.services.pipelines.buildPipeline(trx, { projectId, def: lignes, workspaceVersion: 1 }));
     createdTables.push(b!.tableName);
     expect(b).toMatchObject({ status: 'failed', rowCount: 9 });
     expect(b!.checks[0]!.ok).toBe(false);

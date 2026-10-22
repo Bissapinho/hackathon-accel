@@ -1,7 +1,7 @@
 import type { ActionTypeDef, ObjectTypeDef, PropertyDef, WorkspaceDoc } from '@mini/shared';
 import { sql } from 'kysely';
 import type { Db } from '../src/db/index.js';
-import { sqlName } from '../src/modules/actions/evaluate.js';
+import { toSqlName as sqlName } from '../src/modules/objects/model.js';
 
 // A tiny Kumo-shaped world for the action tests: lots of production, kitchen-days with a capacity,
 // clients, articles and unsold declarations. Publish (T-14) isn't built yet, so the tables and views it

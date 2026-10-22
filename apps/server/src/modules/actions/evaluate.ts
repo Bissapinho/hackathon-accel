@@ -11,15 +11,6 @@ import type {
 // Pure part of the action engine: parameter coercion, value expressions, comparisons and message
 // templates. No database here, so it is unit-tested without Postgres.
 
-// snake_case SQL name of an API name (03-data-model §8): CuisineJour → cuisine_jour, lieuProduction → lieu_production.
-// TODO(merge): use the shared naming helper once the workspace module exports one.
-export function sqlName(apiName: string): string {
-  return apiName
-    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-    .toLowerCase();
-}
-
 export type Scalar = string | number | boolean | null;
 export type ObjectValues = Record<string, unknown>; // one object, keyed by property / logic API name
 

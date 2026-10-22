@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { asTool, countLine } from './part-a-helpers.js';
+import { runTool, countLine } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 export const validateDraft = defineTool({
@@ -8,7 +8,7 @@ export const validateDraft = defineTool({
   risk: 'draft',
   input: z.object({ rationale: rationaleSchema }),
   run: (_input, ctx) =>
-    asTool(ctx, 'write', async () => {
+    runTool(ctx, 'write', async () => {
       const validation = await ctx.services.workspace.validateDraft(ctx.projectId);
       const verdict = validation.errors.length ? 'not publishable yet' : 'publishable';
       return { summary: `Draft is ${verdict}: ${countLine(validation)}`, result: validation };

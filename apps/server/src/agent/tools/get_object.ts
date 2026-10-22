@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { runTool } from './result.alexandre.js';
+import { runTool } from './tool-result.js';
 import { defineTool, rationaleSchema } from './types.js';
 
 export const getObject = defineTool({

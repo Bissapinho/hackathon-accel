@@ -20,15 +20,23 @@ export function buildAlexandreServices(deps: AppDeps) {
     onProfileDone: deps.onProfileDone,
     kickJobs: () => jobs.kick(),
   });
+  // Data checks of workspace validation (T-13) run through the pipelines service, which reads the draft
+  // through the workspace service: the checker is bound late to break that cycle.
+  const workspace = createWorkspaceService({
+    db: deps.db,
+    semantics: deps.semantics,
+    dataChecker: { check: (doc, ctx) => pipelines.checkWorkspaceData(doc, ctx) },
+  });
+  const pipelines = createPipelinesService({ db: deps.db, config: deps.config, workspace });
   jobs.setHandler('profile', (versionId, progress) => datasets.runProfileJob(versionId, progress));
   return {
     resources,
     jobs,
     datasets,
-    pipelines: createPipelinesService({ db: deps.db, config: deps.config }),
-    logic: createLogicService({ db: deps.db, config: deps.config }),
+    pipelines,
+    logic: createLogicService({ db: deps.db, config: deps.config, workspace }),
     objects: createObjectsService(deps.db),
-    actions: createActionsService(deps.db),
-    workspace: createWorkspaceService({ db: deps.db, semantics: deps.semantics }),
+    actions: createActionsService(deps.db, workspace),
+    workspace,
   };
 }

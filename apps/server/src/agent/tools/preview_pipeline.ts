@@ -1,20 +1,6 @@
 import { z } from 'zod';
-import { ApiError } from '../../errors.js';
-import { defineTool, rationaleSchema, type ToolResult } from './types.js';
-
-// Errors are returned, never thrown (05-agent §3).
-function toToolError(err: unknown): ToolResult {
-  if (err instanceof ApiError) {
-    const details = err.extra.details?.map((d) => `${d.path}: ${d.message}`).join('\n');
-    return {
-      ok: false,
-      code: err.code,
-      message: details ? `${err.message}\n${details}` : err.message,
-      ...(err.extra.hint ? { hint: err.extra.hint } : {}),
-    };
-  }
-  return { ok: false, code: 'INTERNAL', message: (err as Error).message };
-}
+import { toToolError } from './tool-result.js';
+import { defineTool, rationaleSchema } from './types.js';
 
 export const previewPipelineTool = defineTool({
   name: 'preview_pipeline',

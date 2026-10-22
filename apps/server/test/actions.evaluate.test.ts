@@ -7,9 +7,9 @@ import {
   evaluateCompare,
   evaluateValue,
   renderTemplate,
-  sqlName,
   type RunContext,
 } from '../src/modules/actions/evaluate.js';
+import { toSqlName } from '../src/modules/objects/model.js';
 import { checkRules } from '../src/modules/actions/service.js';
 import { kumoActionsDoc } from './actions-world.js';
 
@@ -17,13 +17,13 @@ const base = { currentUser: 'Ada', now: '2025-10-13T08:00:00.000Z' };
 const doc: WorkspaceDoc = kumoActionsDoc();
 const reaffecter = doc.actionTypes.find((a) => a.apiName === 'ReaffecterProduction')!;
 
-describe('sqlName', () => {
+describe('toSqlName', () => {
   it('turns API names into snake_case SQL names', () => {
-    expect(sqlName('CuisineJour')).toBe('cuisine_jour');
-    expect(sqlName('lieuProduction')).toBe('lieu_production');
-    expect(sqlName('tauxRetour')).toBe('taux_retour');
-    expect(sqlName('LotProduction')).toBe('lot_production');
-    expect(sqlName('id')).toBe('id');
+    expect(toSqlName('CuisineJour')).toBe('cuisine_jour');
+    expect(toSqlName('lieuProduction')).toBe('lieu_production');
+    expect(toSqlName('tauxRetour')).toBe('taux_retour');
+    expect(toSqlName('LotProduction')).toBe('lot_production');
+    expect(toSqlName('id')).toBe('id');
   });
 });
 
