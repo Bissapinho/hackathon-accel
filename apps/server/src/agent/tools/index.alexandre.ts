@@ -1,12 +1,18 @@
 import { aggregateObjects } from './aggregate_objects.js';
+import { diffDraft } from './diff_draft.js';
+import { discardDraft } from './discard_draft.js';
+import { editDraft } from './edit_draft.js';
 import { getActionLogTool } from './get_action_log.js';
 import { getObject } from './get_object.js';
+import { getWorkspace } from './get_workspace.js';
 import { previewPipelineTool } from './preview_pipeline.js';
 import { queryObjects } from './query_objects.js';
 import { runActionTool } from './run_action.js';
+import { searchOntologyTool } from './search_ontology.js';
 import { testActionTool } from './test_action.js';
 import { testLogicTool } from './test_logic.js';
 import type { AnyToolDef } from './types.js';
+import { validateDraft } from './validate_draft.js';
 
 // Part A agent tools (owner: Alexandre, 09 §5). One file per tool in this folder, listed here.
 export const alexandreTools: AnyToolDef[] = [
@@ -18,4 +24,10 @@ export const alexandreTools: AnyToolDef[] = [
   aggregateObjects,
   getObject,
   getActionLogTool,
+  getWorkspace,
+  searchOntologyTool,
+  editDraft,
+  validateDraft,
+  diffDraft,
+  discardDraft,
 ];

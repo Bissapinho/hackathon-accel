@@ -4,9 +4,11 @@ import { registerActionRoutes } from './modules/actions/routes.js';
 import { registerLogicRoutes } from './modules/logic/routes.js';
 import { registerObjectRoutes } from './modules/objects/routes.js';
 import { registerPipelineRoutes } from './modules/pipelines/routes.js';
+import { registerWorkspaceRoutes } from './modules/workspace/routes.js';
 
 // Part A routes (owner: Alexandre): datasets, jobs, workspace, pipelines, objects, logic, actions.
 export async function registerAlexandre(app: FastifyInstance, ctx: AppContext): Promise<void> {
+  registerWorkspaceRoutes(app, { workspace: ctx.services.workspace, resources: ctx.services.resources });
   registerPipelineRoutes(app, ctx.services);
   registerLogicRoutes(app, ctx.services);
   registerObjectRoutes(app, ctx.services);
