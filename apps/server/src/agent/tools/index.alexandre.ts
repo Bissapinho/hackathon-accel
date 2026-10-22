@@ -10,6 +10,7 @@ import { listDatasets } from './list_datasets.js';
 import { previewDataset } from './preview_dataset.js';
 import { previewPipelineTool } from './preview_pipeline.js';
 import { profileColumns } from './profile_columns.js';
+import { publishDraftTool } from './publish_draft.js';
 import { queryObjects } from './query_objects.js';
 import { runActionTool } from './run_action.js';
 import { searchOntologyTool } from './search_ontology.js';
@@ -38,4 +39,5 @@ export const alexandreTools: AnyToolDef[] = [
   validateDraft,
   diffDraft,
   discardDraft,
+  publishDraftTool,
 ];

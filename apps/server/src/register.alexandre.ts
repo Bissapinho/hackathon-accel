@@ -6,6 +6,7 @@ import { registerJobRoutes } from './modules/jobs/routes.js';
 import { registerLogicRoutes } from './modules/logic/routes.js';
 import { registerObjectRoutes } from './modules/objects/routes.js';
 import { registerPipelineRoutes } from './modules/pipelines/routes.js';
+import { registerPublishRoutes } from './modules/workspace/publish-routes.js';
 import { registerWorkspaceRoutes } from './modules/workspace/routes.js';
 
 // Part A routes (owner: Alexandre): datasets, jobs, workspace, pipelines, objects, logic, actions.
@@ -14,6 +15,7 @@ export async function registerAlexandre(app: FastifyInstance, ctx: AppContext): 
   registerDatasetRoutes(app, { datasets, resources, dataDir: ctx.config.DATA_DIR });
   registerJobRoutes(app, jobs);
   registerWorkspaceRoutes(app, { workspace: ctx.services.workspace, resources });
+  registerPublishRoutes(app, { publish: ctx.services.publish, resources });
   registerPipelineRoutes(app, ctx.services);
   registerLogicRoutes(app, ctx.services);
   registerObjectRoutes(app, ctx.services);
