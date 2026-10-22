@@ -1,0 +1,103 @@
+{
+  "seed": 20251014,
+  "files": {
+    "CLIENTS_NETSUITE.csv": 20,
+    "ARTICLES_NETSUITE.csv": 30,
+    "COMMANDES_NETSUITE_2025.csv.gz": 1514,
+    "FACTURES_AVOIRS_2025.csv": 37,
+    "MERCURIALES_NETSUITE.csv": 40,
+    "APP_COMMANDES_2025.csv": 40,
+    "APP_STOCKS_2025.csv": 40,
+    "APP_KIOSQUE_INVENDUS_2025.csv": 30,
+    "APP_KIOSQUE_PRODUCTION_2025.csv": 20,
+    "IMPORTS_NETSUITE_2025.csv": 40,
+    "MIX_PRODUIT_EXPORTS_2025.csv": 40,
+    "ETAGERES_CORRESPONDANCE.csv": 8,
+    "ETAGERES_MESURES_2025.csv": 50,
+    "CUISINES_REFERENTIEL.csv": 3,
+    "CAPACITE_CUISINES_JOUR_2025.csv": 180,
+    "STOCKS_MAGASINS_JOUR_2025.csv": 50
+  },
+  "clients": {
+    "count": 20,
+    "inactive": [
+      "C0269",
+      "C0608"
+    ],
+    "withoutDocuments": [
+      "C0086",
+      "C0686"
+    ],
+    "zones": {
+      "IDF": 14,
+      "LYON": 6
+    }
+  },
+  "articles": {
+    "count": 30,
+    "inactive": [
+      "A0406",
+      "A0804"
+    ]
+  },
+  "orderLines": {
+    "lines": 1514,
+    "soDocuments": 120,
+    "rmaDocuments": 60,
+    "soLines": 1109,
+    "rmaLines": 405,
+    "lieuProductionNulls": 989,
+    "unknownArticleLines": [
+      {
+        "No_Transaction": "SO-098109",
+        "article": "A1158"
+      }
+    ],
+    "productionLots": 437
+  },
+  "kitchens": [
+    "Gennevilliers",
+    "Frepillon",
+    "Draveil"
+  ],
+  "kitchenDays": {
+    "count": 90,
+    "days": [
+      "2025-10-01",
+      "2025-10-30"
+    ],
+    "overCapacity": [
+      "Draveil|2025-10-07",
+      "Frepillon|2025-10-14",
+      "Gennevilliers|2025-10-23"
+    ]
+  },
+  "demoDay": {
+    "date": "2025-10-14",
+    "Gennevilliers": {
+      "capacite": 47,
+      "charge": 37,
+      "spare": 10
+    },
+    "Frepillon": {
+      "capacite": 36,
+      "charge": 44
+    },
+    "Draveil": {
+      "capacite": 45,
+      "charge": 27
+    },
+    "lot6": {
+      "lieuProduction": "Frepillon",
+      "dateProduction": "2025-10-14",
+      "article": "A0481",
+      "quantity": 6
+    },
+    "lot15": {
+      "lieuProduction": "Frepillon",
+      "dateProduction": "2025-10-14",
+      "article": "A0621",
+      "quantity": 15
+    }
+  }
+}

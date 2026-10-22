@@ -1,0 +1,41 @@
+niveau_de_prix,article_id_interne,article,nom_affichage,nom_mercuriale,inactif,article_actif,article_affilie_bdd,grande_famille_produit,famille_produit,groupe_produit,dlc,poids,id_interne_catalogue
+NP05,A0009,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,false,true,A0009,1.0,1.0,,4,350g,CAT37
+NP05,A0081,Poulet Coco Citronnelle,Poulet Coco Citronnelle,Poulet Coco Citronnelle,false,true,A0081,1.0,15.0,7,3,350g,CAT32
+NP05,A0273,Boule de Riz Thon Ciboulette,Boule de Riz Thon Ciboulette,Boule de Riz Thon Ciboulette,false,true,A0273,7.0,50.0,,1,120g,CAT29
+NP05,A0376,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,false,true,A0376,13.0,85.0,,3,380g,CAT37
+NP05,A0583,Salade Lentilles Feta,Salade Lentilles Feta,Salade Lentilles Feta,false,true,A0583,17.0,120.0,6,3,250g,CAT29
+NP05,A0621,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,false,true,A0621,17.0,113.0,2,4,180g,CAT32
+NP05,A1065,Bao Légumes Laqués,Bao Légumes Laqués,Bao Légumes Laqués,false,true,A1065,1.0,36.0,7,3,140g,CAT37
+NP05,A1081,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,false,true,A1081,11.0,37.0,1,,,CAT37
+NP07,A0009,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,false,true,A0009,1.0,1.0,11,4,350g,CAT32
+NP07,A0288,Boule de Riz Poulet Sésame,Boule de Riz Poulet Sésame,Boule de Riz Poulet Sésame,false,true,A0288,7.0,50.0,4,1,120g,CAT29
+NP07,A0300,Bol Saumon Mangue,Bol Saumon Mangue,Bol Saumon Mangue,false,true,A0300,4.0,22.0,5,3,330g,CAT32
+NP07,A0406,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,true,false,A0406,13.0,85.0,7,3,400g,CAT29
+NP07,A0481,Taboulé Menthe Citron,Taboulé Menthe Citron,Taboulé Menthe Citron,false,true,A0481,17.0,120.0,9,3,250g,CAT32
+NP22,A0188,Maki Concombre Menthe (8 pcs),Maki Concombre Menthe (8 pcs),Maki Concombre Menthe (8 pcs),false,true,A0188,7.0,43.0,8,1,180g,CAT37
+NP22,A0481,Taboulé Menthe Citron,Taboulé Menthe Citron,Taboulé Menthe Citron,false,true,A0481,17.0,120.0,10,3,250g,CAT37
+NP22,A0583,Salade Lentilles Feta,Salade Lentilles Feta,Salade Lentilles Feta,false,true,A0583,17.0,120.0,2,3,250g,CAT32
+NP22,A0797,Brochettes Poulet Citron (3 pcs),Brochettes Poulet Citron (3 pcs),Brochettes Poulet Citron (3 pcs),false,true,A0797,1.0,36.0,6,4,180g,CAT32
+NP22,A1125,Limonade Gingembre 33cl,Limonade Gingembre 33cl,Limonade Gingembre 33cl,false,true,A1125,11.0,37.0,,,,CAT37
+NP27,A0009,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,Riz Sauté Légumes Croquants,false,true,A0009,1.0,1.0,7,4,350g,CAT29
+NP27,A0043,Nouilles Bœuf Gingembre,Nouilles Bœuf Gingembre,Nouilles Bœuf Gingembre,false,true,A0043,1.0,1.0,9,3,350g,CAT32
+NP27,A0149,Curry Vert Légumes du Marché,Curry Vert Légumes du Marché,Curry Vert Légumes du Marché,false,true,A0149,1.0,15.0,9,3,350g,CAT29
+NP27,A0360,Hachis Parmentier Maison,Hachis Parmentier Maison,Hachis Parmentier Maison,false,true,A0360,13.0,85.0,,4,380g,CAT29
+NP27,A0376,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,false,true,A0376,13.0,85.0,2,3,380g,CAT29
+NP27,A0406,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,true,false,A0406,13.0,85.0,7,3,400g,CAT29
+NP27,A0797,Brochettes Poulet Citron (3 pcs),Brochettes Poulet Citron (3 pcs),Brochettes Poulet Citron (3 pcs),false,true,A0797,1.0,36.0,,4,180g,CAT32
+NP27,A1081,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,false,true,A1081,11.0,37.0,2,,,CAT29
+NP42,A0188,Maki Concombre Menthe (8 pcs),Maki Concombre Menthe (8 pcs),Maki Concombre Menthe (8 pcs),false,true,A0188,7.0,43.0,11,1,180g,CAT29
+NP42,A0273,Boule de Riz Thon Ciboulette,Boule de Riz Thon Ciboulette,Boule de Riz Thon Ciboulette,false,true,A0273,7.0,50.0,,1,120g,CAT29
+NP42,A0300,Bol Saumon Mangue,Bol Saumon Mangue,Bol Saumon Mangue,false,true,A0300,4.0,22.0,,3,330g,CAT32
+NP42,A0621,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,false,true,A0621,17.0,113.0,6,4,180g,CAT29
+NP42,A0804,Crumble Pomme Cannelle,Crumble Pomme Cannelle,Crumble Pomme Cannelle,true,false,A0804,6.0,2.0,7,4,120g,CAT29
+NP62,A0043,Nouilles Bœuf Gingembre,Nouilles Bœuf Gingembre,Nouilles Bœuf Gingembre,false,true,A0043,1.0,1.0,10,3,350g,CAT37
+NP62,A0117,Bol Tofu Sésame Grillé,Bol Tofu Sésame Grillé,Bol Tofu Sésame Grillé,false,true,A0117,4.0,22.0,8,3,320g,CAT32
+NP62,A0298,Assortiment Saumon Agrumes (9 pcs),Assortiment Saumon Agrumes (9 pcs),Assortiment Saumon Agrumes (9 pcs),false,true,A0298,7.0,64.0,,3,250g,CAT32
+NP62,A0376,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,Lasagnes Légumes Ricotta,false,true,A0376,13.0,85.0,6,3,380g,CAT37
+NP62,A0406,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,Couscous Légumes Pois Chiches,true,false,A0406,13.0,85.0,1,3,400g,CAT37
+NP62,A0621,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,Quiche Poireaux Chèvre,false,true,A0621,17.0,113.0,6,4,180g,CAT37
+NP62,A0705,Porc Caramel Riz Jasmin,Porc Caramel Riz Jasmin,Porc Caramel Riz Jasmin,false,true,A0705,1.0,15.0,3,3,350g,CAT37
+NP62,A0834,Riz au Lait Vanille,Riz au Lait Vanille,Riz au Lait Vanille,false,true,A0834,6.0,2.0,11,3,120g,CAT37
+NP62,A1081,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,Thé Glacé Pêche Basilic 33cl,false,true,A1081,11.0,37.0,6,,,CAT29

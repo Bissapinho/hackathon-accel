@@ -1,0 +1,3977 @@
+{
+  "browse": [
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "T_net_income",
+          "name": "net_income",
+          "type": "metric",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "income",
+              "net"
+            ]
+          }
+        }
+      ],
+      "matched_total": 1,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "needs_query",
+      "items": [],
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Provide a specific query. Full-catalog enumeration is disabled."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "T_return_rate",
+          "name": "return rate",
+          "type": "metric",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "return",
+              "store"
+            ]
+          }
+        },
+        {
+          "id": "T_region",
+          "name": "region",
+          "type": "dimension",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "store"
+            ]
+          }
+        },
+        {
+          "id": "T_return",
+          "name": "return",
+          "type": "entity",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "T_store",
+          "name": "store",
+          "type": "entity",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "store"
+            ]
+          }
+        },
+        {
+          "id": "T_store_count",
+          "name": "store count",
+          "type": "metric",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "store"
+            ]
+          }
+        }
+      ],
+      "matched_total": 5,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "C_return_base",
+          "name": "business_rule",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "C_rma_negative",
+          "name": "data_quality",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "M_return",
+          "name": "T_return -> ORDERS",
+          "type": "mapping",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "R_return_rate_return",
+          "name": "derivation",
+          "type": "relation",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "T_return",
+          "name": "return",
+          "type": "entity",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "T_return_rate",
+          "name": "return rate",
+          "type": "metric",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        }
+      ],
+      "matched_total": 6,
+      "catalog_total": 22,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "C_return_base",
+          "name": "business_rule",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        },
+        {
+          "id": "C_rma_negative",
+          "name": "data_quality",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "return"
+            ]
+          }
+        }
+      ],
+      "matched_total": 6,
+      "catalog_total": 22,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "T_weekly_sales",
+          "name": "weekly sales",
+          "type": "metric",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "sale",
+              "weekly"
+            ]
+          }
+        },
+        {
+          "id": "T_client_type",
+          "name": "client type",
+          "type": "category",
+          "scope": "all clients",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        },
+        {
+          "id": "T_order",
+          "name": "order",
+          "type": "entity",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        },
+        {
+          "id": "T_region",
+          "name": "region",
+          "type": "dimension",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        }
+      ],
+      "matched_total": 4,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "T_monthly_sales",
+          "name": "monthly sales",
+          "type": "metric",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "monthly",
+              "sale"
+            ]
+          }
+        },
+        {
+          "id": "T_client_type",
+          "name": "client type",
+          "type": "category",
+          "scope": "all clients",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        },
+        {
+          "id": "T_order",
+          "name": "order",
+          "type": "entity",
+          "scope": "2025",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        },
+        {
+          "id": "T_region",
+          "name": "region",
+          "type": "dimension",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "sale"
+            ]
+          }
+        }
+      ],
+      "matched_total": 4,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [],
+      "matched_total": 0,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "M_order",
+          "name": "T_order -> ORDERS",
+          "type": "mapping",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "order"
+            ]
+          }
+        },
+        {
+          "id": "M_return",
+          "name": "T_return -> ORDERS",
+          "type": "mapping",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "order"
+            ]
+          }
+        }
+      ],
+      "matched_total": 2,
+      "catalog_total": 5,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "R_order_line_order",
+          "name": "composition",
+          "type": "relation",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "composition"
+            ]
+          }
+        }
+      ],
+      "matched_total": 1,
+      "catalog_total": 3,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "C_return_base",
+          "name": "business_rule",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "refund"
+            ]
+          }
+        },
+        {
+          "id": "C_rma_negative",
+          "name": "data_quality",
+          "type": "constraint",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "refund"
+            ]
+          }
+        }
+      ],
+      "matched_total": 2,
+      "catalog_total": 3,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "T_region",
+          "name": "region",
+          "type": "dimension",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "region",
+              "zone"
+            ]
+          }
+        },
+        {
+          "id": "T_store_count",
+          "name": "store count",
+          "type": "metric",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": false,
+            "overlap_tokens": [
+              "region"
+            ]
+          }
+        }
+      ],
+      "matched_total": 2,
+      "catalog_total": 11,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    },
+    {
+      "status": "ok",
+      "items": [
+        {
+          "id": "M_client_type",
+          "name": "T_client_type -> CLIENTS",
+          "type": "mapping",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "client"
+            ]
+          }
+        },
+        {
+          "id": "M_region",
+          "name": "T_region -> CLIENTS",
+          "type": "mapping",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "client"
+            ]
+          }
+        },
+        {
+          "id": "T_client_type",
+          "name": "client type",
+          "type": "category",
+          "scope": "all clients",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "client"
+            ]
+          }
+        },
+        {
+          "id": "T_store",
+          "name": "store",
+          "type": "entity",
+          "scope": "",
+          "availability": "active",
+          "match_rationale": {
+            "phrase_match": true,
+            "overlap_tokens": [
+              "client"
+            ]
+          }
+        }
+      ],
+      "matched_total": 4,
+      "catalog_total": 22,
+      "version": "v0",
+      "note": "Only query-relevant items are returned; this is not an analysis checklist."
+    }
+  ],
+  "resolve": [
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "net_income",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'net_income'",
+          "term": {
+            "id": "T_net_income",
+            "type": "metric",
+            "name": "net_income",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "definition": "net income",
+            "scope": "",
+            "evidence_refs": []
+          },
+          "mappings": [
+            {
+              "id": "M_net_income",
+              "term_id": "T_net_income",
+              "table": "financials",
+              "column": "net_income",
+              "semantic_filter": "",
+              "aggregation_semantics": "",
+              "grain": "",
+              "evidence_refs": []
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "profit",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact alias match: term 'net_income'",
+          "term": {
+            "id": "T_net_income",
+            "type": "metric",
+            "name": "net_income",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "definition": "net income",
+            "scope": "",
+            "evidence_refs": []
+          },
+          "mappings": [
+            {
+              "id": "M_net_income",
+              "term_id": "T_net_income",
+              "table": "financials",
+              "column": "net_income",
+              "semantic_filter": "",
+              "aggregation_semantics": "",
+              "grain": "",
+              "evidence_refs": []
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "return",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'return'",
+          "term": {
+            "id": "T_return",
+            "type": "entity",
+            "name": "return",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "evidence_refs": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          },
+          "mappings": [
+            {
+              "id": "M_return",
+              "term_id": "T_return",
+              "table": "ORDERS",
+              "column": "no_transaction",
+              "semantic_filter": "only documents starting with RMA-",
+              "aggregation_semantics": "",
+              "grain": "one row per order line",
+              "evidence_refs": []
+            }
+          ],
+          "relations": [
+            {
+              "id": "R_return_rate_return",
+              "relation_type": "derivation",
+              "source": "T_return_rate",
+              "target": "T_return",
+              "connection_condition": "",
+              "evidence_refs": []
+            }
+          ],
+          "constraints": [
+            {
+              "id": "C_rma_negative",
+              "severity": "warn",
+              "description": "RMA documents carry negative quantities",
+              "evidence_refs": [
+                "E_negative"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_prefixes",
+              "source": "ORDERS",
+              "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+              "result": "SO-: 120, RMA: 60",
+              "validation_method": "prefix profile",
+              "timestamp": "2025-10-20T09:00:00Z"
+            },
+            {
+              "id": "E_negative",
+              "source": "ORDERS",
+              "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+              "result": "-1: 405",
+              "validation_method": "sign check",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "rma",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact alias match: term 'return'",
+          "term": {
+            "id": "T_return",
+            "type": "entity",
+            "name": "return",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "evidence_refs": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          },
+          "mappings": [
+            {
+              "id": "M_return",
+              "term_id": "T_return",
+              "table": "ORDERS",
+              "column": "no_transaction",
+              "semantic_filter": "only documents starting with RMA-",
+              "aggregation_semantics": "",
+              "grain": "one row per order line",
+              "evidence_refs": []
+            }
+          ],
+          "relations": [
+            {
+              "id": "R_return_rate_return",
+              "relation_type": "derivation",
+              "source": "T_return_rate",
+              "target": "T_return",
+              "connection_condition": "",
+              "evidence_refs": []
+            }
+          ],
+          "constraints": [
+            {
+              "id": "C_rma_negative",
+              "severity": "warn",
+              "description": "RMA documents carry negative quantities",
+              "evidence_refs": [
+                "E_negative"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_prefixes",
+              "source": "ORDERS",
+              "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+              "result": "SO-: 120, RMA: 60",
+              "validation_method": "prefix profile",
+              "timestamp": "2025-10-20T09:00:00Z"
+            },
+            {
+              "id": "E_negative",
+              "source": "ORDERS",
+              "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+              "result": "-1: 405",
+              "validation_method": "sign check",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "t_return_rate",
+          "query_type": "semantic_id",
+          "status": "resolved",
+          "match_rationale": "semantic id lookup: 'T_return_rate'",
+          "term": {
+            "id": "T_return_rate",
+            "type": "metric",
+            "name": "return rate",
+            "aliases": [
+              "refund rate"
+            ],
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "evidence_refs": []
+          },
+          "relations": [
+            {
+              "id": "R_return_rate_return",
+              "relation_type": "derivation",
+              "source": "T_return_rate",
+              "target": "T_return",
+              "connection_condition": "",
+              "evidence_refs": []
+            }
+          ],
+          "constraints": [
+            {
+              "id": "C_return_base",
+              "severity": "block",
+              "description": "The return rate can be measured against ordered or delivered quantities",
+              "evidence_refs": [
+                "E_negative"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_negative",
+              "source": "ORDERS",
+              "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+              "result": "-1: 405",
+              "validation_method": "sign check",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "unknown concept",
+          "query_type": "mention",
+          "status": "unresolved",
+          "match_rationale": "No active term matching 'unknown concept'. Inspect the data directly.",
+          "candidates": [],
+          "coverage_status": "unavailable"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "sales",
+          "query_type": "mention",
+          "status": "ambiguous",
+          "match_rationale": "3 terms match 'sales'",
+          "candidates": [
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'monthly sales'",
+              "term": {
+                "id": "T_monthly_sales",
+                "type": "metric",
+                "name": "monthly sales",
+                "aliases": [],
+                "definition": "Quantity delivered per calendar month",
+                "scope": "",
+                "evidence_refs": []
+              }
+            },
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'order'",
+              "term": {
+                "id": "T_order",
+                "type": "entity",
+                "name": "order",
+                "aliases": [
+                  "sales order",
+                  "purchase"
+                ],
+                "definition": "A sales order document, one per SO number",
+                "scope": "2025",
+                "evidence_refs": [
+                  "E_prefixes"
+                ]
+              },
+              "mappings": [
+                {
+                  "id": "M_order",
+                  "term_id": "T_order",
+                  "table": "ORDERS",
+                  "column": "no_transaction",
+                  "semantic_filter": "only documents starting with SO-",
+                  "aggregation_semantics": "count of distinct documents",
+                  "grain": "one row per order line",
+                  "evidence_refs": []
+                }
+              ],
+              "relations": [
+                {
+                  "id": "R_order_line_order",
+                  "relation_type": "composition",
+                  "source": "T_order_line",
+                  "target": "T_order",
+                  "connection_condition": "same document number",
+                  "evidence_refs": [
+                    "E_prefixes"
+                  ]
+                },
+                {
+                  "id": "R_order_store",
+                  "relation_type": "association",
+                  "source": "T_order",
+                  "target": "T_store",
+                  "connection_condition": "client id of the order equals the store id",
+                  "evidence_refs": [
+                    "E_join"
+                  ]
+                }
+              ],
+              "evidence": [
+                {
+                  "id": "E_prefixes",
+                  "source": "ORDERS",
+                  "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+                  "result": "SO-: 120, RMA: 60",
+                  "validation_method": "prefix profile",
+                  "timestamp": "2025-10-20T09:00:00Z"
+                },
+                {
+                  "id": "E_join",
+                  "source": "ORDERS",
+                  "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+                  "result": "100% matched",
+                  "validation_method": "join match rate",
+                  "timestamp": "2025-10-20T09:00:00Z"
+                }
+              ]
+            },
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'weekly sales'",
+              "term": {
+                "id": "T_weekly_sales",
+                "type": "metric",
+                "name": "weekly sales",
+                "aliases": [],
+                "definition": "Quantity delivered per week",
+                "scope": "",
+                "evidence_refs": []
+              }
+            }
+          ],
+          "coverage_status": "partial"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "sales",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "context-disambiguated match: 'sales'",
+          "term": {
+            "id": "T_monthly_sales",
+            "type": "metric",
+            "name": "monthly sales",
+            "aliases": [],
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "evidence_refs": []
+          },
+          "coverage_status": "partial"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "sales",
+          "query_type": "mention",
+          "status": "ambiguous",
+          "match_rationale": "3 terms match 'sales'",
+          "candidates": [
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'monthly sales'",
+              "term": {
+                "id": "T_monthly_sales",
+                "type": "metric",
+                "name": "monthly sales",
+                "aliases": [],
+                "definition": "Quantity delivered per calendar month",
+                "scope": "",
+                "evidence_refs": []
+              }
+            },
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'order'",
+              "term": {
+                "id": "T_order",
+                "type": "entity",
+                "name": "order",
+                "aliases": [
+                  "sales order",
+                  "purchase"
+                ],
+                "definition": "A sales order document, one per SO number",
+                "scope": "2025",
+                "evidence_refs": [
+                  "E_prefixes"
+                ]
+              },
+              "mappings": [
+                {
+                  "id": "M_order",
+                  "term_id": "T_order",
+                  "table": "ORDERS",
+                  "column": "no_transaction",
+                  "semantic_filter": "only documents starting with SO-",
+                  "aggregation_semantics": "count of distinct documents",
+                  "grain": "one row per order line",
+                  "evidence_refs": []
+                }
+              ],
+              "relations": [
+                {
+                  "id": "R_order_line_order",
+                  "relation_type": "composition",
+                  "source": "T_order_line",
+                  "target": "T_order",
+                  "connection_condition": "same document number",
+                  "evidence_refs": [
+                    "E_prefixes"
+                  ]
+                },
+                {
+                  "id": "R_order_store",
+                  "relation_type": "association",
+                  "source": "T_order",
+                  "target": "T_store",
+                  "connection_condition": "client id of the order equals the store id",
+                  "evidence_refs": [
+                    "E_join"
+                  ]
+                }
+              ],
+              "evidence": [
+                {
+                  "id": "E_prefixes",
+                  "source": "ORDERS",
+                  "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+                  "result": "SO-: 120, RMA: 60",
+                  "validation_method": "prefix profile",
+                  "timestamp": "2025-10-20T09:00:00Z"
+                },
+                {
+                  "id": "E_join",
+                  "source": "ORDERS",
+                  "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+                  "result": "100% matched",
+                  "validation_method": "join match rate",
+                  "timestamp": "2025-10-20T09:00:00Z"
+                }
+              ]
+            },
+            {
+              "query": "sales",
+              "query_type": "mention",
+              "status": "ambiguous",
+              "match_rationale": "substring match: term 'weekly sales'",
+              "term": {
+                "id": "T_weekly_sales",
+                "type": "metric",
+                "name": "weekly sales",
+                "aliases": [],
+                "definition": "Quantity delivered per week",
+                "scope": "",
+                "evidence_refs": []
+              }
+            }
+          ],
+          "coverage_status": "partial"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "revenue",
+          "query_type": "mention",
+          "status": "unresolved",
+          "match_rationale": "No active term matching 'revenue'. Inspect the data directly.",
+          "candidates": [],
+          "coverage_status": "unavailable"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "partial",
+      "results": [
+        {
+          "query": "order",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'order'",
+          "term": {
+            "id": "T_order",
+            "type": "entity",
+            "name": "order",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "evidence_refs": [
+              "E_prefixes"
+            ]
+          },
+          "mappings": [
+            {
+              "id": "M_order",
+              "term_id": "T_order",
+              "table": "ORDERS",
+              "column": "no_transaction",
+              "semantic_filter": "only documents starting with SO-",
+              "aggregation_semantics": "count of distinct documents",
+              "grain": "one row per order line",
+              "evidence_refs": []
+            }
+          ],
+          "relations": [
+            {
+              "id": "R_order_line_order",
+              "relation_type": "composition",
+              "source": "T_order_line",
+              "target": "T_order",
+              "connection_condition": "same document number",
+              "evidence_refs": [
+                "E_prefixes"
+              ]
+            },
+            {
+              "id": "R_order_store",
+              "relation_type": "association",
+              "source": "T_order",
+              "target": "T_store",
+              "connection_condition": "client id of the order equals the store id",
+              "evidence_refs": [
+                "E_join"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_prefixes",
+              "source": "ORDERS",
+              "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+              "result": "SO-: 120, RMA: 60",
+              "validation_method": "prefix profile",
+              "timestamp": "2025-10-20T09:00:00Z"
+            },
+            {
+              "id": "E_join",
+              "source": "ORDERS",
+              "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+              "result": "100% matched",
+              "validation_method": "join match rate",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        },
+        {
+          "query": "store",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'store'",
+          "term": {
+            "id": "T_store",
+            "type": "entity",
+            "name": "store",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "evidence_refs": [
+              "E_client_types"
+            ]
+          },
+          "relations": [
+            {
+              "id": "R_order_store",
+              "relation_type": "association",
+              "source": "T_order",
+              "target": "T_store",
+              "connection_condition": "client id of the order equals the store id",
+              "evidence_refs": [
+                "E_join"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_client_types",
+              "source": "CLIENTS",
+              "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+              "result": "Depot Vente 14, Achat Vente 6",
+              "validation_method": "distinct values",
+              "timestamp": "2025-10-20T09:00:00Z"
+            },
+            {
+              "id": "E_join",
+              "source": "ORDERS",
+              "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+              "result": "100% matched",
+              "validation_method": "join match rate",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        },
+        {
+          "query": "region",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'region'",
+          "term": {
+            "id": "T_region",
+            "type": "dimension",
+            "name": "region",
+            "aliases": [
+              "zone"
+            ],
+            "definition": "sales region of a store",
+            "scope": "",
+            "evidence_refs": []
+          },
+          "mappings": [
+            {
+              "id": "M_region",
+              "term_id": "T_region",
+              "table": "CLIENTS",
+              "column": "zone_distribution",
+              "semantic_filter": "",
+              "aggregation_semantics": "",
+              "grain": "",
+              "evidence_refs": []
+            }
+          ],
+          "coverage_status": "supported"
+        },
+        {
+          "query": "client type",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'client type'",
+          "term": {
+            "id": "T_client_type",
+            "type": "category",
+            "name": "client type",
+            "aliases": [
+              "contract type"
+            ],
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "evidence_refs": [
+              "E_client_types"
+            ]
+          },
+          "mappings": [
+            {
+              "id": "M_client_type",
+              "term_id": "T_client_type",
+              "table": "CLIENTS",
+              "column": "type_de_contrat",
+              "semantic_filter": "",
+              "aggregation_semantics": "",
+              "grain": "one row per client",
+              "evidence_refs": []
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_client_types",
+              "source": "CLIENTS",
+              "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+              "result": "Depot Vente 14, Achat Vente 6",
+              "validation_method": "distinct values",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        },
+        {
+          "query": "line",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact alias match: term 'order line'",
+          "term": {
+            "id": "T_order_line",
+            "type": "entity",
+            "name": "order line",
+            "aliases": [
+              "line"
+            ],
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "evidence_refs": [
+              "E_prefixes"
+            ]
+          },
+          "relations": [
+            {
+              "id": "R_order_line_order",
+              "relation_type": "composition",
+              "source": "T_order_line",
+              "target": "T_order",
+              "connection_condition": "same document number",
+              "evidence_refs": [
+                "E_prefixes"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_prefixes",
+              "source": "ORDERS",
+              "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+              "result": "SO-: 120, RMA: 60",
+              "validation_method": "prefix profile",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 7,
+      "processed_count": 5,
+      "skipped": [
+        {
+          "query_type": "mention",
+          "query": "return rate"
+        },
+        {
+          "query_type": "mention",
+          "query": "zone"
+        }
+      ],
+      "version": "v0",
+      "note": "Resolve is limited to 5 relevant concepts."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "store",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "exact name match: 'store'",
+          "term": {
+            "id": "T_store",
+            "type": "entity",
+            "name": "store",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "evidence_refs": [
+              "E_client_types"
+            ]
+          },
+          "relations": [
+            {
+              "id": "R_order_store",
+              "relation_type": "association",
+              "source": "T_order",
+              "target": "T_store",
+              "connection_condition": "client id of the order equals the store id",
+              "evidence_refs": [
+                "E_join"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_client_types",
+              "source": "CLIENTS",
+              "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+              "result": "Depot Vente 14, Achat Vente 6",
+              "validation_method": "distinct values",
+              "timestamp": "2025-10-20T09:00:00Z"
+            },
+            {
+              "id": "E_join",
+              "source": "ORDERS",
+              "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+              "result": "100% matched",
+              "validation_method": "join match rate",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    },
+    {
+      "status": "ok",
+      "results": [
+        {
+          "query": "rate",
+          "query_type": "mention",
+          "status": "resolved",
+          "match_rationale": "substring match: term 'return rate'",
+          "term": {
+            "id": "T_return_rate",
+            "type": "metric",
+            "name": "return rate",
+            "aliases": [
+              "refund rate"
+            ],
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "evidence_refs": []
+          },
+          "relations": [
+            {
+              "id": "R_return_rate_return",
+              "relation_type": "derivation",
+              "source": "T_return_rate",
+              "target": "T_return",
+              "connection_condition": "",
+              "evidence_refs": []
+            }
+          ],
+          "constraints": [
+            {
+              "id": "C_return_base",
+              "severity": "block",
+              "description": "The return rate can be measured against ordered or delivered quantities",
+              "evidence_refs": [
+                "E_negative"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "id": "E_negative",
+              "source": "ORDERS",
+              "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+              "result": "-1: 405",
+              "validation_method": "sign check",
+              "timestamp": "2025-10-20T09:00:00Z"
+            }
+          ],
+          "coverage_status": "supported"
+        }
+      ],
+      "requested_count": 1,
+      "processed_count": 1,
+      "skipped": [],
+      "version": "v0",
+      "note": "Use these mappings only for the current analysis need."
+    }
+  ],
+  "truncate": [
+    {
+      "result": "short result",
+      "result_truncated": false,
+      "result_summary": "short result"
+    },
+    {
+      "result": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "result_truncated": true,
+      "result_summary": "1 lines, 2500 chars; preview shows first 20 lines / 2000 chars."
+    },
+    {
+      "result": "row 0\nrow 1\nrow 2\nrow 3\nrow 4\nrow 5\nrow 6\nrow 7\nrow 8\nrow 9\nrow 10\nrow 11\nrow 12\nrow 13\nrow 14\nrow 15\nrow 16\nrow 17\nrow 18\nrow 19",
+      "result_truncated": true,
+      "result_summary": "30 lines, 199 chars; preview shows first 20 lines / 2000 chars."
+    }
+  ],
+  "validate": {
+    "valid": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": []
+    },
+    "mapping_term": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_missing",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": [
+        "mapping M_order: unresolved term_id 'T_missing'"
+      ]
+    },
+    "relation_ends": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_nope",
+            "relation_type": "association",
+            "target": "T_missing",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": [
+        "relation R_order_store: unresolved source 'T_nope'",
+        "relation R_order_store: unresolved target 'T_missing'"
+      ]
+    },
+    "constraint_target": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "X_missing",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": [
+        "constraint C_rma_negative: unresolved target 'X_missing'"
+      ]
+    },
+    "term_evidence": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_missing"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": [
+        "term T_order: unresolved evidence ref 'E_missing'"
+      ]
+    },
+    "mapping_evidence": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_gone"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_negative",
+            "source": "ORDERS",
+            "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+            "result": "-1: 405",
+            "validation_method": "sign check",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": []
+    },
+    "removed_evidence": {
+      "records": {
+        "terms": [
+          {
+            "id": "T_client_type",
+            "name": "client type",
+            "type": "category",
+            "definition": "Contract type of a client: consignment or outright sale",
+            "scope": "all clients",
+            "aliases": [
+              "contract type"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_monthly_sales",
+            "name": "monthly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per calendar month",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_net_income",
+            "name": "net_income",
+            "type": "metric",
+            "definition": "net income",
+            "scope": "",
+            "aliases": [
+              "profit",
+              "earnings"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_old_metric",
+            "name": "legacy revenue",
+            "type": "metric",
+            "definition": "Revenue as computed before the price change",
+            "scope": "",
+            "aliases": [
+              "revenue"
+            ],
+            "evidence": [],
+            "status": "enriched",
+            "lifecycle": {
+              "state": "superseded"
+            }
+          },
+          {
+            "id": "T_order",
+            "name": "order",
+            "type": "entity",
+            "definition": "A sales order document, one per SO number",
+            "scope": "2025",
+            "aliases": [
+              "sales order",
+              "purchase"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_order_line",
+            "name": "order line",
+            "type": "entity",
+            "definition": "One article on an order with its quantity",
+            "scope": "2025",
+            "aliases": [
+              "line"
+            ],
+            "evidence": [
+              "E_prefixes"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_region",
+            "name": "region",
+            "type": "dimension",
+            "definition": "sales region of a store",
+            "scope": "",
+            "aliases": [
+              "zone"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return",
+            "name": "return",
+            "type": "entity",
+            "definition": "A return document with negative quantities",
+            "scope": "2025",
+            "aliases": [
+              "RMA",
+              "refund"
+            ],
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_return_rate",
+            "name": "return rate",
+            "type": "metric",
+            "definition": "Returned quantity divided by the base chosen by the business, per store",
+            "scope": "2025",
+            "aliases": [
+              "refund rate"
+            ],
+            "evidence": [],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store",
+            "name": "store",
+            "type": "entity",
+            "definition": "A client location that receives deliveries",
+            "scope": "",
+            "aliases": [
+              "client",
+              "shop"
+            ],
+            "evidence": [
+              "E_client_types"
+            ],
+            "status": "enriched"
+          },
+          {
+            "id": "T_store_count",
+            "name": "store count",
+            "type": "metric",
+            "definition": "Number of active stores in a region",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "card"
+          },
+          {
+            "id": "T_weekly_sales",
+            "name": "weekly sales",
+            "type": "metric",
+            "definition": "Quantity delivered per week",
+            "scope": "",
+            "aliases": [],
+            "evidence": [],
+            "status": "enriched"
+          }
+        ],
+        "mappings": [
+          {
+            "id": "M_client_type",
+            "term_id": "T_client_type",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "type_de_contrat",
+            "grain": "one row per client",
+            "evidence": [
+              "E_client_types"
+            ]
+          },
+          {
+            "id": "M_net_income",
+            "term_id": "T_net_income",
+            "database_source": "ds9",
+            "table": "financials",
+            "column": "net_income",
+            "evidence": []
+          },
+          {
+            "id": "M_order",
+            "term_id": "T_order",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with SO-",
+            "aggregation_semantics": "count of distinct documents",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "M_region",
+            "term_id": "T_region",
+            "database_source": "ds1",
+            "table": "CLIENTS",
+            "column": "zone_distribution",
+            "evidence": []
+          },
+          {
+            "id": "M_return",
+            "term_id": "T_return",
+            "database_source": "ds2",
+            "table": "ORDERS",
+            "column": "no_transaction",
+            "semantic_filter": "only documents starting with RMA-",
+            "grain": "one row per order line",
+            "evidence": [
+              "E_prefixes",
+              "E_negative"
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "id": "R_order_line_order",
+            "source": "T_order_line",
+            "relation_type": "composition",
+            "target": "T_order",
+            "connection_condition": "same document number",
+            "description": "An order line is part of an order",
+            "evidence": [
+              "E_prefixes"
+            ]
+          },
+          {
+            "id": "R_order_store",
+            "source": "T_order",
+            "relation_type": "association",
+            "target": "T_store",
+            "connection_condition": "client id of the order equals the store id",
+            "description": "An order is placed by a store",
+            "keys": [
+              {
+                "fromColumn": "id_interne_client_netsuite",
+                "toColumn": "id_interne"
+              }
+            ],
+            "evidence": [
+              "E_join"
+            ]
+          },
+          {
+            "id": "R_return_rate_return",
+            "source": "T_return_rate",
+            "relation_type": "derivation",
+            "target": "T_return",
+            "description": "The return rate is computed from returns",
+            "evidence": []
+          }
+        ],
+        "constraints": [
+          {
+            "id": "C_region_scope",
+            "target": "M_region",
+            "constraint_type": "scope",
+            "trigger_keywords": [
+              "region",
+              "zone"
+            ],
+            "severity": "info",
+            "confidence": 0.8,
+            "description": "Only IDF and LYON zones are present",
+            "evidence": []
+          },
+          {
+            "id": "C_return_base",
+            "target": "T_return_rate",
+            "constraint_type": "business_rule",
+            "trigger_keywords": [
+              "return rate",
+              "refund rate"
+            ],
+            "severity": "block",
+            "confidence": 0.9,
+            "description": "The return rate can be measured against ordered or delivered quantities",
+            "options": [
+              "ordered",
+              "delivered"
+            ],
+            "resolution": {
+              "choice": "delivered",
+              "by": "u1",
+              "at": "2025-10-20T10:00:00Z"
+            },
+            "evidence": [
+              "E_negative"
+            ]
+          },
+          {
+            "id": "C_rma_negative",
+            "target": "T_return",
+            "constraint_type": "data_quality",
+            "trigger_keywords": [
+              "return",
+              "RMA",
+              "refund"
+            ],
+            "severity": "warning",
+            "confidence": 1.0,
+            "description": "RMA documents carry negative quantities",
+            "evidence": [
+              "E_negative"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E_client_types",
+            "source": "CLIENTS",
+            "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+            "result": "Depot Vente 14, Achat Vente 6",
+            "validation_method": "distinct values",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_join",
+            "source": "ORDERS",
+            "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+            "result": "100% matched",
+            "validation_method": "join match rate",
+            "timestamp": "2025-10-20T09:00:00Z"
+          },
+          {
+            "id": "E_prefixes",
+            "source": "ORDERS",
+            "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+            "result": "SO-: 120, RMA: 60",
+            "validation_method": "prefix profile",
+            "timestamp": "2025-10-20T09:00:00Z"
+          }
+        ]
+      },
+      "errors": [
+        "term T_return: unresolved evidence ref 'E_negative'",
+        "constraint C_return_base: unresolved evidence ref 'E_negative'",
+        "constraint C_rma_negative: unresolved evidence ref 'E_negative'"
+      ]
+    }
+  }
+}
