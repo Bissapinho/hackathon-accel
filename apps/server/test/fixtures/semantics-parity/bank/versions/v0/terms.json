@@ -1,0 +1,158 @@
+[
+  {
+    "id": "T_client_type",
+    "name": "client type",
+    "type": "category",
+    "definition": "Contract type of a client: consignment or outright sale",
+    "scope": "all clients",
+    "aliases": [
+      "contract type"
+    ],
+    "evidence": [
+      "E_client_types"
+    ],
+    "status": "enriched"
+  },
+  {
+    "id": "T_monthly_sales",
+    "name": "monthly sales",
+    "type": "metric",
+    "definition": "Quantity delivered per calendar month",
+    "scope": "",
+    "aliases": [],
+    "evidence": [],
+    "status": "enriched"
+  },
+  {
+    "id": "T_net_income",
+    "name": "net_income",
+    "type": "metric",
+    "definition": "net income",
+    "scope": "",
+    "aliases": [
+      "profit",
+      "earnings"
+    ],
+    "evidence": [],
+    "status": "enriched"
+  },
+  {
+    "id": "T_old_metric",
+    "name": "legacy revenue",
+    "type": "metric",
+    "definition": "Revenue as computed before the price change",
+    "scope": "",
+    "aliases": [
+      "revenue"
+    ],
+    "evidence": [],
+    "status": "enriched",
+    "lifecycle": {
+      "state": "superseded"
+    }
+  },
+  {
+    "id": "T_order",
+    "name": "order",
+    "type": "entity",
+    "definition": "A sales order document, one per SO number",
+    "scope": "2025",
+    "aliases": [
+      "sales order",
+      "purchase"
+    ],
+    "evidence": [
+      "E_prefixes"
+    ],
+    "status": "enriched"
+  },
+  {
+    "id": "T_order_line",
+    "name": "order line",
+    "type": "entity",
+    "definition": "One article on an order with its quantity",
+    "scope": "2025",
+    "aliases": [
+      "line"
+    ],
+    "evidence": [
+      "E_prefixes"
+    ],
+    "status": "enriched"
+  },
+  {
+    "id": "T_region",
+    "name": "region",
+    "type": "dimension",
+    "definition": "sales region of a store",
+    "scope": "",
+    "aliases": [
+      "zone"
+    ],
+    "evidence": [],
+    "status": "enriched"
+  },
+  {
+    "id": "T_return",
+    "name": "return",
+    "type": "entity",
+    "definition": "A return document with negative quantities",
+    "scope": "2025",
+    "aliases": [
+      "RMA",
+      "refund"
+    ],
+    "evidence": [
+      "E_prefixes",
+      "E_negative"
+    ],
+    "status": "enriched"
+  },
+  {
+    "id": "T_return_rate",
+    "name": "return rate",
+    "type": "metric",
+    "definition": "Returned quantity divided by the base chosen by the business, per store",
+    "scope": "2025",
+    "aliases": [
+      "refund rate"
+    ],
+    "evidence": [],
+    "status": "enriched"
+  },
+  {
+    "id": "T_store",
+    "name": "store",
+    "type": "entity",
+    "definition": "A client location that receives deliveries",
+    "scope": "",
+    "aliases": [
+      "client",
+      "shop"
+    ],
+    "evidence": [
+      "E_client_types"
+    ],
+    "status": "enriched"
+  },
+  {
+    "id": "T_store_count",
+    "name": "store count",
+    "type": "metric",
+    "definition": "Number of active stores in a region",
+    "scope": "",
+    "aliases": [],
+    "evidence": [],
+    "status": "card"
+  },
+  {
+    "id": "T_weekly_sales",
+    "name": "weekly sales",
+    "type": "metric",
+    "definition": "Quantity delivered per week",
+    "scope": "",
+    "aliases": [],
+    "evidence": [],
+    "status": "enriched"
+  }
+]
