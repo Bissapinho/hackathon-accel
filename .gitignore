@@ -15,3 +15,6 @@ data/
 !fixtures/**/*.csv
 !fixtures/**/*.csv.gz
 !build-package/fixtures/*.csv
+
+# Claude Code worktrees (agents)
+.claude/worktrees/
