@@ -396,7 +396,7 @@ function erDiagram(doc, onPick) {
       const x1 = a.x + W, x2 = b.x + W, out = Math.max(x1, x2) + 60 + (i % 3) * 18;
       path = `M${x1},${y1} C${out},${y1} ${out},${y2} ${x2},${y2}`; lx = out - 14; ly = (y1 + y2) / 2;
     }
-    const lbl = `${l.displayName || l.apiName} · ${l.cardinality === 'one-to-one' ? '1:1' : 'N:1'}`;
+    const lbl = l.label || `${l.displayName || l.apiName} · ${l.cardinality === 'one-to-one' ? '1:1' : 'N:1'}`;
     edges += `<g class="er-r"><title>${esc(`${l.from} → ${l.to}: ${l.description || ''}`)}</title><path d="${path}" marker-end="url(#erArr)"/>
       <rect x="${lx - lbl.length * 3.4 - 6}" y="${ly - 10}" width="${lbl.length * 6.8 + 12}" height="20" rx="4"/><text x="${lx}" y="${ly + 4}" text-anchor="middle">${esc(lbl)}</text></g>`;
   });
@@ -433,6 +433,28 @@ function erDiagram(doc, onPick) {
   return wrap;
 }
 
+// Until object types exist, draw the semantic bank: terms linked by relations become boxes, relation keys become rows.
+async function semanticDoc() {
+  for (const version of ['active', 'draft']) {
+    let recs;
+    try { recs = await api('GET', `${P()}/semantics/records?version=${version}&limit=1000`); } catch { continue; }
+    const rels = recs.filter((r) => r.kind === 'relation').map((r) => r.body).filter((r) => r.source && r.target);
+    if (!rels.length) continue;
+    const terms = Object.fromEntries(recs.filter((r) => r.kind === 'term').map((r) => [r.body.id, r.body]));
+    const types = {};
+    const add = (id) => (types[id] ??= { apiName: id, displayName: prettyName(terms[id]?.name || id.replace(/^T_/, '')), description: terms[id]?.definition || '', primaryKey: '', properties: [] });
+    const prop = (t, name, pk) => { if (!name) return; const n = name.toLowerCase(); if (!t.properties.some((p) => p.apiName === n)) t.properties.push({ apiName: n, type: terms[t.apiName]?.type || '' }); if (pk && !t.primaryKey) t.primaryKey = n; };
+    const linkTypes = rels.map((r) => {
+      const a = add(r.source), b = add(r.target), k = (r.keys || [])[0];
+      if (k) { prop(a, k.fromColumn); prop(b, k.toColumn, true); }
+      return { apiName: r.id, from: r.source, to: r.target, displayName: r.relation_type || r.id, label: r.relation_type || 'relation', description: r.description || '',
+        keys: k ? [{ fromProperty: k.fromColumn.toLowerCase(), toProperty: k.toColumn.toLowerCase() }] : [] };
+    });
+    return { version, doc: { objectTypes: Object.values(types), linkTypes } };
+  }
+  return null;
+}
+
 async function viewObjects(content, bar) {
   let doc, published = true;
   try { doc = (await api('GET', `${P()}/workspace`)).doc; }
@@ -442,7 +464,14 @@ async function viewObjects(content, bar) {
     try { doc = (await api('GET', `${P()}/workspace?version=draft`)).draft?.doc; } catch { /* no draft either */ }
   }
   const types = doc?.objectTypes || [];
-  if (!types.length) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'No object types yet'), el('div', { class: 'muted' }, 'Ask the assistant to build your objects.')));
+  if (!types.length) {
+    const sem = await semanticDoc();
+    if (!sem) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'No object types yet'), el('div', { class: 'muted' }, 'Ask the assistant to build your objects.')));
+    bar.append(el('span', { class: 'ds-st warn', style: 'margin:0' }, `From the meaning (${sem.version}), no objects built yet`));
+    return content.append(el('div', { class: 'stack' },
+      el('div', { class: 'xs muted' }, `${sem.doc.objectTypes.length} entities · ${sem.doc.linkTypes.length} relations from the semantic bank. Hover a box to see its relations.`),
+      erDiagram(sem.doc, () => {})));
+  }
   if (!S.objMode) S.objMode = 'diagram';
   if (S.openObject && published) S.objMode = 'records';
   const seg = el('div', { class: 'seg' }, [['diagram', 'Diagram'], ['records', 'Records']].map(([k, label]) =>
