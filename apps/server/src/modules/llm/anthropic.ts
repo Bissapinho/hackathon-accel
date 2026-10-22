@@ -76,7 +76,10 @@ export class AnthropicGateway implements LlmGateway {
           });
         }
         // With eager input streaming, finalMessage() rejects when a tool input is not parseable at all.
-        return interpretMessage(await stream.finalMessage(), req.tools);
+        const message = await stream.finalMessage();
+        // One line per model call (no content): what benchmarks and cost checks read.
+        console.log(`llm-usage ${JSON.stringify({ model: params.model, ...message.usage })}`);
+        return interpretMessage(message, req.tools);
       } catch (err) {
         if (err instanceof Anthropic.APIError) throw toLlmError(err);
         if (attempt >= maxJsonRetries) {
