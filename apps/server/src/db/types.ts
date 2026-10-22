@@ -1,4 +1,4 @@
-import type { BaseType, PipelineCheck, Validation, WorkspaceDoc } from '@mini/shared';
+import type { ColumnInfo, ColumnProfile, DatasetVersion, Job, PipelineCheck, ProfileStatus, Validation, WorkspaceDoc } from '@mini/shared';
 import type { ColumnType, Generated } from 'kysely';
 
 // Kysely table types for the `meta` schema (apps/server/migrations/001_init.sql).
@@ -29,7 +29,7 @@ export interface ProjectMembersTable {
   role: ProjectRole;
 }
 
-// jsonb columns: read as parsed JSON, written as JSON text (pg would turn a JS array into a Postgres array).
+// jsonb columns: parsed objects when read, JSON text when written.
 type Json<T> = ColumnType<T, string, string>;
 
 export interface DatasetsTable {
@@ -51,10 +51,10 @@ export interface DatasetVersionsTable {
   transaction_type: 'SNAPSHOT' | 'APPEND';
   table_name: string;
   row_count: number;
-  columns: Json<{ name: string; sqlName: string; type: BaseType; nullable: boolean; sample: unknown[] }[]>;
-  profile: Json<unknown> | null;
-  profile_status: Generated<'pending' | 'running' | 'done' | 'failed'>;
-  parse_errors: ColumnType<unknown[], string | undefined, string>;
+  columns: Json<ColumnInfo[]>;
+  profile: ColumnType<ColumnProfile[] | null, string | null, string | null>;
+  profile_status: Generated<ProfileStatus>;
+  parse_errors: ColumnType<ParseError[], string | undefined, string>;
   source_file: string;
   dropped_at: Date | null;
   created_by: string;
@@ -115,6 +115,20 @@ export interface ActionRunsTable {
   created_at: Timestamp;
 }
 
+export type ParseError = DatasetVersion['parseErrors'][number];
+
+export interface JobsTable {
+  id: Generated<string>;
+  project_id: string;
+  kind: 'profile';
+  target: string;
+  status: Generated<Job['status']>;
+  progress: Generated<number>;
+  error: string | null;
+  created_at: Timestamp;
+  finished_at: Date | null;
+}
+
 export interface DB {
   'meta.users': UsersTable;
   'meta.projects': ProjectsTable;
@@ -125,4 +139,5 @@ export interface DB {
   'meta.workspace_versions': WorkspaceVersionsTable;
   'meta.pipeline_builds': PipelineBuildsTable;
   'meta.action_runs': ActionRunsTable;
+  'meta.jobs': JobsTable;
 }

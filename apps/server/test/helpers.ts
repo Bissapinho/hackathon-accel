@@ -5,23 +5,30 @@ import { loadConfig } from '../src/config.js';
 import { createDb, type Db } from '../src/db/index.js';
 import { createPool } from '../src/db/pool.js';
 import { initReadOnly } from '../src/db/readonly.js';
-import { stubOnProfileDone, stubSemanticsPort, type SemanticsPort } from '../src/ports.js';
+import { stubOnProfileDone, stubSemanticsPort, type OnProfileDone, type SemanticsPort } from '../src/ports.js';
 
 // Local Docker test database (never Aiven). Migrated and seeded by global-setup.ts.
 export const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL ?? 'postgres://mini:mini@localhost:5432/mini_test';
 
 export type TestApp = { app: FastifyInstance; ctx: AppContext; db: Db; pool: pg.Pool; close(): Promise<void> };
 
-export async function buildTestApp(opts: { semantics?: SemanticsPort } = {}): Promise<TestApp> {
-  const config = loadConfig({ DATABASE_URL: TEST_DATABASE_URL, COOKIE_SECRET: 'test-cookie-secret-0123456789' });
+export async function buildTestApp(
+  opts: { semantics?: SemanticsPort; onProfileDone?: OnProfileDone; dataDir?: string } = {},
+): Promise<TestApp> {
+  const config = loadConfig({
+    DATABASE_URL: TEST_DATABASE_URL,
+    COOKIE_SECRET: 'test-cookie-secret-0123456789',
+    ...(opts.dataDir ? { DATA_DIR: opts.dataDir } : {}),
+  });
   const pool = createPool({ connectionString: TEST_DATABASE_URL, max: 3 });
   initReadOnly(pool);
   const db = createDb(pool);
   const { app, ctx } = await buildApp({
     config,
     db,
+    pool,
     semantics: opts.semantics ?? stubSemanticsPort,
-    onProfileDone: stubOnProfileDone,
+    onProfileDone: opts.onProfileDone ?? stubOnProfileDone,
   });
   return {
     app,

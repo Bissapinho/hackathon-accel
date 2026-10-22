@@ -1,3 +1,4 @@
+import type pg from 'pg';
 import type { Config } from './config.js';
 import type { Db } from './db/index.js';
 import type { OnProfileDone, SemanticsPort } from './ports.js';
@@ -8,6 +9,7 @@ import { buildAlfredServices } from './services.alfred.js';
 export type AppDeps = {
   config: Config;
   db: Db;
+  pool: pg.Pool; // raw connections, for COPY (datasets)
   semantics: SemanticsPort;
   onProfileDone: OnProfileDone;
 };
