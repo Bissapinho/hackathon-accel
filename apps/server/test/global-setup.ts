@@ -5,7 +5,9 @@ import { seed } from '../src/db/seed.js';
 import { TEST_DATABASE_URL } from './helpers.js';
 
 // Once per `pnpm test`: bring the local test database to the latest migration and seed it.
+// VITEST_NO_DB=1 skips it, to run pure unit tests without Postgres (e.g. `VITEST_NO_DB=1 pnpm test <file>`).
 export default async function setup(): Promise<void> {
+  if (process.env.VITEST_NO_DB === '1') return;
   const pool = createPool({ connectionString: TEST_DATABASE_URL, max: 1 });
   try {
     await migrate(pool);

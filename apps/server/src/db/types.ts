@@ -1,4 +1,5 @@
-import type { Generated } from 'kysely';
+import type { WorkspaceDoc } from '@mini/shared';
+import type { Generated, JSONColumnType } from 'kysely';
 
 // Kysely table types for the `meta` schema (apps/server/migrations/001_init.sql).
 // Hand-written; add a table here when a service starts using it. Tables are addressed as 'meta.<name>'.
@@ -28,8 +29,20 @@ export interface ProjectMembersTable {
   role: ProjectRole;
 }
 
+export interface WorkspaceVersionsTable {
+  project_id: string;
+  version: number;
+  sem_version: string;
+  doc: JSONColumnType<WorkspaceDoc>;
+  message: string;
+  published_by: string;
+  published_via: 'ui' | 'agent';
+  published_at: Timestamp;
+}
+
 export interface DB {
   'meta.users': UsersTable;
   'meta.projects': ProjectsTable;
   'meta.project_members': ProjectMembersTable;
+  'meta.workspace_versions': WorkspaceVersionsTable;
 }
