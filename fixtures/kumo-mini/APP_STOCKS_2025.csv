@@ -1,0 +1,41 @@
+order_date,store_name,store_id,external_id,created_at,updated_at,user_email,status,product_id,product_name,quantity,lieu,stock_j1,qte_final,vitrine_note_agencement,produits_perimes,vitrine_bien_chargee,poids_stock_total,poids_stock_dlc_j,dlc_rayon,bl_j1
+2025-09-03,C0012,C0012,APP01475,2025-09-03 12:31:29.37613-06,2026-01-19 12:31:29.890811-06,PERS15,submitted,A0804,Crumble Pomme Cannelle,-2,KUMO Frepillon,,4,,false,true,,,,1
+2025-09-03,C0012,C0012,APP01475,2025-09-03 08:16:20.024144-06,2025-12-02 08:16:20.350982-05,PERS15,submitted,A0303,Rouleaux Printemps Crevette (2 pcs),-6,KUMO Gennevilliers,,0,,false,false,,,J+3,3
+2025-07-14,C0727,C0727,APP01476,2025-07-14 11:41:51.753636-05,2025-10-06 11:41:51.930192-06,PERS44,submitted,A0406,Couscous Légumes Pois Chiches,-4,KUMO Frepillon,3,1,,false,false,,,,5
+2025-07-14,C0727,C0727,APP01476,2025-07-14 12:26:20.780117-06,2025-12-07 12:26:20.499021-05,PERS44,submitted,A0360,Hachis Parmentier Maison,-3,KUMO Frepillon,2,2,,false,true,,,,5
+2025-07-14,C0727,C0727,APP01476,2025-07-14 06:41:30.957202-05,2025-08-09 06:41:30.624068-06,PERS44,submitted,A0288,Boule de Riz Poulet Sésame,-3,KUMO Gennevilliers,,2,,false,true,,,,6
+2025-06-04,C0515,C0515,APP01477,2025-06-04 12:33:15.352858-06,2025-07-23 12:33:15.618199-05,PERS44,submitted,A0298,Assortiment Saumon Agrumes (9 pcs),-2,KUMO Gennevilliers,3,3,,false,false,,,,4
+2025-06-04,C0515,C0515,APP01477,2025-06-04 08:51:01.71476-06,2025-09-11 08:51:01.507967-06,PERS44,submitted,A0376,Lasagnes Légumes Ricotta,-4,KUMO Frepillon,0,2,,false,true,,,J+3,4
+2025-06-04,C0515,C0515,APP01477,2025-06-04 09:38:41.310348-05,2025-07-09 09:38:41.24984-06,PERS44,submitted,A1065,Bao Légumes Laqués,-2,KUMO Draveil,,3,2,false,true,,,,2
+2025-06-04,C0515,C0515,APP01477,2025-06-04 08:43:49.93974-06,2025-06-25 08:43:49.67033-06,PERS44,submitted,A0288,Boule de Riz Poulet Sésame,-3,KUMO Gennevilliers,0,3,,true,false,,,,3
+2025-08-08,C0515,C0515,APP01478,2025-08-08 07:03:03.305848-06,2025-09-09 07:03:03.568173-06,PERS06,submitted,A1065,Bao Légumes Laqués,-3,KUMO Draveil,,3,2,false,false,,,,3
+2025-08-08,C0515,C0515,APP01478,2025-08-08 10:56:41.404629-05,2025-11-02 10:56:41.783774-05,PERS06,submitted,A0834,Riz au Lait Vanille,-1,KUMO Frepillon,,2,3,false,true,,,J+3,3
+2025-08-08,C0515,C0515,APP01478,2025-08-08 11:34:57.452161-06,2025-08-14 11:34:57.288521-06,PERS06,submitted,A0456,Risotto Champignons Parmesan,-2,KUMO Frepillon,,0,1,false,false,,,J+3,5
+2025-08-08,C0515,C0515,APP01478,2025-08-08 12:48:55.963343-05,2025-12-21 12:48:55.368963-06,PERS06,submitted,A0481,Taboulé Menthe Citron,-1,KUMO Frepillon,,2,,false,true,,,,4
+2025-09-12,C0233,C0233,APP01479,2025-09-12 08:43:51.053451-06,2025-12-15 08:43:51.123808-06,PERS38,submitted,A0081,Poulet Coco Citronnelle,-6,KUMO Draveil,,3,,false,false,,,J+3,1
+2025-09-12,C0233,C0233,APP01479,2025-09-12 07:07:24.465397-05,2025-12-16 07:07:24.624097-06,PERS38,submitted,A0456,Risotto Champignons Parmesan,-1,KUMO Frepillon,,4,,false,false,,,J+3,1
+2025-05-14,C0269,C0269,APP01480,2025-05-14 07:45:08.779265-06,2025-07-04 07:45:08.124767-05,PERS15,submitted,A0797,Brochettes Poulet Citron (3 pcs),-2,KUMO Draveil,5,2,,false,true,,,,4
+2025-05-14,C0269,C0269,APP01480,2025-05-14 09:58:36.304007-05,2025-05-25 09:58:36.641023-06,PERS15,submitted,A0834,Riz au Lait Vanille,-4,KUMO Frepillon,,1,,false,true,,,,2
+2025-08-31,C0608,C0608,APP01481,2025-08-31 10:50:34.884743-06,2026-01-13 10:50:34.197753-06,PERS57,submitted,A0376,Lasagnes Légumes Ricotta,-2,KUMO Frepillon,,1,3,false,true,,,,3
+2025-08-31,C0608,C0608,APP01481,2025-08-31 06:23:23.896175-06,2026-01-01 06:23:23.963623-06,PERS57,submitted,A0188,Maki Concombre Menthe (8 pcs),-4,KUMO Gennevilliers,,0,,false,false,,,J+1,1
+2025-10-15,C0269,C0269,APP01482,2025-10-15 08:39:04.032284-06,2025-11-10 08:39:04.257355-05,PERS15,submitted,A0043,Nouilles Bœuf Gingembre,-1,KUMO Draveil,,2,,false,false,,,,1
+2025-10-15,C0269,C0269,APP01482,2025-10-15 09:32:58.442582-05,2026-01-05 09:32:58.968265-05,PERS15,submitted,A0905,Mousse Chocolat Noir,-4,KUMO Gennevilliers,1,4,,false,true,,,J+3,5
+2025-08-04,C0616,C0616,APP01483,2025-08-04 11:19:21.311751-05,2025-10-30 11:19:21.311522-05,PERS06,submitted,A0043,Nouilles Bœuf Gingembre,-5,KUMO Draveil,5,0,,false,true,,,,1
+2025-08-04,C0616,C0616,APP01483,2025-08-04 09:59:51.730835-06,2025-08-28 09:59:51.370451-05,PERS06,submitted,A0303,Rouleaux Printemps Crevette (2 pcs),-3,KUMO Gennevilliers,,0,,false,true,,,J+3,3
+2025-08-04,C0616,C0616,APP01483,2025-08-04 12:45:59.442004-05,2025-12-28 12:45:59.006208-05,PERS06,submitted,A0188,Maki Concombre Menthe (8 pcs),-5,KUMO Gennevilliers,0,1,,false,false,,,,5
+2025-08-04,C0616,C0616,APP01483,2025-08-04 11:12:50.825815-06,2025-10-18 11:12:50.631753-06,PERS06,submitted,A0376,Lasagnes Légumes Ricotta,-5,KUMO Frepillon,,1,2,true,false,,,,1
+2025-10-22,C0217,C0217,APP01484,2025-10-22 12:07:43.972162-06,2026-01-17 12:07:43.134811-05,PERS49,submitted,A1065,Bao Légumes Laqués,-3,KUMO Draveil,,2,,false,true,,,,0
+2025-10-22,C0217,C0217,APP01484,2025-10-22 08:09:33.164971-05,2026-02-24 08:09:33.570148-05,PERS49,submitted,A0303,Rouleaux Printemps Crevette (2 pcs),-4,KUMO Gennevilliers,2,3,,false,true,,,,3
+2025-10-22,C0217,C0217,APP01484,2025-10-22 08:25:24.424063-06,2025-11-16 08:25:24.048678-05,PERS49,submitted,A0149,Curry Vert Légumes du Marché,-2,KUMO Draveil,3,1,,false,true,,,J+3,6
+2025-10-22,C0217,C0217,APP01484,2025-10-22 12:16:39.499596-05,2026-01-14 12:16:39.301414-05,PERS49,submitted,A0406,Couscous Légumes Pois Chiches,-2,KUMO Frepillon,4,1,,false,true,,,J+3,2
+2025-08-20,C0582,C0582,APP01485,2025-08-20 07:17:05.678072-06,2025-10-19 07:17:05.839568-05,PERS15,submitted,A0775,Soupe Potiron Coco,-6,KUMO Frepillon,,4,2,false,false,,,,1
+2025-08-20,C0582,C0582,APP01485,2025-08-20 07:55:49.936417-05,2025-10-27 07:55:49.549961-05,PERS15,submitted,A0406,Couscous Légumes Pois Chiches,-6,KUMO Frepillon,,1,5,false,true,,,J+3,1
+2025-08-20,C0582,C0582,APP01485,2025-08-20 11:42:53.061865-06,2025-12-15 11:42:53.767444-05,PERS15,submitted,A0081,Poulet Coco Citronnelle,-2,KUMO Draveil,0,2,5,true,false,,,,0
+2025-08-20,C0582,C0582,APP01485,2025-08-20 10:38:58.447197-05,2025-08-30 10:38:58.646151-05,PERS15,submitted,A0009,Riz Sauté Légumes Croquants,-5,KUMO Draveil,6,2,,false,false,,,,3
+2025-07-05,C0147,C0147,APP01486,2025-07-05 10:50:31.178141-05,2025-07-31 10:50:31.137204-06,PERS15,submitted,A0081,Poulet Coco Citronnelle,-2,KUMO Draveil,,2,4,false,true,,,,5
+2025-07-05,C0147,C0147,APP01486,2025-07-05 07:48:16.837563-06,2025-07-24 07:48:16.674322-06,PERS15,submitted,A0456,Risotto Champignons Parmesan,-3,KUMO Frepillon,,0,,false,false,,,J+3,3
+2025-07-05,C0147,C0147,APP01486,2025-07-05 12:46:22.486684-06,2025-07-23 12:46:22.034174-06,PERS15,submitted,A0468,Wrap Poulet Curry Doux,-3,KUMO Frepillon,,3,3,false,true,,,,4
+2025-10-10,C0209,C0209,APP01487,2025-10-10 07:31:39.045263-06,2026-02-26 07:31:39.09642-06,PERS35,submitted,A0406,Couscous Légumes Pois Chiches,-3,KUMO Frepillon,,1,,false,true,,,J+3,0
+2025-10-10,C0209,C0209,APP01487,2025-10-10 10:55:53.050327-06,2026-03-08 10:55:53.131776-06,PERS35,submitted,A0081,Poulet Coco Citronnelle,-2,KUMO Draveil,0,1,,false,true,,,J+3,4
+2025-10-10,C0209,C0209,APP01487,2025-10-10 11:53:17.601908-06,2025-10-12 11:53:17.955451-06,PERS35,submitted,A0009,Riz Sauté Légumes Croquants,-4,KUMO Draveil,3,4,,false,true,,,J+4,6
+2025-10-10,C0209,C0209,APP01487,2025-10-10 09:26:45.223519-06,2026-01-30 09:26:45.515446-05,PERS35,submitted,A0300,Bol Saumon Mangue,-4,KUMO Gennevilliers,6,1,,false,true,,,,5
