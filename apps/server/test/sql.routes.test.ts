@@ -1,12 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { registerSqlRoutes } from '../src/modules/sql/routes.js';
-import { buildSqlServices } from '../src/modules/sql/service.js';
 import { buildTestApp, loginAs, type TestApp } from './helpers.js';
 
-// T-16 route: POST /api/projects/:pid/sql. The routes are registered here on the test app, until
-// register.alfred.ts wires them.
+// T-16 route: POST /api/projects/:pid/sql (registered by register.alfred.ts).
 
 let t: TestApp;
 let projectId: string;
@@ -29,8 +26,6 @@ const post = (pid: string, body: unknown, cookie?: string) =>
 
 beforeAll(async () => {
   t = await buildTestApp();
-  registerSqlRoutes(t.app, { ...buildSqlServices(t.ctx), resources: t.ctx.services.resources });
-  await t.app.ready();
   const p = await t.db.selectFrom('meta.projects').select('id').where('name', '=', 'Kumo 2025').executeTakeFirstOrThrow();
   projectId = p.id;
   ada = await loginAs(t.app, 'ada@kumo.test');
