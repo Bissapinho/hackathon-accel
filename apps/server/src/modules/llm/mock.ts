@@ -6,6 +6,7 @@
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { buildParams, type Effort, type StreamParams } from './anthropic.js';
 import { interpretMessage } from './interpret.js';
+import { checkMessageSequence } from './sequence.js';
 import { LlmError, type BetaMessage, type LlmErrorCode, type LlmGateway, type LlmHandlers, type LlmRequest, type LlmTurn } from './types.js';
 
 /** One JSONL line: a recorded response, or an error to raise at that turn. `note` is for humans. */
@@ -64,6 +65,11 @@ export class MockGateway implements LlmGateway {
     // Copies of the conversation: the loop keeps appending to the same arrays after this call.
     this.requests.push({ ...req, messages: structuredClone(req.messages), signal: undefined });
     this.sent.push(structuredClone(buildParams(this.params, req)));
+    // Same answer as the API for a conversation in an order it refuses (a 400), before any recorded turn is used.
+    const issues = checkMessageSequence(req.messages);
+    if (issues.length > 0) {
+      throw new LlmError('LLM_BAD_REQUEST', `Claude rejected the request: ${issues.map((i) => i.message).join(' ')}`, { status: 400 });
+    }
     const line = this.lines[this.cursor++];
     if (!line) throw new LlmError('LLM_MOCK_EXHAUSTED', `The mock has no recorded response left (turn ${this.cursor}).${this.exhaustedHint}`);
     if ('error' in line) throw new LlmError(line.error.code, line.error.message, { status: line.error.status });

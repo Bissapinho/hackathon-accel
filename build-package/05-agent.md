@@ -65,6 +65,7 @@ DeepSeek / OpenAI-compatible APIs are no longer supported; the mock gateway (§1
 
 - `change_mode` is free (no approval). **`build` is refused (`NO_SEMANTIC_VERSION`) until a semantic version is published.** The agent may go back to `semantics` to add a Term or a Relation it finds missing, then re-publish (gated) and `setSemanticVersion` in the workspace draft.
 - The mode is told to the model with a **mid-conversation system message** (`{role: 'system', content: <mode guide>}` appended after the user turn), not by changing the top-level `system`, and the **tool list is the same in every mode**: both keep the cached prefix intact. The server enforces which tools a mode may call.
+- **Placement rule of the API**: a mid-conversation system message must follow a user message and be either the last message or followed by an assistant message (anything else is a 400). Notes are appended just before a model call, so they normally end the request; when no assistant reply follows them (the call failed, a bare refusal) or they follow an assistant message (the "continue" note after `max_tokens`), `buildMessages` sends that run of notes as one user message of `<system-reminder>` text blocks instead. The choice depends only on items that never change, so answered notes are replayed as system messages forever. The mock gateway refuses any request that breaks these rules (`checkMessageSequence`).
 
 ## 3. Tools
 
