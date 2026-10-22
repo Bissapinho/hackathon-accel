@@ -1,0 +1,55 @@
+[
+  {
+    "id": "C_region_scope",
+    "target": "M_region",
+    "constraint_type": "scope",
+    "trigger_keywords": [
+      "region",
+      "zone"
+    ],
+    "severity": "info",
+    "confidence": 0.8,
+    "description": "Only IDF and LYON zones are present",
+    "evidence": []
+  },
+  {
+    "id": "C_return_base",
+    "target": "T_return_rate",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "return rate",
+      "refund rate"
+    ],
+    "severity": "block",
+    "confidence": 0.9,
+    "description": "The return rate can be measured against ordered or delivered quantities",
+    "options": [
+      "ordered",
+      "delivered"
+    ],
+    "resolution": {
+      "choice": "delivered",
+      "by": "u1",
+      "at": "2025-10-20T10:00:00Z"
+    },
+    "evidence": [
+      "E_negative"
+    ]
+  },
+  {
+    "id": "C_rma_negative",
+    "target": "T_return",
+    "constraint_type": "data_quality",
+    "trigger_keywords": [
+      "return",
+      "RMA",
+      "refund"
+    ],
+    "severity": "warning",
+    "confidence": 1.0,
+    "description": "RMA documents carry negative quantities",
+    "evidence": [
+      "E_negative"
+    ]
+  }
+]

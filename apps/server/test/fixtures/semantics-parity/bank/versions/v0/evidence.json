@@ -1,0 +1,34 @@
+[
+  {
+    "id": "E_client_types",
+    "source": "CLIENTS",
+    "query": "SELECT type_de_contrat, count(*) FROM data.clients GROUP BY 1",
+    "result": "Depot Vente 14, Achat Vente 6",
+    "validation_method": "distinct values",
+    "timestamp": "2025-10-20T09:00:00Z"
+  },
+  {
+    "id": "E_join",
+    "source": "ORDERS",
+    "query": "SELECT count(*) FROM data.orders o JOIN data.clients c ON c.id_interne = o.id_interne_client_netsuite",
+    "result": "100% matched",
+    "validation_method": "join match rate",
+    "timestamp": "2025-10-20T09:00:00Z"
+  },
+  {
+    "id": "E_negative",
+    "source": "ORDERS",
+    "query": "SELECT sign(quantite), count(*) FROM data.orders WHERE no_transaction LIKE 'RMA-%' GROUP BY 1",
+    "result": "-1: 405",
+    "validation_method": "sign check",
+    "timestamp": "2025-10-20T09:00:00Z"
+  },
+  {
+    "id": "E_prefixes",
+    "source": "ORDERS",
+    "query": "SELECT left(no_transaction, 3), count(DISTINCT no_transaction) FROM data.orders GROUP BY 1",
+    "result": "SO-: 120, RMA: 60",
+    "validation_method": "prefix profile",
+    "timestamp": "2025-10-20T09:00:00Z"
+  }
+]

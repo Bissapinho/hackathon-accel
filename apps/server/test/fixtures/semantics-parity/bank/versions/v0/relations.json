@@ -1,0 +1,38 @@
+[
+  {
+    "id": "R_order_line_order",
+    "source": "T_order_line",
+    "relation_type": "composition",
+    "target": "T_order",
+    "connection_condition": "same document number",
+    "description": "An order line is part of an order",
+    "evidence": [
+      "E_prefixes"
+    ]
+  },
+  {
+    "id": "R_order_store",
+    "source": "T_order",
+    "relation_type": "association",
+    "target": "T_store",
+    "connection_condition": "client id of the order equals the store id",
+    "description": "An order is placed by a store",
+    "keys": [
+      {
+        "fromColumn": "id_interne_client_netsuite",
+        "toColumn": "id_interne"
+      }
+    ],
+    "evidence": [
+      "E_join"
+    ]
+  },
+  {
+    "id": "R_return_rate_return",
+    "source": "T_return_rate",
+    "relation_type": "derivation",
+    "target": "T_return",
+    "description": "The return rate is computed from returns",
+    "evidence": []
+  }
+]

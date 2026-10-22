@@ -1,0 +1,55 @@
+[
+  {
+    "id": "M_client_type",
+    "term_id": "T_client_type",
+    "database_source": "ds1",
+    "table": "CLIENTS",
+    "column": "type_de_contrat",
+    "grain": "one row per client",
+    "evidence": [
+      "E_client_types"
+    ]
+  },
+  {
+    "id": "M_net_income",
+    "term_id": "T_net_income",
+    "database_source": "ds9",
+    "table": "financials",
+    "column": "net_income",
+    "evidence": []
+  },
+  {
+    "id": "M_order",
+    "term_id": "T_order",
+    "database_source": "ds2",
+    "table": "ORDERS",
+    "column": "no_transaction",
+    "semantic_filter": "only documents starting with SO-",
+    "aggregation_semantics": "count of distinct documents",
+    "grain": "one row per order line",
+    "evidence": [
+      "E_prefixes"
+    ]
+  },
+  {
+    "id": "M_region",
+    "term_id": "T_region",
+    "database_source": "ds1",
+    "table": "CLIENTS",
+    "column": "zone_distribution",
+    "evidence": []
+  },
+  {
+    "id": "M_return",
+    "term_id": "T_return",
+    "database_source": "ds2",
+    "table": "ORDERS",
+    "column": "no_transaction",
+    "semantic_filter": "only documents starting with RMA-",
+    "grain": "one row per order line",
+    "evidence": [
+      "E_prefixes",
+      "E_negative"
+    ]
+  }
+]
