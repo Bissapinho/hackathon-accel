@@ -46,29 +46,68 @@ type ProcessOutcome = { kind: 'paused' } | { kind: 'done'; results: ExecResult[]
 
 // ───────────── request building (pure) ─────────────
 
-/** The model's messages, rebuilt from the items in order. UI-only items (tool_call, notes, approvals…) are skipped. */
+/** A system note that can't be sent as a system message, folded as text into the user turn it sits in. */
+export function systemReminder(text: string): { type: 'text'; text: string } {
+  return { type: 'text', text: `<system-reminder>\n${text}\n</system-reminder>` };
+}
+
+/**
+ * The model's messages, rebuilt from the items in order. UI-only items (tool_call, notes, approvals…) are skipped.
+ *
+ * A mid-conversation system message must follow a user message and be either last or followed by an assistant
+ * message. System notes are appended right before a model call, so they always end the request they were made
+ * for; but when that call produced no assistant reply (an API error, a bare refusal) the next item is a new user
+ * message, and after a reply cut off at max_tokens the "continue" note follows an assistant message. Those runs
+ * of notes go out as one user message of `<system-reminder>` text blocks instead (merged by the API with the user
+ * turn next to it). The choice depends only on the items around the run, which never change once written, so a
+ * run that was sent as system messages and answered by Claude is replayed as system messages forever: valid
+ * histories are rebuilt byte-for-byte as before, and Claude's content (thinking blocks included) is untouched.
+ */
 export function buildMessages(items: AgentItem[]): BetaMessageParam[] {
-  const messages: BetaMessageParam[] = [];
+  type Entry = { kind: 'message'; message: BetaMessageParam } | { kind: 'note'; text: string };
+  const entries: Entry[] = [];
   for (const item of items) {
     switch (item.kind) {
       case 'user_message':
-        messages.push({ role: 'user', content: item.payload.text });
+        entries.push({ kind: 'message', message: { role: 'user', content: item.payload.text } });
         break;
       case 'assistant_message':
         // Replayed from the exact JSON text received; an empty content (e.g. a bare refusal) can't be sent back.
         if (item.payload.content.length > 0) {
-          messages.push({ role: 'assistant', content: JSON.parse(item.payload.contentJson) as Extract<BetaMessageParam, { role: 'assistant' }>['content'] });
+          const content = JSON.parse(item.payload.contentJson) as Extract<BetaMessageParam, { role: 'assistant' }>['content'];
+          entries.push({ kind: 'message', message: { role: 'assistant', content } });
         }
         break;
       case 'tool_results':
-        messages.push({ role: 'user', content: item.payload.content });
+        entries.push({ kind: 'message', message: { role: 'user', content: item.payload.content } });
         break;
       case 'system_note':
-        messages.push({ role: 'system', content: item.payload.text });
+        entries.push({ kind: 'note', text: item.payload.text });
         break;
       default:
         break;
     }
+  }
+
+  const messages: BetaMessageParam[] = [];
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i]!;
+    if (entry.kind === 'message') {
+      messages.push(entry.message);
+      continue;
+    }
+    const run: string[] = [];
+    let j = i;
+    for (; j < entries.length && entries[j]!.kind === 'note'; j++) run.push((entries[j] as { text: string }).text);
+    const next = entries[j];
+    const afterUser = messages.at(-1)?.role === 'user';
+    const beforeAssistantOrEnd = next === undefined || (next.kind === 'message' && next.message.role === 'assistant');
+    if (afterUser && beforeAssistantOrEnd) {
+      for (const text of run) messages.push({ role: 'system', content: text });
+    } else {
+      messages.push({ role: 'user', content: run.map(systemReminder) });
+    }
+    i = j - 1;
   }
   return messages;
 }

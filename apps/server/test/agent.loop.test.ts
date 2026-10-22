@@ -1,10 +1,10 @@
 import type { AgentEvent, AgentMode } from '@mini/shared';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { RESULT_MAX_CHARS } from '../src/agent/loop.js';
+import { buildMessages, RESULT_MAX_CHARS, systemReminder } from '../src/agent/loop.js';
 import { AgentService } from '../src/modules/agent/index.js';
 import { agentDb } from '../src/modules/agent/tables.js';
-import type { ToolResultContent } from '../src/modules/agent/types.js';
-import { MockGateway, type BetaMessage, type BetaMessageParam } from '../src/modules/llm/index.js';
+import type { AgentItem, ToolResultContent } from '../src/modules/agent/types.js';
+import { checkMessageSequence, MockGateway, type BetaMessage, type BetaMessageParam, type MockLine } from '../src/modules/llm/index.js';
 import type { User } from '../src/modules/resources/schemas.js';
 import { answer, fakePort, fakeTools, fixedFacts, msg, text, thinking, use, why, type FakeTools } from './agent.helpers.js';
 import { buildTestApp, type TestApp } from './helpers.js';
@@ -32,8 +32,11 @@ beforeEach(() => {
 
 type Setup = { mock: MockGateway; agent: AgentService; sid: string; tools: FakeTools };
 
-async function setup(script: BetaMessage[], opts: { mode?: AgentMode; tools?: FakeTools; budget?: number; maxSteps?: number } = {}): Promise<Setup> {
-  const mock = MockGateway.fromMessages(script);
+/** A scripted 400 from the API at that turn. */
+const fail400 = (): MockLine => ({ error: { code: 'LLM_BAD_REQUEST', message: 'Claude rejected the request.', status: 400 } });
+
+async function setup(script: (BetaMessage | MockLine)[], opts: { mode?: AgentMode; tools?: FakeTools; budget?: number; maxSteps?: number } = {}): Promise<Setup> {
+  const mock = new MockGateway(script.map((l): MockLine => ('error' in l ? l : { response: l as BetaMessage })));
   const tools = opts.tools ?? fakeTools();
   const agent = opts.budget ? new AgentService({ db: t.db, tokenBudget: opts.budget }) : t.ctx.services.agent;
   agent.attach({
@@ -451,5 +454,197 @@ describe('limits and stop', () => {
     const s = await setup([msg([use('list_datasets', { rationale: why() })]), msg([use('list_datasets', { rationale: why('Encore') })])], { mode: 'explore', maxSteps: 2 });
     await say(s, 'Boucle');
     expect((await views(s)).at(-1)).toMatchObject({ kind: 'note', text: expect.stringContaining('2 steps') });
+  });
+});
+
+describe('message order after errors and interruptions (Messages API rules)', () => {
+  /** Every request respects the API's ordering rules, and no note says the mock refused the order (its 400). */
+  async function checkAllRequests(s: Setup, name = ''): Promise<void> {
+    for (const [i, req] of s.mock.requests.entries()) expect(checkMessageSequence(req.messages), `${name} request ${i}`).toEqual([]);
+    expect((await views(s)).filter((v) => v.kind === 'note' && v.text.includes('rejected the request:')), name).toEqual([]);
+  }
+
+  it('after a failed model call the next message works: the unanswered system notes become reminders in the user turn', async () => {
+    const s = await setup([fail400(), answer('Bonjour !'), answer('Encore.')]);
+    await say(s, 'Bonjour');
+    expect((await session(s)).status).toBe('idle');
+    expect((await views(s)).at(-1)).toMatchObject({ kind: 'note', text: expect.stringContaining('Claude rejected the request.') });
+
+    await say(s, 'Bonjour ?');
+    const [first, second] = s.mock.requests;
+    const facts = first!.messages[1]!.content as string;
+    const mode = first!.messages[2]!.content as string;
+    expect(first!.messages).toEqual([
+      { role: 'user', content: 'Bonjour' },
+      { role: 'system', content: facts },
+      { role: 'system', content: mode },
+    ]);
+    // Before the fix: [user, system, system, user] → 400 "messages.2: role 'system' must precede an 'assistant' message".
+    expect(second!.messages).toEqual([
+      { role: 'user', content: 'Bonjour' },
+      { role: 'user', content: [systemReminder(facts), systemReminder(mode)] },
+      { role: 'user', content: 'Bonjour ?' },
+    ]);
+    expect(facts).toContain('## Current facts');
+    expect(mode).toContain('## Mode: router');
+    expect((await views(s)).at(-1)).toMatchObject({ kind: 'assistant_message', text: 'Bonjour !' });
+
+    // The conversation goes on with the same history: request 2 is a prefix of request 3.
+    await say(s, 'Et après ?');
+    const third = s.mock.requests[2]!;
+    expect(JSON.stringify(third.messages.slice(0, second!.messages.length))).toBe(JSON.stringify(second!.messages));
+    expect(third.messages.slice(second!.messages.length)).toEqual([
+      { role: 'assistant', content: [text('Bonjour !')] },
+      { role: 'user', content: 'Et après ?' },
+    ]);
+    await checkAllRequests(s);
+  });
+
+  it('a reply cut off at max_tokens without a tool call continues with a reminder in a user turn, not a system message after it', async () => {
+    const s = await setup([msg([text('Début')], 'max_tokens'), answer('Suite.')]);
+    await say(s, 'Raconte');
+    const continueNote = (await items(s)).find((i) => i.kind === 'system_note' && i.payload.about === 'continue') as AgentItem<'system_note'>;
+    const second = s.mock.requests[1]!;
+    expect(second.messages.slice(3)).toEqual([
+      { role: 'assistant', content: [text('Début')] },
+      { role: 'user', content: [systemReminder(continueNote.payload.text)] },
+    ]);
+    expect((await session(s)).status).toBe('idle');
+    await checkAllRequests(s);
+  });
+
+  it('a bare refusal (no content to replay) leaves a session whose next message works', async () => {
+    const s = await setup([msg([], 'refusal'), answer('Ok')]);
+    await say(s, 'Quelque chose');
+    await say(s, 'Autre chose');
+    expect(s.mock.requests[1]!.messages.map((m) => m.role)).toEqual(['user', 'user', 'user']);
+    expect((await views(s)).at(-1)).toMatchObject({ kind: 'assistant_message', text: 'Ok' });
+    await checkAllRequests(s);
+  });
+
+  it('a mode change whose next call fails: the new mode guide reaches the model with the next message', async () => {
+    const s = await setup([
+      msg([use('change_mode', { mode: 'semantics', reason: 'New project', rationale: why() })]),
+      fail400(),
+      answer('Ok'),
+    ]);
+    await say(s, 'Aide-moi');
+    await say(s, 'Alors ?');
+    const msgs = s.mock.requests[2]!.messages;
+    expect(msgs.map((m) => m.role)).toEqual(['user', 'system', 'system', 'assistant', 'user', 'user', 'user']);
+    expect(JSON.stringify(msgs[5])).toContain('## Mode: semantics');
+    await checkAllRequests(s);
+  });
+
+  it('every request of every interruption path follows the ordering rules, and the next message always works', async () => {
+    const twice = async (s: Setup) => {
+      await say(s, 'a');
+      await say(s, 'b');
+      return s;
+    };
+    const scenarios: { name: string; run: () => Promise<Setup> }[] = [
+      { name: 'model error', run: async () => twice(await setup([fail400(), answer()])) },
+      { name: 'mock exhausted', run: async () => twice(await setup([])) },
+      { name: 'refusal with a tool_use', run: async () => twice(await setup([msg([text('Je'), use('list_datasets', { rationale: why() })], 'refusal'), answer()], { mode: 'explore' })) },
+      { name: 'max_tokens with a tool_use, then an error', run: async () => twice(await setup([msg([use('list_datasets', { rationale: why() })], 'max_tokens'), fail400(), answer()], { mode: 'explore' })) },
+      {
+        name: 'rejected approval',
+        run: async () => {
+          const s = await setup([msg([use('publish_semantics', { summary: 'v1', rationale: why() })]), answer(), answer()], { mode: 'semantics' });
+          await say(s, 'a');
+          await s.agent.decide(s.sid, (await session(s)).pending!.approvalId!, ada, { decision: 'reject', note: 'Non' });
+          await s.agent.settled(s.sid);
+          await say(s, 'b');
+          return s;
+        },
+      },
+      {
+        name: 'answered question',
+        run: async () => {
+          const questions = [{ id: 'q', text: 'Lequel ?', choices: ['A', 'B'] }];
+          const s = await setup([msg([use('ask_user', { questions, rationale: why() })]), answer(), answer()], { mode: 'semantics' });
+          await say(s, 'a');
+          await s.agent.answer(s.sid, (await session(s)).pending!.questionId!, ada, { q: 'A' });
+          await s.agent.settled(s.sid);
+          await say(s, 'b');
+          return s;
+        },
+      },
+      {
+        name: 'stop while paused',
+        run: async () => {
+          const s = await setup([msg([use('publish_semantics', { summary: 'v1', rationale: why() }), use('edit_semantics', { ops: [], rationale: why() })]), answer()], { mode: 'semantics' });
+          await say(s, 'a');
+          await s.agent.stop(s.sid);
+          await say(s, 'b');
+          return s;
+        },
+      },
+      {
+        name: 'stop while running',
+        run: async () => {
+          let release!: () => void;
+          const gate = new Promise<void>((r) => (release = r));
+          const tools = fakeTools({ list_datasets: async () => { await gate; return { ok: true, summary: 'ok', result: [] }; } });
+          const s = await setup([msg([use('list_datasets', { rationale: why() })]), answer()], { mode: 'explore', tools });
+          await s.agent.postMessage(s.sid, ada, 'a');
+          while (!tools.calls.list_datasets) await new Promise((r) => setTimeout(r, 5));
+          await s.agent.stop(s.sid);
+          release();
+          await s.agent.settled(s.sid);
+          await say(s, 'b');
+          return s;
+        },
+      },
+      {
+        name: 'repeated failures',
+        run: async () => {
+          const tools = fakeTools({ run_sql: async () => ({ ok: false, code: 'SQL_REJECTED', message: 'Only SELECT is allowed.' }) });
+          const bad = () => msg([use('run_sql', { sql: 'DELETE FROM x', rationale: why() })]);
+          return twice(await setup([bad(), bad(), bad(), answer()], { mode: 'explore', tools }));
+        },
+      },
+      {
+        name: 'step limit',
+        run: async () => twice(await setup([msg([use('list_datasets', { rationale: why() })]), msg([use('list_datasets', { rationale: why('Encore') })]), answer()], { mode: 'explore', maxSteps: 2 })),
+      },
+    ];
+    for (const sc of scenarios) {
+      const s = await sc.run();
+      expect(s.mock.requests.length, sc.name).toBeGreaterThan(1);
+      await checkAllRequests(s, sc.name);
+      const lastView = (await views(s)).at(-1);
+      if (sc.name === 'mock exhausted') expect(lastView, sc.name).toMatchObject({ kind: 'note', text: expect.stringContaining('no recorded response') });
+      else expect(lastView, sc.name).toMatchObject({ kind: 'assistant_message' });
+      expect((await session(s)).status, sc.name).toBe('idle');
+    }
+  });
+
+  it('buildMessages leaves valid histories as they were: system notes answered by Claude stay system messages', () => {
+    let seq = 0;
+    const item = <K extends AgentItem['kind']>(kind: K, payload: AgentItem<K>['payload']) =>
+      ({ seq: ++seq, kind, payload, tokenEstimate: 0, createdAt: '' }) as unknown as AgentItem;
+    const content = [thinking('Hmm', 'sig-9'), text('Salut')] as unknown as BetaMessage['content'];
+    const items = [
+      item('user_message', { text: 'Bonjour' }),
+      item('system_note', { text: 'facts', about: 'facts' }),
+      item('system_note', { text: 'mode', about: 'mode', mode: 'router' }),
+      item('assistant_message', { content, contentJson: JSON.stringify(content), stopReason: 'end_turn' }),
+      item('user_message', { text: 'Encore' }),
+      item('system_note', { text: 'facts 2', about: 'facts' }),
+      item('note', { text: 'Claude rejected the request.' }),
+      item('user_message', { text: 'Encore ?' }),
+    ];
+    const messages = buildMessages(items);
+    expect(messages).toEqual([
+      { role: 'user', content: 'Bonjour' },
+      { role: 'system', content: 'facts' },
+      { role: 'system', content: 'mode' },
+      { role: 'assistant', content },
+      { role: 'user', content: 'Encore' },
+      { role: 'user', content: [systemReminder('facts 2')] },
+      { role: 'user', content: 'Encore ?' },
+    ]);
+    expect(checkMessageSequence(messages)).toEqual([]);
   });
 });

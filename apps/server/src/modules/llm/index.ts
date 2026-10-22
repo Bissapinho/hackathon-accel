@@ -11,6 +11,7 @@ import type { LlmGateway } from './types.js';
 export * from './anthropic.js';
 export * from './interpret.js';
 export * from './mock.js';
+export * from './sequence.js';
 export * from './tools.js';
 export * from './types.js';
 

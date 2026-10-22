@@ -8,7 +8,7 @@ import { buildToolRegistry } from '../src/agent/registry.js';
 import { getObject } from '../src/agent/tools/get_object.js';
 import { queryObjects } from '../src/agent/tools/query_objects.js';
 import {
-  AnthropicGateway, buildLlmServices, buildParams, catalogDescriptions, createLlmGateway, interpretMessage, LlmError, loadLlmConfig,
+  AnthropicGateway, buildLlmServices, buildParams, catalogDescriptions, checkMessageSequence, createLlmGateway, interpretMessage, LlmError, loadLlmConfig,
   MockGateway, parseMockFile, RecordingGateway, toLlmTool, toLlmTools,
   type BetaMessage, type LlmRequest, type LlmTool,
 } from '../src/modules/llm/index.js';
@@ -129,7 +129,11 @@ describe('mock gateway', () => {
     expect(seen).toEqual(['thinking:Je regarde les données', 'text:Je regarde.', 'tool:preview_dataset']);
     expect(r1.toolCalls[0]).toMatchObject({ ok: true });
 
-    const history = [...req().messages, { role: 'assistant' as const, content: r1.message.content }];
+    const history: LlmRequest['messages'] = [
+      ...req().messages,
+      { role: 'assistant', content: r1.message.content },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 'tu_1', content: 'ok' }] },
+    ];
     const r2 = await mock.stream(req({ messages: history }));
     expect(r2.outcome).toBe('end_turn');
     // G7-style check: the stored assistant content went back unchanged, thinking block included.
@@ -179,6 +183,48 @@ describe('mock gateway', () => {
     expect(buildLlmServices().llm.kind).toBe('mock');
     const given = MockGateway.fromMessages([]);
     expect(buildLlmServices({ llm: given }).llm).toBe(given);
+  });
+});
+
+describe('message order rules (checkMessageSequence)', () => {
+  type M = LlmRequest['messages'];
+  const U = (content: string): M[number] => ({ role: 'user', content });
+  const A = (content: string): M[number] => ({ role: 'assistant', content });
+  const S = (content: string): M[number] => ({ role: 'system', content });
+  const codes = (m: M) => checkMessageSequence(m).map((i) => `${i.index}:${i.code}`);
+
+  it('accepts system messages after a user turn that end the array or precede an assistant message', () => {
+    expect(codes([U('a'), S('facts'), S('mode')])).toEqual([]);
+    expect(codes([U('a'), S('facts'), S('mode'), A('b'), U('c'), S('mode 2')])).toEqual([]);
+    expect(codes([U('a'), A('b'), U('c'), U('d')])).toEqual([]);
+    // Directive-only form (no content) may sit anywhere.
+    expect(codes([U('a'), A('b'), { role: 'system', content: [] }, U('c')])).toEqual([]);
+  });
+
+  it('flags the live bug: a system message between two user turns (messages.2 of user, system, system, user)', () => {
+    const issues = checkMessageSequence([U('Bonjour'), S('facts'), S('mode'), U('Bonjour ?')]);
+    expect(issues.map((i) => `${i.index}:${i.code}`)).toEqual(['1:SYSTEM_PLACEMENT', '2:SYSTEM_PLACEMENT']);
+    expect(issues[1]!.message).toContain("messages.2: role 'system' must precede an 'assistant' message");
+  });
+
+  it('flags a system message first or right after an assistant message, a final assistant message, and tool pairing errors', () => {
+    expect(codes([S('x'), U('a')])).toEqual(['0:FIRST_NOT_USER', '0:SYSTEM_PLACEMENT', '0:SYSTEM_PLACEMENT']);
+    expect(codes([U('a'), A('b'), S('continue')])).toEqual(['2:SYSTEM_PLACEMENT']);
+    expect(codes([U('a'), A('b')])).toEqual(['1:ENDS_WITH_ASSISTANT']);
+    const call: M[number] = { role: 'assistant', content: [{ type: 'tool_use', id: 'tu_1', name: 'x', input: {} }] };
+    const result = (id: string): M[number] => ({ role: 'user', content: [{ type: 'tool_result', tool_use_id: id, content: 'ok' }] });
+    expect(codes([U('a'), call, result('tu_1'), U('b')])).toEqual([]);
+    expect(codes([U('a'), call, U('b')])).toEqual(['1:TOOL_USE_UNANSWERED']);
+    expect(codes([U('a'), call, result('tu_2')])).toEqual(['2:TOOL_RESULT_UNKNOWN', '1:TOOL_USE_UNANSWERED']);
+    expect(codes([U('a'), call, U('b'), result('tu_1')])).toEqual(['2:TOOL_RESULT_ORDER']);
+  });
+
+  it('the mock gateway answers an invalid order with a 400, like the API', async () => {
+    const mock = MockGateway.fromMessages([msg([{ type: 'text', text: 'Ok' }], 'end_turn')]);
+    await expect(mock.stream(req({ messages: [U('a'), S('b'), U('c')] }))).rejects.toMatchObject({
+      code: 'LLM_BAD_REQUEST', details: { status: 400 }, message: expect.stringContaining("role 'system' must precede"),
+    });
+    expect(mock.remaining).toBe(1);
   });
 });
 
