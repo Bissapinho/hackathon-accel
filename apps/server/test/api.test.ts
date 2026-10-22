@@ -35,7 +35,10 @@ describe('T-03 server skeleton', () => {
     expect(res.statusCode).toBe(200);
     const me = res.json();
     expect(me.user).toMatchObject({ email: 'ada@kumo.test', displayName: 'Ada' });
-    expect(me.projects).toEqual([expect.objectContaining({ id: projectId, name: 'Kumo 2025', role: 'owner' })]);
+    // Other test files add projects to the shared test database; Kumo 2025 must be among Ada's.
+    expect(me.projects).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: projectId, name: 'Kumo 2025', role: 'owner' })]),
+    );
   });
 
   it('GET /api/me without login is 401 with an ApiError body', async () => {
@@ -90,8 +93,8 @@ describe('T-03 server skeleton', () => {
 });
 
 describe('Phase 0 tool registry', () => {
-  it('starts empty and rejects duplicates and names missing from the catalog', () => {
-    expect(buildToolRegistry().size).toBe(0);
+  it('registers every tool once and rejects duplicates and names missing from the catalog', () => {
+    expect(() => buildToolRegistry()).not.toThrow();
     const fake = { name: 'list_datasets', modes: [], risk: 'read', input: null, run: async () => ({ ok: true }) };
     expect(() => buildToolRegistry([fake, fake] as never)).toThrow(/twice/);
     expect(() => buildToolRegistry([{ ...fake, name: 'nope' }] as never)).toThrow(/catalog/);

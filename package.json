@@ -10,6 +10,7 @@
     "dev": "pnpm --filter @mini/server dev",
     "db:migrate": "pnpm --filter @mini/server db:migrate",
     "db:seed": "pnpm --filter @mini/server db:seed",
+    "seed:kumo": "pnpm --filter @mini/server seed:kumo",
     "test": "pnpm --filter @mini/server test",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint ."
