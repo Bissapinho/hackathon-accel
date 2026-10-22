@@ -100,3 +100,31 @@ details.res pre { white-space: pre-wrap; max-height: 300px; overflow: auto; back
 .split { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
 .list button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
 .list button:hover { background: rgba(28, 27, 24, 0.04); } .list button.on { background: var(--surface); box-shadow: var(--ring); font-weight: 600; }
+
+/* Data */
+.split { grid-template-columns: 300px minmax(0, 1fr); }
+.drop { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px dashed var(--sep-strong); border-radius: 12px; color: var(--ink-3); cursor: pointer; font-size: 14px; }
+.drop:hover, .drop.over { border-color: var(--accent); color: var(--accent); background: var(--accent-tint); }
+.ds-list { display: grid; gap: 6px; }
+.ds { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+.ds:hover { background: rgba(28, 27, 24, 0.04); }
+.ds.on { background: var(--surface); box-shadow: var(--ring); }
+div.ds { background: var(--surface); box-shadow: var(--ring); cursor: default; }
+.ds-name { font-weight: 600; }
+.ds-meta { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-3); }
+.ds-st { margin-left: auto; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.ds-st::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 6px; vertical-align: middle; }
+.ds-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.stats { display: flex; gap: 28px; }
+.stats div { display: grid; text-align: right; }
+.stats b { font-size: 22px; line-height: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stats span { font-size: 12px; color: var(--ink-3); }
+.tw.data { max-height: calc(100vh - 260px); }
+.tw.data th { padding: 10px 14px; }
+.tw.data th .type { font-weight: 400; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.tw.data td { padding: 8px 14px; white-space: nowrap; max-width: 260px; }
+.tw.data tbody tr:nth-child(even) td { background: #faf9f6; }
+.tw.data td.null { color: var(--ink-3); opacity: .5; }
+.empty { text-align: center; padding: 8vh 0 0; display: grid; justify-items: center; gap: 8px; }
+.empty .icon { width: 36px; height: 36px; color: var(--ink-3); }
+.empty .muted { max-width: 460px; }

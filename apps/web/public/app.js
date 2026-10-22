@@ -254,36 +254,63 @@ function renderBlock(b) {
 }
 
 // ── data ──
+const prettyName = (n) => { const s = String(n).replace(/_/g, ' ').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
+const PROFILE = { done: ['ok', 'Analysed'], pending: ['warn', 'Analysing…'], running: ['warn', 'Analysing…'], failed: ['bad', 'Analysis failed'] };
+
+function dataTable(columns, rows) {
+  return el('div', { class: 'tw data' }, el('table', { class: 't' },
+    el('thead', {}, el('tr', {}, columns.map((c) => el('th', {}, el('div', {}, c.name), el('div', { class: 'type' }, c.type))))),
+    el('tbody', {}, rows.map((r) => el('tr', {}, r.map((v, i) => v == null || v === ''
+      ? el('td', { class: 'null' }, '—')
+      : el('td', { class: ['integer', 'number', 'decimal'].includes(columns[i]?.type) || typeof v === 'number' ? 'num' : null, title: fmt(v) }, fmt(v))))))));
+}
+
 async function viewData(content, bar) {
   const files = el('input', { type: 'file', multiple: true, accept: '.csv,.gz', style: 'display:none', onchange: () => upload([...files.files]) });
-  bar.append(files, el('button', { class: 'btn primary', onclick: () => files.click() }, icon('download'), 'Upload CSV'));
-  const log = el('div', { class: 'stack' });
-  const list = el('div');
-  const detail = el('div');
-  content.append(el('div', { class: 'stack' }, log, list, detail));
+  bar.append(files, el('button', { class: 'btn primary', onclick: () => files.click() }, icon('download'), 'Upload files'));
+  const log = el('div', { class: 'stack', style: 'gap:6px' });
+  const list = el('div', { class: 'ds-list' });
+  const detail = el('div', { class: 'stack' });
+  const drop = el('div', { class: 'drop', onclick: () => files.click(),
+    ondragover: (e) => { e.preventDefault(); drop.classList.add('over'); }, ondragleave: () => drop.classList.remove('over'),
+    ondrop: (e) => { e.preventDefault(); drop.classList.remove('over'); upload([...e.dataTransfer.files]); } },
+    icon('file'), el('span', {}, 'Drop CSV or CSV.gz files here'));
+  content.append(el('div', { class: 'split' }, el('div', { class: 'stack' }, drop, log, list), detail));
+  let current = null;
   const load = async () => {
     try {
       const ds = await api('GET', `${P()}/datasets`);
-      if (!ds.length) return list.replaceChildren(el('div', { class: 'card muted' }, 'No data yet. Upload your CSV or CSV.gz exports.'));
-      list.replaceChildren(table(['Name', 'Rows', 'Columns', 'Version', 'Profile'],
-        ds.map((d) => [d.name, d.current?.rowCount ?? '', d.current?.columnCount ?? '', d.current?.version ?? '', d.current?.profileStatus ?? '']),
-        (i) => preview(ds[i])));
+      if (!ds.length) { list.replaceChildren(); return detail.replaceChildren(el('div', { class: 'empty' }, icon('db'), el('h2', {}, 'No data yet'), el('div', { class: 'muted' }, 'Upload your exports to get started.'))); }
+      list.replaceChildren(...ds.map((d) => {
+        const [cls, label] = PROFILE[d.current?.profileStatus] || ['', d.current?.profileStatus || 'No version'];
+        return el('button', { class: `ds${current?.id === d.id ? ' on' : ''}`, 'data-id': d.id, onclick: () => preview(d) },
+          el('div', { class: 'ds-name' }, prettyName(d.name)),
+          el('div', { class: 'ds-meta' }, d.current ? `${d.current.rowCount.toLocaleString()} rows · ${d.current.columnCount} columns` : '—',
+            el('span', { class: `ds-st ${cls}` }, label)));
+      }));
+      if (!current) preview(ds[0]);
     } catch (e) { list.replaceChildren(errBox(e)); }
   };
   const preview = async (d) => {
+    current = d;
+    list.querySelectorAll('.ds').forEach((b) => b.classList.toggle('on', b.dataset.id === d.id));
     detail.replaceChildren(el('div', { class: 'muted' }, 'Loading…'));
     try {
       const p = await api('GET', `/api/datasets/${d.id}/preview?limit=50`);
-      detail.replaceChildren(el('div', { class: 'stack' }, el('h2', {}, d.name, ' ', el('span', { class: 'muted xs' }, `first ${p.rows.length} of ${p.total.toLocaleString()} rows`)),
-        table(p.columns.map((c) => `${c.name} · ${c.type}`), p.rows)));
+      detail.replaceChildren(
+        el('div', { class: 'ds-head' }, el('div', {}, el('h1', {}, prettyName(d.name)), el('div', { class: 'mono muted' }, d.name)),
+          el('div', { class: 'stats' }, [['Rows', p.total.toLocaleString()], ['Columns', p.columns.length], ['Version', d.currentVersion ?? '—']]
+            .map(([k, v]) => el('div', {}, el('b', {}, v), el('span', {}, k))))),
+        el('div', { class: 'xs muted' }, `Showing the first ${p.rows.length} rows`),
+        dataTable(p.columns, p.rows));
     } catch (e) { detail.replaceChildren(errBox(e)); }
   };
   const upload = async (fs) => {
     for (const f of fs) {
-      const line = el('div', { class: 'muted' }, `Uploading ${f.name}…`);
+      const line = el('div', { class: 'xs muted' }, `Uploading ${f.name}…`);
       log.append(line);
       const fd = new FormData(); fd.append('file', f);
-      try { const v = await api('POST', `${P()}/datasets`, fd); line.className = 'ok'; line.textContent = `✓ ${f.name}: ${v.rowCount.toLocaleString()} rows (version ${v.version})${v.parseErrors?.length ? `, ${v.parseErrors.length} values not read` : ''}`; }
+      try { const v = await api('POST', `${P()}/datasets`, fd); line.className = 'xs ok'; line.textContent = `✓ ${f.name} · ${v.rowCount.toLocaleString()} rows`; }
       catch (e) { line.replaceWith(errBox(e)); }
       await load();
     }
@@ -324,9 +351,19 @@ async function viewMeaning(content, bar) {
 async function viewObjects(content) {
   let doc;
   try { doc = (await api('GET', `${P()}/workspace`)).doc; }
-  catch (e) { return content.append(errBox(e), el('div', { class: 'muted' }, 'Objects appear once the assistant publishes a workspace.')); }
+  catch (e) {
+    if (e.status !== 404) return content.append(errBox(e));
+    let draft = null;
+    try { draft = (await api('GET', `${P()}/workspace?version=draft`)).draft?.doc; } catch { /* no draft either */ }
+    const types = draft?.objectTypes || [];
+    return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'Nothing published yet'),
+      el('div', { class: 'muted' }, types.length ? 'The assistant has drafted these object types. Approve the publish in the Assistant to browse their records.'
+        : 'Ask the assistant to build your objects, then approve the publish.')),
+      types.length ? el('div', { class: 'ds-list', style: 'max-width:720px;margin:24px auto 0' }, types.map((t) => el('div', { class: 'ds' },
+        el('div', { class: 'ds-name' }, t.pluralDisplayName || t.apiName), el('div', { class: 'ds-meta' }, t.description || '', el('span', { class: 'ds-st warn' }, 'Draft'))))) : null);
+  }
   const types = doc.objectTypes || [];
-  if (!types.length) return content.append(el('div', { class: 'muted' }, 'No object types published yet.'));
+  if (!types.length) return content.append(el('div', { class: 'empty' }, icon('cube'), el('h2', {}, 'No object types yet'), el('div', { class: 'muted' }, 'Ask the assistant to build them.')));
   const nav = el('div', { class: 'list' });
   const main = el('div', { class: 'stack' });
   content.append(el('div', { class: 'split' }, nav, main));
