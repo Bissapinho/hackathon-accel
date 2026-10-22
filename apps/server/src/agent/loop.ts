@@ -365,12 +365,7 @@ export class AgentLoop {
         fail('TOO_MANY_TOOL_CALLS', `Only ${MAX_CALLS_PER_RESPONSE} tool calls run per reply; this one was skipped.`, 'Make fewer calls at once, then call it again.');
         continue;
       }
-      if (!call.ok) {
-        if (call.code === 'UNKNOWN_TOOL') fail('UNKNOWN_TOOL', call.message, 'Use one of the declared tools.');
-        else if (call.code === 'TRUNCATED') fail('BAD_ARGUMENTS', call.message, 'Send a smaller input (fewer items per call).');
-        else fail('BAD_ARGUMENTS', call.message, 'Fix the fields listed and call the tool again.');
-        continue;
-      }
+      // Same order as 05-agent §1: the mode first, then the arguments.
       const tool = this.rt.tools.get(call.name);
       if (!tool) {
         fail('UNKNOWN_TOOL', `There is no tool named "${call.name}".`, 'Use one of the declared tools.');
@@ -382,6 +377,11 @@ export class AgentLoop {
           `${call.name} is not available in ${session.mode} mode.`,
           `Call change_mode first: ${call.name} works in ${tool.modes.join(', ')} mode.`,
         );
+        continue;
+      }
+      if (!call.ok) {
+        if (call.code === 'TRUNCATED') fail('BAD_ARGUMENTS', call.message, 'Send a smaller input (fewer items per call).');
+        else fail('BAD_ARGUMENTS', call.message, 'Fix the fields listed and call the tool again.');
         continue;
       }
 
