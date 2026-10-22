@@ -9,7 +9,7 @@ import { createPool } from '../apps/server/src/db/pool.js';
 import { initReadOnly } from '../apps/server/src/db/readonly.js';
 import { SEED_PROJECT_NAME, SEED_USERS } from '../apps/server/src/db/seed.js';
 import { buildServices } from '../apps/server/src/services.js';
-import { ports } from '../apps/server/src/wiring.js';
+import { buildPorts } from '../apps/server/src/wiring.js';
 
 // Generated tables, tagged as simulated everywhere (02-slice-and-demo §3).
 const SIMULATED = new Set(['CUISINES_REFERENTIEL', 'CAPACITE_CUISINES_JOUR_2025', 'STOCKS_MAGASINS_JOUR_2025']);
@@ -41,7 +41,7 @@ const config = loadConfig();
 const pool = createPool({ connectionString: config.DATABASE_URL, caCertPath: config.DATABASE_CA_CERT, max: 2 });
 initReadOnly(pool);
 const db = createDb(pool);
-const services = buildServices({ config, db, pool, ...ports });
+const services = buildServices({ config, db, pool, ...buildPorts(db) });
 
 try {
   const owner = await db
