@@ -8,8 +8,6 @@ import { buildToolRegistry } from '../src/agent/registry.js';
 import { bankOverview } from '../src/agent/tools/bank_overview.js';
 import { browseSemantics } from '../src/agent/tools/browse_semantics.js';
 import { editSemantics } from '../src/agent/tools/edit_semantics.js';
-import { alexandreTools } from '../src/agent/tools/index.alexandre.js';
-import { alfredTools } from '../src/agent/tools/index.alfred.js';
 import { semanticsTools } from '../src/agent/tools/index.semantics.js';
 import { publishSemantics } from '../src/agent/tools/publish_semantics.js';
 import { resolveSemantics } from '../src/agent/tools/resolve_semantics.js';
@@ -89,7 +87,7 @@ describe('semantics tools: catalog and LLM specs', () => {
   const catalog = JSON.parse(readFileSync(fileURLToPath(new URL('../../../build-package/tools/catalog.json', import.meta.url)), 'utf8')) as { tools: CatalogTool[] };
 
   it('every tool is accepted by buildToolRegistry with the catalog modes and risk', () => {
-    const registry = buildToolRegistry([...alexandreTools, ...alfredTools, ...semanticsTools]);
+    const registry = buildToolRegistry(); // the app's registry: index.alfred.ts lists semanticsTools
     for (const tool of semanticsTools) {
       expect(registry.get(tool.name)).toBe(tool);
       const entry = catalog.tools.find((c) => c.name === tool.name)!;
@@ -177,16 +175,21 @@ describe('edit_semantics (S1, S2)', () => {
   });
 
   it('S2: the server writes the evidence result; a write query is refused with SQL_REJECTED', async () => {
-    await call(editSemantics, {
+    // A write query is refused before anything is applied (T-09): the whole edit is rejected.
+    expect(await call(editSemantics, {
       expectedRevision: 0,
       ops: [
         { op: 'upsertRecord', record: { kind: 'evidence', body: { id: 'E_ok', source: 'x', query: 'SELECT 42 AS answer', validation_method: 'v' } } },
         { op: 'upsertRecord', record: { kind: 'evidence', body: { id: 'E_bad', source: 'x', query: 'DELETE FROM data.x', validation_method: 'v' } } },
       ],
-    });
+    })).toMatchObject({ ok: false, code: 'SQL_REJECTED' });
     const store = t.ctx.services.semantics;
+    expect(await store.getRecord(ctx.projectId, 'draft', 'E_ok')).toBeNull();
+    await call(editSemantics, {
+      expectedRevision: 0,
+      ops: [{ op: 'upsertRecord', record: { kind: 'evidence', body: { id: 'E_ok', source: 'x', query: 'SELECT 42 AS answer', validation_method: 'v' } } }],
+    });
     expect((await store.getRecord(ctx.projectId, 'draft', 'E_ok'))!.body).toMatchObject({ result: expect.stringContaining('42') });
-    expect((await store.getRecord(ctx.projectId, 'draft', 'E_bad'))!.body).toMatchObject({ result: expect.stringContaining('SQL_REJECTED') });
     // The agent can't write `result` itself: it is not an input.
     const parsed = parse(editSemantics, { expectedRevision: 1, ops: [{ op: 'upsertRecord', record: { kind: 'evidence', body: { id: 'E_x', source: 'x', validation_method: 'v', result: 'forged' } } }] });
     expect(JSON.stringify(parsed)).not.toContain('forged');
