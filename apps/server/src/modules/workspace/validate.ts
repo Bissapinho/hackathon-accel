@@ -14,6 +14,8 @@ import type {
   WorkspaceDoc,
 } from '@mini/shared';
 import type { SemanticsPort } from '../../ports.js';
+import { sqlName as toSqlName } from '../logic/sqltext.js';
+import { validateLogic } from '../logic/validate.js';
 
 // Validation of the workspace document (04-api §5). This file holds the structural half (T-13): names,
 // duplicates, references between entities, descriptions, cycles, types that can be known without running
@@ -51,13 +53,8 @@ const CAMEL = /^[a-z][A-Za-z0-9]*$/;
 const KEBAB = /^[a-z][a-z0-9-]*$/;
 const SQL_IDENT = /^[a-z][a-z0-9_]{0,62}$/;
 
-// SQL name of an API name: `CuisineJour` → `cuisine_jour`, `tauxRetour` → `taux_retour` (03-data-model §8).
-export function toSqlName(apiName: string): string {
-  return apiName
-    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1_$2')
-    .toLowerCase();
-}
+// SQL name of an API name (03-data-model §8): the same function publish uses for view columns.
+export { toSqlName };
 
 // `null` = unknown (e.g. a null literal): fits anything.
 type T = BaseType | null;
@@ -736,6 +733,15 @@ function checkLogic(r: Report, doc: WorkspaceDoc, model: Model) {
   if (cycle) {
     const at = doc.logic.findIndex((l) => `${l.objectType}.${l.apiName}` === cycle[0]);
     r.err(`logic[${at}]`, 'LOGIC_CYCLE', `These calculations depend on each other in a loop: ${cycle.join(' → ')}.`);
+  }
+  // Publish compiles logic with the logic module's own checks (cycles through `case`/aggregate filters,
+  // nesting depth, stricter types): report what they refuse on items not flagged above, so a draft that
+  // validates also publishes.
+  const logicIndex = (path: string) => /^logic\[(\d+)\]/.exec(path)?.[1];
+  const flagged = new Set(r.errors.map((e) => logicIndex(e.path)).filter((i) => i !== undefined));
+  for (const e of validateLogic(doc).errors) {
+    const i = logicIndex(e.path);
+    if (i !== undefined && !flagged.has(i)) r.errors.push(e);
   }
 }
 

@@ -55,17 +55,23 @@ export async function openCsv(path: string): Promise<CsvReader> {
     parse({ delimiter, bom: true, relax_column_count: true, relax_quotes: true, skip_empty_lines: true }),
   );
   const iterator = parser[Symbol.asyncIterator]() as AsyncIterator<string[]>;
-  const first = await iterator.next();
-  if (first.done) throw new Error('empty file');
-  const header = first.value.map((h) => h.trim());
-  return {
-    header,
-    records: { [Symbol.asyncIterator]: () => iterator },
-    close: () => {
-      parser.destroy();
-      file.destroy();
-    },
+  const close = () => {
+    parser.destroy();
+    file.destroy();
   };
+  let first: IteratorResult<string[]>;
+  try {
+    first = await iterator.next();
+  } catch (err) {
+    close(); // a header that doesn't parse must not leave the file open
+    throw err;
+  }
+  if (first.done) {
+    close();
+    throw new Error('empty file');
+  }
+  const header = first.value.map((h) => h.trim());
+  return { header, records: { [Symbol.asyncIterator]: () => iterator }, close };
 }
 
 // Header + the first `n` records, for inference.

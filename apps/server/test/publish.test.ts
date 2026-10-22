@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { publishDraftTool } from '../src/agent/tools/publish_draft.js';
 import type { ToolContext } from '../src/agent/tools/types.js';
 import { withReadOnly } from '../src/db/readonly.js';
-import { createPublishService, PUBLISH_LOCK_KEY, type PublishProgress } from '../src/modules/workspace/publish.js';
+import { createPublishService, editsSql, PUBLISH_LOCK_KEY, type PublishProgress } from '../src/modules/workspace/publish.js';
 import { docToOps } from '../src/modules/workspace/ops.js';
 import { stubSemanticsPort } from '../src/ports.js';
 import { DS, kumoWorkspace } from './fixtures/workspace-kumo.js';
@@ -226,6 +226,34 @@ describe('publish (W4, W5, W6)', () => {
     expect(gone.rows[0]!.t).toBeNull();
     const meta = await t.db.selectFrom('meta.dataset_versions').select('dropped_at').where('dataset_id', '=', DS.commandes).where('version', '=', 1).executeTakeFirstOrThrow();
     expect(meta.dropped_at).not.toBeNull();
+  });
+});
+
+describe('edits tables', () => {
+  it('converts an edited column when its property changes type, keeping the edits', async () => {
+    const type = (t2: 'string' | 'integer') => ({
+      apiName: 'EditsTypeProbe',
+      primaryKey: 'id',
+      properties: [
+        { apiName: 'id', type: 'string', column: 'id' },
+        { apiName: 'qty', type: t2, column: 'qty', editable: true },
+      ],
+    }) as never;
+    await sql`DROP TABLE IF EXISTS edits.edits_type_probe`.execute(t.db);
+    try {
+      for (const s of editsSql(type('string'))) await sql.raw(s).execute(t.db);
+      await sql`INSERT INTO edits.edits_type_probe (pk, _edited_by, qty) VALUES ('a', 'test', '42')`.execute(t.db);
+      for (const s of editsSql(type('integer'))) await sql.raw(s).execute(t.db);
+      const col = await sql<{ t: string }>`SELECT format_type(atttypid, atttypmod) AS t FROM pg_attribute
+        WHERE attrelid = 'edits.edits_type_probe'::regclass AND attname = 'qty'`.execute(t.db);
+      expect(col.rows[0]?.t).toBe('bigint');
+      const row = await sql<{ qty: string }>`SELECT qty FROM edits.edits_type_probe WHERE pk = 'a'`.execute(t.db);
+      expect(Number(row.rows[0]?.qty)).toBe(42);
+      // Same type again: nothing to convert.
+      for (const s of editsSql(type('integer'))) await sql.raw(s).execute(t.db);
+    } finally {
+      await sql`DROP TABLE IF EXISTS edits.edits_type_probe`.execute(t.db);
+    }
   });
 });
 

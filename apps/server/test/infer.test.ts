@@ -44,7 +44,10 @@ describe('value parsing', () => {
     expect(parseAs('date', '1/2/2025')).toBe('2025-02-01');
     expect(parseAs('date', '31/02/2025')).toBeUndefined();
     expect(parseAs('timestamp', '14/10/2025 08:30')).toBe('2025-10-14 08:30:00');
-    expect(parseAs('timestamp', '2025-10-14T08:30:12Z')).toBe('2025-10-14 08:30:12Z');
+    expect(parseAs('timestamp', '2025-10-14T08:30:12Z')).toBe('2025-10-14 08:30:12');
+    // Offsets are converted to UTC (a `timestamp` column would ignore them).
+    expect(parseAs('timestamp', '2025-10-14T01:30:00.5+02:00')).toBe('2025-10-13 23:30:00.5');
+    expect(parseAs('timestamp', '2025-10-14 22:00-0330')).toBe('2025-10-15 01:30:00');
     expect(parseAs('timestamp', '2025-10-14')).toBe('2025-10-14 00:00:00');
     expect(parseAs('timestamp', '14/10/2025 25:00')).toBeUndefined();
   });

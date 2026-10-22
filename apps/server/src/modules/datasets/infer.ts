@@ -87,8 +87,13 @@ function parseTimestamp(v: string): string | undefined {
     const date = ymd(Number(m[1]), Number(m[2]), Number(m[3]));
     const time = hms(Number(m[4]), Number(m[5]), Number(m[6] ?? 0));
     if (!date || !time) return undefined;
-    // An explicit offset is kept so Postgres converts it; local times stay as written.
-    return `${date} ${time}${m[7] ?? ''}${m[8] ?? ''}`;
+    const fraction = m[7] ?? '';
+    if (!m[8]) return `${date} ${time}${fraction}`; // local times stay as written
+    // The column is `timestamp`, where Postgres silently ignores an offset: convert to UTC here.
+    const off = m[8] === 'Z' ? 0 : (m[8][0] === '-' ? -1 : 1) * (Number(m[8].slice(1, 3)) * 60 + Number(m[8].slice(-2)));
+    const utc = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6] ?? 0)) - off * 60_000);
+    const iso = utc.toISOString();
+    return `${iso.slice(0, 10)} ${iso.slice(11, 19)}${fraction}`;
   }
   m = FR_TS_RE.exec(v);
   if (m) {

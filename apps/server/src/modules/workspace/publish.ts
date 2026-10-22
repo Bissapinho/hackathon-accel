@@ -74,16 +74,6 @@ export function createPublishService(deps: {
     const draft = await workspace.getDraft(projectId);
     checkFresh(draft.revision, args.expectedRevision, draft.baseVersion, (await workspace.latestPublished(projectId))?.version ?? 0);
 
-    // Validation gate: the draft is published only if it has no errors.
-    const validation = await workspace.validateDraft(projectId);
-    if (validation.errors.length > 0) {
-      throw new ApiError(
-        422,
-        'VALIDATION_FAILED',
-        `The draft has ${validation.errors.length} problem(s) that must be fixed before publishing.`,
-        { details: validation.errors },
-      );
-    }
     const doc = draft.doc;
     const semVersion = doc.semanticVersion || (await semantics.activeVersion(projectId));
     if (!semVersion) {
@@ -110,6 +100,17 @@ export function createPublishService(deps: {
         .executeTakeFirst();
       const version = (latest?.version ?? 0) + 1;
       checkFresh(draft.revision, args.expectedRevision, draft.baseVersion, latest?.version ?? 0);
+
+      // Validation gate, under the lock: its data checks run every pipeline, so only one publish pays for them.
+      const validation = await workspace.validateDraft(projectId);
+      if (validation.errors.length > 0) {
+        throw new ApiError(
+          422,
+          'VALIDATION_FAILED',
+          `The draft has ${validation.errors.length} problem(s) that must be fixed before publishing.`,
+          { details: validation.errors },
+        );
+      }
 
       // ── 1. Pipelines ──
       const total = docToStore.pipelines.length;
@@ -314,9 +315,27 @@ export function editsSql(t: ObjectTypeDef): string[] {
   _edited_by text NOT NULL,
   _action_run_id uuid
 )`,
-    ...editable.map((p) => `ALTER TABLE ${name} ADD COLUMN IF NOT EXISTS ${q(sqlName(p.apiName))} ${PG_TYPE[p.type as BaseType]}`),
+    ...editable.flatMap((p) => {
+      const col = q(sqlName(p.apiName));
+      const type = PG_TYPE[p.type as BaseType];
+      // A property whose type changed keeps its edits: the column is converted (a value that can't convert fails the publish).
+      const convert = `ALTER TABLE ${name} ALTER COLUMN ${col} TYPE ${type} USING ${col}::text::${type}`;
+      return [
+        `ALTER TABLE ${name} ADD COLUMN IF NOT EXISTS ${col} ${type}`,
+        `DO $$ BEGIN
+  IF (SELECT format_type(atttypid, atttypmod) FROM pg_attribute
+      WHERE attrelid = ${literal(`edits.${q(sqlName(t.apiName))}`)}::regclass AND attname = ${literal(sqlName(p.apiName))} AND NOT attisdropped)
+     <> ${literal(FORMAT_TYPE[type] ?? type)} THEN
+    EXECUTE ${literal(convert)};
+  END IF;
+END $$`,
+      ];
+    }),
   ];
 }
+
+// format_type() spelling of the PG_TYPE names that differ.
+const FORMAT_TYPE: Record<string, string> = { timestamptz: 'timestamp with time zone' };
 
 // ont.<t> = source FULL JOIN edits (03-data-model §3 step 3). View columns are the properties' SQL names.
 export function ontViewSql(t: ObjectTypeDef, source: string): string {
@@ -353,11 +372,13 @@ async function commentStatements(t: ObjectTypeDef, projectId: string, semVersion
   const out: string[] = [];
   const view = sqlName(t.apiName);
   const text = `${t.description}${await definition(t.term)}`;
+  // Each Term is looked up once; the same comments go on ont.<t> and logic.<t>.
+  const columns = await Promise.all(
+    t.properties.map(async (p) => ({ column: q(sqlName(p.apiName)), text: `${p.description}${await definition(p.term)}` })),
+  );
   for (const schema of ['ont', 'logic']) {
     out.push(`COMMENT ON VIEW ${schema}.${q(view)} IS ${literal(text)}`);
-    for (const p of t.properties) {
-      out.push(`COMMENT ON COLUMN ${schema}.${q(view)}.${q(sqlName(p.apiName))} IS ${literal(`${p.description}${await definition(p.term)}`)}`);
-    }
+    for (const c of columns) out.push(`COMMENT ON COLUMN ${schema}.${q(view)}.${c.column} IS ${literal(c.text)}`);
   }
   return out;
 }

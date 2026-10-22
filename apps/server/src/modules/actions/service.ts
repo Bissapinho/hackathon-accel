@@ -17,6 +17,7 @@ import { sql, type Kysely, type RawBuilder } from 'kysely';
 import type { Db, DB } from '../../db/index.js';
 import { ident, qualified } from '../../db/ident.js';
 import { ApiError, notFound } from '../../errors.js';
+import { PG_TYPE } from '../logic/sqltext.js';
 import { toSqlName } from '../objects/model.js';
 import type { User } from '../resources/schemas.js';
 import type { WorkspaceService } from '../workspace/service.js';
@@ -55,15 +56,6 @@ type Outcome = {
   errors: FieldError[];
   edits: ActionEdit[];
   message: string;
-};
-
-const PG_TYPE: Record<BaseType, string> = {
-  string: 'text',
-  integer: 'bigint',
-  double: 'double precision',
-  boolean: 'boolean',
-  date: 'date',
-  timestamp: 'timestamptz',
 };
 
 // Thrown inside the transaction to roll it back while keeping the outcome (dry-runs and rejections).

@@ -1,4 +1,5 @@
 import type { DraftOp, EntityKind, Validation, WorkspaceDoc } from '@mini/shared';
+import { sql } from 'kysely';
 import type { Db } from '../../db/index.js';
 import { ApiError, notFound } from '../../errors.js';
 import type { SemanticsPort } from '../../ports.js';
@@ -196,25 +197,26 @@ export function createWorkspaceService(deps: { db: Db; semantics: SemanticsPort;
 
   // Resets the draft to the latest published doc; the revision keeps increasing so stale saves fail.
   async function discardDraft(projectId: string, userId: string): Promise<{ revision: number }> {
-    const current = await getDraft(projectId);
+    await getDraft(projectId); // make sure it exists
     const latest = await latestPublished(projectId);
     const doc = latest?.doc ?? emptyDoc((await semantics.activeVersion(projectId)) ?? '');
     const validation = await quickValidate(projectId, doc);
-    const revision = current.revision + 1;
-    await db
+    // Incremented in SQL: a save committed meanwhile can't end up with the same revision as the reset.
+    const row = await db
       .updateTable('meta.workspace_drafts')
       .set({
         doc: JSON.stringify(doc),
         base_version: latest?.version ?? 0,
         sem_version: doc.semanticVersion || null,
-        revision,
+        revision: sql<number>`revision + 1`,
         validation: JSON.stringify(validation),
         updated_by: userId,
         updated_at: new Date(),
       })
       .where('project_id', '=', projectId)
-      .execute();
-    return { revision };
+      .returning('revision')
+      .executeTakeFirstOrThrow();
+    return { revision: row.revision };
   }
 
   async function history(projectId: string): Promise<HistoryEntry[]> {

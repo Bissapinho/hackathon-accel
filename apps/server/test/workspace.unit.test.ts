@@ -213,6 +213,19 @@ describe('T-13 structural validation', () => {
     expect(v.errors).toContainEqual(expect.objectContaining({ code: 'LOGIC_UNKNOWN_LINK', path: 'logic[5].expr.aggregate.link' }));
   });
 
+  it('reports what publish refuses: a cycle through a case condition', () => {
+    const doc = clone();
+    doc.logic.push(
+      {
+        apiName: 'score', objectType: 'Client', kind: 'derived', type: 'integer',
+        expr: { case: [{ when: { kind: 'rule', rule: 'risky' }, then: { literal: 1 } }], else: { literal: 0 } },
+        displayName: 'Score', description: 'Score.',
+      },
+      { apiName: 'risky', objectType: 'Client', kind: 'rule', condition: { kind: 'cmp', property: 'score', op: 'gt', value: 0 }, displayName: 'Risky', description: 'Risky.' },
+    );
+    expect(codes(validateStructure(doc, kumoCatalog()))).toContain('LOGIC_CYCLE');
+  });
+
   it('message templates must name real parameters', () => {
     const doc = clone();
     doc.actionTypes[0]!.successMessage = 'Moved {{lot.poids}} to {{cuisine}}';

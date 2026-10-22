@@ -11,6 +11,7 @@ export const testLogicTool = defineTool({
   input: logicTestRequestSchema.extend({ rationale: rationaleSchema }),
   async run(input: z.infer<typeof logicTestRequestSchema>, ctx) {
     try {
+      await ctx.services.resources.requireAccess(ctx.projectId, ctx.user.id, 'read');
       const res = await ctx.services.logic.testDraftLogic(ctx.projectId, {
         objectType: input.objectType,
         apiNames: input.apiNames,
