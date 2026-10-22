@@ -1,8 +1,11 @@
 import { aggregateObjects } from './aggregate_objects.js';
+import { disableAutomationTool } from './disable_automation.js';
 import { diffDraft } from './diff_draft.js';
 import { discardDraft } from './discard_draft.js';
 import { editDraft } from './edit_draft.js';
+import { enableAutomationTool } from './enable_automation.js';
 import { getActionLogTool } from './get_action_log.js';
+import { getAutomationEventsTool } from './get_automation_events.js';
 import { getDataset } from './get_dataset.js';
 import { getObject } from './get_object.js';
 import { getWorkspace } from './get_workspace.js';
@@ -40,4 +43,7 @@ export const alexandreTools: AnyToolDef[] = [
   diffDraft,
   discardDraft,
   publishDraftTool,
+  enableAutomationTool,
+  disableAutomationTool,
+  getAutomationEventsTool,
 ];
