@@ -9,7 +9,13 @@ export function createPool(opts: PoolOptions): pg.Pool {
   const ssl = opts.caCertPath ? { ca: readFileSync(opts.caCertPath, 'utf8'), rejectUnauthorized: true } : undefined;
   // pg lets sslmode in the URL override the ssl object; strip it so the CA above is what applies.
   const connectionString = ssl ? stripSslParams(opts.connectionString) : opts.connectionString;
-  return new pg.Pool({ connectionString, ssl, max: opts.max ?? 5 });
+  const pool = new pg.Pool({ connectionString, ssl, max: opts.max ?? 5 });
+  // An idle connection dropped by the server (restart, network) emits 'error' on the pool; without a
+  // listener Node crashes the whole process. The pool discards that client and opens a new one on demand.
+  pool.on('error', (err) => {
+    console.error(`database: an idle connection was closed (${err.message}); it will be replaced on the next query`);
+  });
+  return pool;
 }
 
 function stripSslParams(url: string): string {
