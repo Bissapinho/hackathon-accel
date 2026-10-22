@@ -2,51 +2,68 @@
 
 ## 1. The pitch in one sentence
 
-**A support manager who has never written code uploads two spreadsheets and, in ten minutes of conversation, gets a working ticket-triage system: objects, a link, a "resolve" action with rules, a triage screen, an alert for urgent tickets, and answers to questions about the data.**
+**An operations manager at Kumo who has never written code loads the company's NetSuite exports and, in about fifteen minutes of conversation, gets data it can trust and act on: business definitions backed by evidence, clean orders and returns, kitchens with their daily capacity, a return rate per store and product, and a safe "move this production to another kitchen" action that refuses to overload a kitchen.**
 
 ## 2. What is in the slice
 
-| # | Capability | Built by | Feature-book refs |
-|---|---|---|---|
-| 1 | Projects, users, project roles | seed + UI | 1.P1–P2 |
-| 2 | **Upload CSV** → dataset with inferred schema, versions (SNAPSHOT / APPEND), preview, column profile | user (by hand) | 1.D1–D5 |
-| 3 | **Ontology**: object types from datasets (primary key, title, properties with descriptions and aliases), link types (foreign key), action types (modify / create rules, parameters, submission criteria) | **agent** | 2.F1–F7, F8 (simple) |
-| 4 | **Workspace draft → validate → publish** with versions and history | agent edits, user approves publish | 2.F9–F10, pattern S2 |
-| 5 | **Objects**: views over source + edits, query, aggregate, read-only SQL, object page with links | platform | 6.X1–X2, pattern S9 |
-| 6 | **Actions**: form, validation, apply, action log; edits survive re-upload | user or agent (gated) | 2.F6, C5 of docs check |
-| 7 | **App**: a JSON app document (list + filters + detail + action button + metric cards) rendered by a generic renderer | **agent** | 4.W1–W3 (reduced) |
-| 8 | **Automation**: "when an object enters a set → in-app notification" | **agent** (enabling is gated) | 6.A1–A4 (reduced) |
-| 9 | **AI FDE agent**: router → explore / build modes, tools, plan, clarifying questions, approvals, verification, plain-language summaries, rationale per step, context budget | — | 3.G1–G8, G11, G17; ch. 3 §3.7–3.8 |
-| 10 | **Analyst answers** inside the same chat: SQL / aggregation over objects, small table or bar chart | agent (explore mode) | 3.G8; ch. 3 §4.x |
-| 11 | **Metadata improvement suggestions** after answers (description / alias tweaks, applied through the draft) | agent | ch. 3 §4.x |
+| # | Capability | Stage | Built by | Feature-book refs |
+|---|---|---|---|---|
+| 1 | Projects, users, project roles | — | seed + UI | 1.P1–P2 |
+| 2 | **Upload CSV / CSV.gz** → dataset with inferred schema, versions (SNAPSHOT / APPEND), preview, column profile in SQL | 1 Ingest | user (by hand) | 1.D1–D5 |
+| 3 | **Minimal semantic card for every column** on upload (Term + Mapping + Evidence, no LLM) | 1 Ingest | platform | 8.E2 |
+| 4 | **Seed questions** proposed from the user's goal and picked by the user | 2 Semantics | **agent** + user | 8.E3 |
+| 5 | **Semantic bank**: enrich Terms, Mappings, Relations, Constraints, Evidence; open ambiguities settled as multiple-choice questions; validate; **publish a semantic version** (gated) | 2 Semantics | **agent**, user approves | 8.E1, E4, E5, E8 |
+| 6 | **Pipelines**: typed transform graphs (filter, select, rename, cast, derive, join, union, aggregate, deduplicate), preview on a sample, checks, materialized on publish | 3 Ontology | **agent** | 5.P1, P3, P5, P8 (reduced) |
+| 7 | **Ontology**: object types on datasets or pipeline outputs (key, title, properties with descriptions and aliases taken from Terms), link types from Relations (single or composite keys) | 3 Ontology | **agent** | 2.F1–F5 |
+| 8 | **Workspace draft → validate → publish** with versions and history; the workspace records the semantic version it was built on | 3–4 | agent edits, user approves | 2.F9–F10, pattern S2 |
+| 9 | **Objects**: views over source + edits, query, aggregate, read-only SQL, object page with links and derived properties | — | platform | 6.X1–X2, pattern S9 |
+| 10 | **Logic**: derived properties (expressions, aggregates over links) and rules (named conditions), compiled to `logic.*` views | 4 Logic & actions | **agent** | 6.L1 (deterministic part) |
+| 11 | **Actions between objects**: object and value parameters, rules that modify, create or re-link objects, submission criteria that can call logic rules; dry-run, apply, action log; edits survive re-uploads | 4 Logic & actions | agent defines; user or agent runs (gated) | 2.F6, F8 |
+| 12 | **AI FDE agent**: router → explore / semantics / build, tools, plan, clarifying questions, approvals, verification, plain-language summaries, rationale per step | all | — | 3.G1–G8, G11, G17 |
+| 13 | **Analyst answers** in the same chat, always through the bank (`resolve`), recorded as trajectories | — | agent (explore) | 8.E5, E6 |
+| 14 | *Stretch:* **app** (kitchen planning screen), **automation** (alert when a kitchen-day goes over capacity), **evolution** of the bank (judge-gated) | — | agent | 4.W1–W3, 6.A1–A4, 8.E7 |
 
-**Out of the slice:** connectors and syncs, writeback, pipelines, branches / proposals (the workspace draft replaces them), Workshop drag-and-drop editor, documents and embeddings, Logic functions, fine-grained security.
+**Out of the slice:** connectors and syncs, pipeline schedules, writeback, branches / proposals (the two drafts replace them), Workshop drag-and-drop editor, pipeline graph editor, LLM blocks in Logic, documents and embeddings, fine-grained security, Parquet / XLSX upload.
 
 ## 3. Demo data
 
-`fixtures/tickets.csv` (60 rows: `ticket_id, title, description, status, priority, category, assignee, customer, created_at, resolved_at, estimate_hours`; 36 open, 7 in_progress, 17 resolved; priorities low / medium / high / urgent; one ticket unassigned) and `fixtures/people.csv` (6 rows: `person_id, full_name, email, team, role`). `tickets.assignee` contains the person's **full name**, so a link can be built on `assignee → full_name`.
+Kumo's 2025 exports, all identities replaced by codes (clients `C0421`, articles `A0137`, documents `SO-081234`, people `PERS07`…) and all amounts removed. **Column meanings are not documented: building them is the semantics stage's job.**
 
-## 4. Demo script (≈10 minutes)
+| Dataset | Rows | Notes for the demo |
+|---|---|---|
+| `COMMANDES_NETSUITE_2025` | 2 228 050 | Order **lines**: 135 491 documents, 72 677 `SO-…` (sales orders) and 62 814 `RMA-…` (returns, negative quantities); `Lieu_Production` / `Date_Production` filled only from August |
+| `CLIENTS_NETSUITE` | 893 | One row per client (= store), contract type, delivery days, distribution zone, banner `E..`, capacity |
+| `ARTICLES_NETSUITE` | 1 135 | Products: family, shelf life (`DLC` `J+3`), production type, kitchen (`LABO`) |
+| `MERCURIALES_NETSUITE` | 11 462 | Which article is in which price list `NP..` |
+| `FACTURES_AVOIRS_2025` | 16 526 | Credit notes `CM-…` |
+| `APP_COMMANDES_2025`, `APP_STOCKS_2025`, `APP_KIOSQUE_INVENDUS_2025`, `APP_KIOSQUE_PRODUCTION_2025` | 27 330 · 29 344 · 5 148 · 829 | Kumo's own app: store orders, stock counts, kiosk unsold and kiosk production |
+| `IMPORTS_NETSUITE_2025`, `MIX_PRODUIT_EXPORTS_2025` | 21 977 · 6 833 | Order imports into NetSuite, product-mix exports |
+| `ETAGERES_CORRESPONDANCE`, `ETAGERES_MESURES_2025` | 20 · 57 903 | Connected shelves: which shelf is in which store, weight changes |
+| *Simulated:* `CUISINES_REFERENTIEL`, `CAPACITE_CUISINES_JOUR_2025`, `STOCKS_MAGASINS_JOUR_2025` | 5 · 17 496 · 2 920 562 | Generated by `synthetic/generate_synthetic.py`, calibrated on the real data: kitchens, staffing and capacity per kitchen × workshop × shift × day, daily store stock. **Tagged as simulated** in the bank |
 
-Before the demo: the project **Support Ops** exists; the presenter has uploaded `tickets.csv` and `people.csv` (this is the "manual connection" step, shown in 20 seconds).
+Tests use `fixtures/kumo-mini/`: a small synthetic sample with the same columns (see `07-acceptance-tests.md`). The real files are never committed.
+
+## 4. Demo script (≈15 minutes)
+
+Before the demo: the project **Kumo 2025** exists and the presenter has uploaded the 16 files with the seed script (the "manual connection" step, shown in 20 seconds on the Data page). Every column already has a minimal card.
 
 | # | User says (chat) | Agent does (visible step cards) | User sees / approves |
 |---|---|---|---|
-| 1 | "I just uploaded our tickets and our team list. I'm not technical. Can you turn this into something my team can work with?" | Router → explore mode. Lists datasets in the project, reads both schemas, profiles key columns (uniqueness of `ticket_id`, distinct values of `status` and `priority`, match rate of `assignee` against `people.full_name`) | A **plan card** in plain language: "1. Ticket and Team member objects 2. a link 'assigned to' 3. a way to resolve tickets 4. a triage screen 5. an alert for urgent tickets" + **one clarifying question**: "When a ticket is resolved, should we record who resolved it and when?" (choices) |
-| 2 | Picks "Yes, record who and when" | Switches to build mode. Writes into the **draft**: object types `Ticket` (key `ticket_id`, title `title`, descriptions and aliases for every property, `status` editable) and `TeamMember` (key `person_id`, title `full_name`); link `Ticket.assignedTo → TeamMember` (on `assignee = full_name`); action `ResolveTicket` (parameter ticket + resolution note; rule: status ← "resolved", resolved_at ← now, resolved_by ← current user; submission criterion: status ≠ resolved). Runs **validate draft** | A **proposal card**: table of what will be created + caveats in plain words ("1 ticket has no assignee; it will simply have no link") |
-| 3 | — | Calls `publish_draft` → **approval card** | **Allow** |
-| 4 | — | Verifies with SQL: 60 tickets, 6 team members, 59 links (1 unassigned), action dry-run on an open ticket passes, on a resolved ticket is refused with the right message | A **verification card**: "Checked: 60 tickets, 6 team members, 59 tickets linked, the resolve action works on open tickets and is refused on resolved ones" |
-| 5 | "Now give my team a screen to triage tickets, urgent ones first, and let them resolve from there." | Writes an **app document** into the draft (list filtered to not-resolved, sorted urgent → low, filters on priority / assignee / category; detail panel with properties and the assignee; button "Resolve" → `ResolveTicket`; metric cards: open, urgent, average estimate). Validates. Asks to publish | Approval card → **Allow**; a link "Open Triage app" |
-| 6 | (opens the app, resolves one urgent ticket with a note) | — | The ticket disappears from the list; counts update |
-| 7 | "Warn me whenever a ticket becomes urgent." | Writes an **automation** into the draft: condition "Ticket enters set: priority = urgent and status ≠ resolved"; effect "notify <current user>". Asks to enable | Approval card → **Allow** |
-| 8 | (presenter changes a ticket's priority to urgent with a second action the agent created on request, or edits it in the app) | Automation fires | A **notification** "Ticket T-20xx is now urgent" |
-| 9 | "Who has the most open hours of work right now?" | Explore mode: SQL over `ont.ticket` joined to `ont.team_member` | A small **table + bar chart** and one-sentence answer; step cards show the SQL in "details" |
-| 10 | — | After the answer: suggests a metadata improvement ("add alias 'workload' to estimate_hours"), placed in the draft | A small suggestion card the user can accept (publish) or dismiss |
+| 1 | "I've loaded our NetSuite exports. I'm not technical. I want to see where returns cost us, by store and by product, and let the planning team move production when a kitchen is overloaded." | Router → `semantics`. Reads the bank overview (16 datasets, all minimal cards), profiles the order lines (document prefixes, sign of quantities), the client and article keys, the kitchen columns | A **plan card** in plain words: "1. agree on the questions 2. pin down what an order, a return and a kitchen's load mean 3. build clean orders, returns and kitchens 4. a return rate 5. a safe way to move production" + **a question with checkboxes**: 8–12 proposed questions ("Which stores return the most, as a share of what they receive?", "Which products are returned most?", "Which kitchen-days are over capacity?"…) |
+| 2 | Ticks 6 questions, adds one in free text | Enriches the cards those questions touch: Terms *Commande*, *Retour*, *Client (magasin)*, *Article*, *Cuisine*, *Charge*, *Capacité*; Mappings; Relations (an order line is part of a document; a document belongs to a client); Constraints with Evidence ("`RMA-` documents carry negative quantities", "production site known only from August", "capacity tables are simulated") | A **question card** for the real ambiguities only, with choices: "Is a return rate measured against quantities **delivered** or **ordered**?" · "Before August the kitchen isn't recorded: infer it from the client's zone, or leave those months out?" |
+| 3 | Picks "delivered" and "leave them out" | Records the decisions as resolved Constraints, validates the bank, calls `publish_semantics` | **Approval card**: "Adopt 24 definitions, 9 relations and 11 rules as the official meaning of your data" → **Allow** |
+| 4 | — | Switches to `build`. Writes pipelines into the draft: `commandes` (roll SO lines up to one row per document), `retours` (same for RMA), `production` (one row per kitchen × production day × article, from August), `cuisine_jours` (capacity per kitchen × day). Previews each on a sample, runs checks (unique keys, row counts vs distinct documents). Writes object types *Client*, *Article*, *Commande*, *Retour*, *Cuisine*, *Cuisine-jour*, *Lot de production* with descriptions and aliases from the Terms, and links from the Relations | A **proposal card**: what will be created, row counts from the previews, caveats in plain words ("10 clients have no orders this year; 1 SO line has no article") |
+| 5 | — | Adds **logic**: *Client.tauxRetour* and *Article.tauxRetour* (returned ÷ delivered, per the decision), *Cuisine-jour.charge* (sum of its production lots), *Cuisine-jour.surcharge* rule (charge > capacité). Adds **actions**: *Réaffecter une production* (parameters: a production lot and a target kitchen; sets the lot's kitchen; criterion: the target kitchen-day must stay within capacity after the move) and *Déclarer des invendus* (creates an unsold record linked to a client and an article). Runs `test_logic` and `test_action` on a valid and an invalid case | The proposal card updates; then the **approval card** for `publish_draft` → **Allow** |
+| 6 | — | Verifies after publishing: object counts vs pipeline outputs (72 677 orders, 62 814 returns, 893 clients, 5 kitchens), link coverage, a rule returns rows, both actions pass and fail where expected | A **verification card**: "Checked: 72 677 orders and 62 814 returns, every order linked to a client, 14 kitchen-days currently over capacity, the move is refused when it would overload the target kitchen" |
+| 7 | "Which 5 stores have the highest return rate?" | `explore`: `resolve_semantics` ("return rate", "store") → SQL on `logic.client` | A **table + bar chart** and one sentence; the reply names the definition used ("returns ÷ deliveries, as you decided") |
+| 8 | "Move tomorrow's lot of Poké Saumon from Frepillon to Gennevilliers." | Finds the lot, dry-runs *Réaffecter une production*; if Gennevilliers would exceed its capacity, says so and offers a kitchen with room | **Approval card** for `run_action` → **Allow**; the object page shows the new kitchen, both kitchen-days' load updated, the action log entry |
+| 9 *(stretch)* | "Warn me whenever a kitchen-day goes over capacity." | Automation on the *surcharge* rule; asks to enable | Approval card → **Allow**; moving another lot fires a notification |
 
-**What the audience should take away:** no code, no clicks in an editor; every change was proposed in plain words, approved, and checked.
+**What the audience should take away:** no code; every definition is backed by evidence from the data; every change was proposed in plain words, approved, and checked; the action can't break the business rule it was built from.
 
 ## 5. Fallbacks for a live demo
 
-- **LLM slow or down:** `LLM_MOCK=1` replays a recorded session (`fixtures/demo-session.jsonl`, recorded during rehearsal, task T-24) through the same UI.
-- **Agent makes a different but valid choice** (e.g. names the type `SupportTicket`): fine; the script never depends on exact names.
+- **LLM slow or down:** `LLM_MOCK=1` replays a recorded session (`fixtures/demo-session.jsonl`, recorded during rehearsal, task T-30) through the same UI. The recording is made on the synthetic `kumo-mini` data so it can live in the repo.
+- **Agent makes a different but valid choice** (names a type `Order` instead of `Commande`, proposes other questions, rolls production up differently): fine; the script never depends on exact names.
 - **Agent asks an unexpected question:** answer it naturally; the rehearsal checklist in `07-acceptance-tests.md` lists the outcomes that must hold whatever the wording.
+- **A large load is slow:** the seed script loads the 16 files before the demo; nothing in the script re-uploads.
