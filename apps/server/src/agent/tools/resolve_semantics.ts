@@ -1,7 +1,7 @@
 import type { ResolveResult } from '@mini/shared';
 import { z } from 'zod';
 import { MAX_RESOLVE_MENTIONS } from '../../modules/semantics/engine/index.js';
-import { semVersionRefSchema } from './bank_overview.js';
+import { versionRefSchema } from '../../modules/semantics/schemas.js';
 import { clip, runSemTool } from './result.semantics.js';
 import { defineTool, rationaleSchema } from './types.js';
 
@@ -31,7 +31,7 @@ export const resolveSemantics = defineTool({
       .max(MAX_RESOLVE_MENTIONS)
       .describe(`1 to ${MAX_RESOLVE_MENTIONS} words or phrases from the question, e.g. ["taux de retour", "magasin"]`),
     context: z.string().max(500).describe('The user\'s question, used to choose between close matches'),
-    version: semVersionRefSchema.optional().describe("Default 'active'"),
+    version: versionRefSchema.optional().describe("Default 'active'"),
   }),
   run: ({ mentions, context, version }, ctx) =>
     runSemTool(ctx, 'read', async () => {

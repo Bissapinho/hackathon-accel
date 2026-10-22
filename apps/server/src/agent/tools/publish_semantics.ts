@@ -1,18 +1,11 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { constraints, isOpenDecision, nextVersionName } from '../../modules/semantics/engine/index.js';
 import type { SemanticStore } from '../../modules/semantics/index.js';
+import { publishInputSchema } from '../../modules/semantics/schemas.js';
 import { clip, compactValidation, plural, runSemTool } from './result.semantics.js';
 import { defineTool, rationaleSchema } from './types.js';
 
-// TODO(T-09): move to modules/semantics/schemas.ts (the same body as the publish route).
-export const semPublishSchema = z.object({
-  expectedRevision: z.number().int().min(0).describe('The draft revision you last read'),
-  summary: z.string().trim().min(1).max(500).describe('What this version means for the user, in plain words'),
-  limitations: z.array(z.string().trim().min(1).max(300)).max(15).describe('Known gaps: missing months, simulated data, uncovered questions'),
-  questionLinks: z.record(z.string(), z.array(z.string()).max(30)).describe('Question id → ids of the records that serve it'),
-});
-
-type PublishInput = z.infer<typeof semPublishSchema>;
+type PublishInput = z.infer<typeof publishInputSchema>;
 const MAX_DECISIONS_LISTED = 5;
 
 /** The approval card text (05-agent §5): what will be published, in plain words. */
@@ -43,7 +36,8 @@ export async function publishApprovalText(store: SemanticStore, projectId: strin
   }
   const picked = workload.questions.filter((q) => q.picked);
   if (picked.length) {
-    const covered = picked.filter((q) => (input.questionLinks[q.id]?.length ?? 0) > 0).length;
+    const links = input.questionLinks ?? draft!.info.questionLinks;
+    const covered = picked.filter((q) => (links[q.id]?.length ?? 0) > 0).length;
     lines.push(`Answers ${covered} of your ${plural(picked.length, 'question')}.`);
   }
   if (input.limitations.length) {
@@ -57,7 +51,7 @@ export const publishSemantics = defineTool({
   name: 'publish_semantics',
   modes: ['semantics'],
   risk: 'gated',
-  input: semPublishSchema.extend({ rationale: rationaleSchema }),
+  input: publishInputSchema.extend({ rationale: rationaleSchema }),
   async summarize({ rationale: _r, ...input }, ctx) {
     try {
       return await publishApprovalText(ctx.services.semantics, ctx.projectId, input);
@@ -67,7 +61,10 @@ export const publishSemantics = defineTool({
   },
   run: ({ rationale: _r, ...input }, ctx) =>
     runSemTool(ctx, 'write', async () => {
-      const { version, validation } = await ctx.services.semantics.publish(ctx.projectId, input, { userId: ctx.user.id });
+      const store = ctx.services.semantics;
+      // Without questionLinks the draft's current links are kept (same as the publish route).
+      const questionLinks = input.questionLinks ?? (await store.overview(ctx.projectId, 'draft')).questionLinks;
+      const { version, validation } = await store.publish(ctx.projectId, { ...input, questionLinks }, { userId: ctx.user.id });
       const loaded = await ctx.services.semantics.load(ctx.projectId, version);
       const c = loaded!.info.counts;
       return {

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { notFound } from '../../errors.js';
 import { constraints, isOpenDecision, terms } from '../../modules/semantics/engine/index.js';
+import { versionRefSchema } from '../../modules/semantics/schemas.js';
 import { plural, runSemTool } from './result.semantics.js';
 import { defineTool, rationaleSchema } from './types.js';
 
@@ -8,19 +9,13 @@ import { defineTool, rationaleSchema } from './types.js';
 const MAX_CARDS = 12;
 const MAX_DECISIONS = 10;
 
-// TODO(T-09): move to modules/semantics/schemas.ts (shared with the semantics routes).
-export const semVersionRefSchema = z
-  .string()
-  .min(1)
-  .describe("'active' (the published meaning), 'draft' (work in progress) or a version name such as 'v0'");
-
 export const bankOverview = defineTool({
   name: 'bank_overview',
   modes: ['explore', 'semantics', 'build'],
   risk: 'read',
   input: z.object({
     rationale: rationaleSchema,
-    version: semVersionRefSchema.optional().describe("Version to describe; default: 'draft' in semantics mode, 'active' otherwise"),
+    version: versionRefSchema.optional().describe("Version to describe; default: 'draft' in semantics mode, 'active' otherwise"),
   }),
   run: ({ version }, ctx) =>
     runSemTool(ctx, 'read', async () => {

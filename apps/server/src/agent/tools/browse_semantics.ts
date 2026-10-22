@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { MAX_BROWSE_ITEMS } from '../../modules/semantics/engine/index.js';
-import { semVersionRefSchema } from './bank_overview.js';
+import { versionRefSchema } from '../../modules/semantics/schemas.js';
 import { runSemTool } from './result.semantics.js';
 import { defineTool, rationaleSchema } from './types.js';
 
@@ -16,7 +16,7 @@ export const browseSemantics = defineTool({
       .optional()
       .describe("Which records to search; default 'term'. 'all' also searches mappings, relations and rules"),
     limit: z.number().int().min(1).max(MAX_BROWSE_ITEMS).optional().describe(`At most ${MAX_BROWSE_ITEMS}`),
-    version: semVersionRefSchema.optional().describe("Default 'active'; 'draft' while building the bank"),
+    version: versionRefSchema.optional().describe("Default 'active'; 'draft' while building the bank"),
   }),
   run: ({ query, kind, limit, version }, ctx) =>
     runSemTool(ctx, 'read', async () => {
