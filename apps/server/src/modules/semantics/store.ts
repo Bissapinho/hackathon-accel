@@ -13,6 +13,7 @@ import {
   applyOps, bankFromRecords, browse, counts, emptyBank, nextVersionName, resolve, toBrowseResult, toResolveResult,
   validateBank, type DatasetCatalog, type NewTrajectory, type SemBank,
 } from './engine/index.js';
+import { checkReadOnlySql } from '../sql/parse.js';
 import { semDb, type SemDb, type SemTrx } from './tables.js';
 
 export type Actor = { userId: string };
@@ -47,13 +48,13 @@ export class SemanticStore {
     return row?.version ?? null;
   }
 
-  async listVersions(projectId: string): Promise<{ version: string; status: string; summary: string; publishedBy: string | null; at: string | null }[]> {
+  async listVersions(projectId: string): Promise<{ version: string; status: string; summary: string; limitations: string[]; publishedBy: string | null; at: string | null }[]> {
     const rows = await this.db.selectFrom('meta.sem_versions')
-      .select(['version', 'status', 'summary', 'published_by', 'published_at'])
+      .select(['version', 'status', 'summary', 'limitations', 'published_by', 'published_at'])
       .where('project_id', '=', projectId).where('status', '!=', 'draft').execute();
     return rows
       .sort((a, b) => Number(a.version.slice(1)) - Number(b.version.slice(1)))
-      .map((r) => ({ version: r.version, status: r.status, summary: r.summary, publishedBy: r.published_by, at: r.published_at?.toISOString() ?? null }));
+      .map((r) => ({ version: r.version, status: r.status, summary: r.summary, limitations: r.limitations, publishedBy: r.published_by, at: r.published_at?.toISOString() ?? null }));
   }
 
   /**
@@ -77,6 +78,26 @@ export class SemanticStore {
     return { info: infoOf(bank, row), bank };
   }
 
+  /** Overview of one version (GET semantics?version=): its info with counts. NOT_FOUND for an unknown version. */
+  async overview(projectId: string, ref: VersionRef = 'active'): Promise<SemVersionInfo> {
+    return (await this.loadOrFail(projectId, ref)).info;
+  }
+
+  /** Records of one version, filtered by kind and by a case-insensitive text match on what the record says (see SEARCH_FIELDS). */
+  async listRecords(projectId: string, ref: VersionRef = 'active', opts: { kind?: SemRecord['kind']; q?: string; limit?: number } = {}): Promise<SemRecord[]> {
+    const { bank } = await this.loadOrFail(projectId, ref);
+    const q = opts.q?.trim().toLowerCase();
+    const limit = Math.max(1, Math.min(opts.limit ?? 200, 1000));
+    const out: SemRecord[] = [];
+    for (const record of bank.records.values()) {
+      if (opts.kind && record.kind !== opts.kind) continue;
+      if (q && !searchText(record).includes(q)) continue;
+      out.push(record);
+      if (out.length >= limit) break;
+    }
+    return out;
+  }
+
   async recordExists(projectId: string, version: string, recordId: string): Promise<boolean> {
     return (await this.getRecord(projectId, version, recordId)) !== null;
   }
@@ -91,6 +112,7 @@ export class SemanticStore {
 
   /** Applies operations to the draft (created from the active version if needed). All or nothing. */
   async applyDraftOps(projectId: string, input: { expectedRevision: number; ops: SemOp[] }, actor: Actor, opts: { trusted?: boolean } = {}): Promise<{ revision: number; validation: Validation }> {
+    checkEvidenceQueries(input.ops);
     return this.db.transaction().execute(async (trx) => {
       const draft = await this.lockDraft(trx, projectId);
       if (draft.revision !== input.expectedRevision) throw conflict(draft.revision);
@@ -275,6 +297,36 @@ export class SemanticStore {
 }
 
 // ---------- helpers ----------
+
+/** What a record says (not the ids it points at), for the `q` filter of the records route. */
+const SEARCH_FIELDS = ['id', 'name', 'aliases', 'definition', 'scope', 'description', 'trigger_keywords', 'table', 'column', 'grain', 'semantic_filter', 'aggregation_semantics', 'source', 'validation_method'];
+
+function searchText(record: SemRecord): string {
+  const body = record.body as Record<string, unknown>;
+  return SEARCH_FIELDS.flatMap((f) => (Array.isArray(body[f]) ? body[f] : [body[f]]))
+    .filter((v): v is string => typeof v === 'string').join('\n').toLowerCase();
+}
+
+/**
+ * Evidence queries must be single read-only SELECTs (S2): a write query refuses the whole change with
+ * SQL_REJECTED before anything runs. Other SQL failures (errors, timeouts) become the evidence result text.
+ */
+function checkEvidenceQueries(ops: SemOp[]): void {
+  ops.forEach((op, i) => {
+    if (op.op !== 'upsertRecord' || op.record.kind !== 'evidence') return;
+    const query = (op.record.body as { query?: unknown }).query;
+    if (typeof query !== 'string' || !query.trim()) return;
+    try {
+      checkReadOnlySql(query);
+    } catch (e) {
+      if (!(e instanceof ApiError)) throw e;
+      throw new ApiError(e.status, e.code, `Evidence "${op.record.body.id}": ${e.message}`, {
+        ...e.extra,
+        details: [{ path: `ops[${i}].record.body.query`, code: e.code, message: e.message }],
+      });
+    }
+  });
+}
 
 type VersionRow = {
   status: 'draft' | 'active' | 'superseded'; revision: number; summary: string; limitations: string[];
