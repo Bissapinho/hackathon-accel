@@ -1,0 +1,20 @@
+# Local Postgres 16 for development and tests (never Aiven: 01-architecture §9).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: mini
+      POSTGRES_PASSWORD: mini
+      POSTGRES_DB: mini
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/docker-initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mini -d mini"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  pgdata:

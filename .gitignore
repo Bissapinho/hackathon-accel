@@ -1,3 +1,17 @@
 .DS_Store
-.env
 node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+
+# Kumo data never enters git (01-architecture §7). Only fixtures/kumo-mini/ is synthetic and committed.
+var/
+data/
+*.csv
+*.csv.gz
+*.parquet
+!fixtures/**/*.csv
+!fixtures/**/*.csv.gz
+!build-package/fixtures/*.csv
